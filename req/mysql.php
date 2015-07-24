@@ -212,6 +212,7 @@ function spip_mysql_query($query, $serveur='',$requeter=true) {
 	} else $t = 0 ;
 
 	$connexion['last'] = $query;
+	$connexion['total_requetes']++;
 
 	// ajouter un debug utile dans log/mysql-slow.log ?
 	$debug = '';
