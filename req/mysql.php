@@ -67,6 +67,7 @@ function req_mysql_dist($host, $port, $login, $pass, $db='', $prefixe='') {
 		'last' => $last,
 		'prefixe' => $prefixe ? $prefixe : $db,
 		'link' => $link,
+		'total_requetes' => 0,
 		);
 }
 
