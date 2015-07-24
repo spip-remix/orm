@@ -118,6 +118,7 @@ function req_sqlite_dist($addr, $port, $login, $pass, $db = '', $prefixe = '', $
 		'db' => $db,
 		'prefixe' => $prefixe ? $prefixe : $db,
 		'link' => $link,
+		'total_requetes' => 0,
 	);
 }
 
@@ -2679,6 +2680,7 @@ class sqlite_requeteur {
 			$e = (function_exists('error_get_last')?error_get_last():"");
 			// sauver la derniere requete
 			$GLOBALS['connexions'][$this->serveur ? $this->serveur : 0]['last'] = $query;
+			$GLOBALS['connexions'][$this->serveur ? $this->serveur : 0]['total_requetes']++;
 
 			if ($this->sqlite_version==3){
 				$r = $this->link->query($query);
