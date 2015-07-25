@@ -111,20 +111,27 @@ function spip_connect($serveur='', $version='') {
 	// s'ils le connaissent
 
 	if (!$serveur) {
-		$charset = spip_connect_main($GLOBALS[$jeu]);
+		$charset = spip_connect_main($GLOBALS[$jeu],$GLOBALS['db_ok']['charset']);
 		if (!$charset) {
 			unset($connexions[$index]);
 			spip_log("spip_connect: absence de charset", _LOG_AVERTISSEMENT);
 			return false;
 		}
-	} else	{
+	}
+	else	{
+		if ($GLOBALS['db_ok']['charset']){
+			$charset = $GLOBALS['db_ok']['charset'];
+		}
 		// spip_meta n'existe pas toujours dans la base
 		// C'est le cas d'un dump sqlite par exemple 
-		if ($connexions[$index]['spip_connect_version']
-		AND sql_showtable('spip_meta', true, $serveur)
-		AND $r = sql_getfetsel('valeur', 'spip_meta', "nom='charset_sql_connexion'",'','','','',$serveur))
+		elseif ($connexions[$index]['spip_connect_version']
+		  AND sql_showtable('spip_meta', true, $serveur)
+		  AND $r = sql_getfetsel('valeur', 'spip_meta', "nom='charset_sql_connexion'",'','','','',$serveur)){
 			$charset = $r;
-		else $charset = -1;
+		}
+		else {
+			$charset = -1;
+		}
 	}
 	if ($charset != -1) {
 		$f = $GLOBALS[$jeu]['set_charset'];
@@ -197,11 +204,10 @@ function spip_connect_sql($version, $ins='', $serveur='', $cont=false) {
  * @param string $type    Type de base de données tel que 'mysql', 'sqlite3' (cf ecrire/req/)
  * @param string $prefixe Préfixe des tables SPIP
  * @param string $auth    Type d'authentification (cas si 'ldap')
+ * @param string $charset Charset de la connexion SQL (optionnel)
  * @return array          Description de la connexion
  */
-function spip_connect_db($host, $port, $login, $pass, $db='', $type='mysql', $prefixe='', $auth='') {
-	global $db_ok;
-
+function spip_connect_db($host, $port, $login, $pass, $db='', $type='mysql', $prefixe='', $auth='', $charset='') {
 	// temps avant nouvelle tentative de connexion
 	// suite a une connection echouee
 	if (!defined('_CONNECT_RETRY_DELAY'))
@@ -241,7 +247,8 @@ function spip_connect_db($host, $port, $login, $pass, $db='', $type='mysql', $pr
 		}
 		$g['authentification'] = $auth;
 		$g['type'] = $type;
-		return $db_ok = $g;
+		$g['charset'] = $charset;
+		return $GLOBALS['db_ok'] = $g;
 	}
 	// En cas d'indisponibilite du serveur, eviter de le bombarder
 	if ($f) {
@@ -258,8 +265,9 @@ function spip_connect_db($host, $port, $login, $pass, $db='', $type='mysql', $pr
  * mais vérifier que le fichier de connexion n'est pas trop vieux
  *
  * @note
- *   Version courante = 0.7
+ *   Version courante = 0.8
  *
+ *   - La version 0.8 indique un charset de connexion comme 9e arg
  *   - La version 0.7 indique un serveur d'authentification comme 8e arg
  *   - La version 0.6 indique le prefixe comme 7e arg
  *   - La version 0.5 indique le serveur comme 6e arg
@@ -271,12 +279,13 @@ function spip_connect_db($host, $port, $login, $pass, $db='', $type='mysql', $pr
  *   - la 0.2 fait un include_ecrire('inc_db_mysql.php3').
  * 
  * @param array $connexion Description de la connexion
+ * @param string $charset_sql_connexion charset de connexion fourni dans l'appal a spip_connect_db
  * @return string|bool|int
  *     - false si pas de charset connu pour la connexion
  *     - -1 charset non renseigné
  *     - nom du charset sinon
 **/
-function spip_connect_main($connexion)
+function spip_connect_main($connexion, $charset_sql_connexion='')
 {
 	if ($GLOBALS['spip_connect_version']< 0.1 AND _DIR_RESTREINT){
 		include_spip('inc/headers');
@@ -284,6 +293,11 @@ function spip_connect_main($connexion)
 	}
 
 	if (!($f = $connexion['select'])) return false;
+	// si le charset est fourni, l'utiliser
+	if ($charset_sql_connexion) {
+		return $charset_sql_connexion;
+	}
+	// sinon on regarde la table spip_meta
 	// en cas d'erreur select retourne la requette (is_string=true donc)
 	if (!$r = $f('valeur','spip_meta', "nom='charset_sql_connexion'")
 	  OR is_string($r))
