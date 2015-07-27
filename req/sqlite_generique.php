@@ -1688,8 +1688,12 @@ function spip_sqlite_showtable($nom_table, $serveur = '', $requeter = true){
 			$a = spip_sqlite_query($query, $serveur, $requeter);
 			while ($r = spip_sqlite_fetch($a, null, $serveur)){
 				$key = str_replace($nom_table.'_', '', $r['name']); // enlever le nom de la table ajoute a l'index
+				$keytype = "KEY";
+				if (strpos($r['sql'],"UNIQUE INDEX")!==false){
+					$keytype = "UNIQUE KEY";
+				}
 				$colonnes = preg_replace(',.*\((.*)\).*,', '$1', $r['sql']);
-				$keys['KEY '.$key] = $colonnes;
+				$keys[$keytype.' '.$key] = $colonnes;
 			}
 		}
 
