@@ -923,6 +923,8 @@ function spip_mysql_countsel($from = array(), $where = array(),
  * @note
  *   Bien spécifier le serveur auquel on s'adresse,
  *   mais à l'install la globale n'est pas encore complètement définie.
+ *
+ * @uses sql_error_backtrace()
  * 
  * @param string $query
  *     Requête qui était exécutée

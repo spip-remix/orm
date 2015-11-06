@@ -745,6 +745,8 @@ function spip_sqlite_drop_index($nom, $table, $serveur = '', $requeter = true){
 /**
  * Retourne la dernière erreur generée
  *
+ * @uses sql_error_backtrace()
+ * 
  * @param string $query
  *     Requête qui était exécutée
  * @param string $serveur

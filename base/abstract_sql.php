@@ -30,6 +30,18 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
 define('sql_ABSTRACT_VERSION', 1);
 include_spip('base/connect_sql');
 
+/**
+ * Retourne la pile de fonctions utilisée lors de la précence d'une erreur SQL
+ *
+ * @note
+ *     Ignore les fonctions `include_once`, `include_spip`, `find_in_path`
+ * @param bool $compil_info
+ *      - false : Retourne un texte présentant les fonctions utilisées
+ *      - true : retourne un tableau indiquant un contexte de compilation à l'origine de la requête,
+ *               utile pour présenter une erreur au débuggueur via `erreur_squelette()`
+ * @return array|string
+ *     contexte de l'erreur
+**/
 function sql_error_backtrace($compil_info = false){
 	$trace = debug_backtrace();
 	$caller = array_shift($trace);
@@ -53,12 +65,14 @@ function sql_error_backtrace($compil_info = false){
 	$message = count($trace) ? $trace[0]['file']." L".$trace[0]['line'] : "";
 	$f = array();
 	while(count($trace) AND $t=array_shift($trace)){
-		if (in_array($t['function'],array('include_once','include_spip','find_in_path')))
+		if (in_array($t['function'],array('include_once','include_spip','find_in_path'))) {
 			break;
+		}
 		$f[] = $t['function'];
 	}
-	if (count($f))
+	if (count($f)) {
 		$message .= " [".implode("(),",$f)."()]";
+	}
 
 	return $message;
 }
