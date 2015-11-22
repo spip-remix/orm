@@ -32,7 +32,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * @param string $titre   Inutilisé
  * @param string $reprise Inutilisé
 **/
-function base_repair_dist($titre='', $reprise='') {
+function base_repair_dist($titre = '', $reprise = '') {
 
 	$res = admin_repair_tables();
 	if (!$res) {
@@ -43,7 +43,7 @@ function base_repair_dist($titre='', $reprise='') {
 		propager_les_secteurs();
 	}
 	include_spip('inc/minipres');
-	$res .= pipeline('base_admin_repair',$res);
+	$res .= pipeline('base_admin_repair', $res);
 	echo minipres(_T('texte_tentative_recuperation'),
 		$res . generer_form_ecrire('accueil', '','',_T('public:accueil_site')));
 }

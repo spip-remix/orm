@@ -271,7 +271,7 @@ function _sqlite_func_to_days ($d) {
 	return $result;
 }
 
-function _sqlite_func_substring($string,$start,$len=null){
+function _sqlite_func_substring($string, $start, $len = null){
 	// SQL compte a partir de 1, php a partir de 0
 	$start = ($start>0)?$start-1:$start;
 	if (is_null($len))
@@ -288,7 +288,7 @@ function _sqlite_func_substring($string,$start,$len=null){
  * @param string $date2
  * @return int
  */
-function _sqlite_timestampdiff($unit,$date1,$date2){
+function _sqlite_timestampdiff($unit, $date1, $date2){
 	// PHP >= 5.3
 	if (function_exists("date_diff")){
 		$d1 = date_create($date1);
@@ -378,7 +378,7 @@ function _sqlite_func_year ($d) {
  *   timestamp
  * @return int
  */
-function _sqlite_func_date($quoi,$d) {
+function _sqlite_func_date($quoi, $d) {
 	static $mem = array();
 	static $n = 0;
 	if (isset($mem[$d])) return $mem[$d][$quoi];

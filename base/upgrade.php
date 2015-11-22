@@ -37,7 +37,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * @param string $reprise Inutilisé
  * @return void
  */
-function base_upgrade_dist($titre='', $reprise='')
+function base_upgrade_dist($titre = '', $reprise = '')
 {
 	if (!$titre) return; // anti-testeur automatique
 	if ($GLOBALS['spip_version_base']!=$GLOBALS['meta']['version_installee']) {
@@ -186,7 +186,7 @@ function maj_base($version_cible = 0, $redirect = '') {
  *     Nom de la table meta (sans le prefixe spip_) dans laquelle trouver la meta $nom_meta_base_version
  * @return void
  */
-function maj_plugin($nom_meta_base_version, $version_cible, $maj, $table_meta='meta'){
+function maj_plugin($nom_meta_base_version, $version_cible, $maj, $table_meta = 'meta'){
 
 	if ($table_meta!=='meta')
 		lire_metas($table_meta);
@@ -248,7 +248,7 @@ function maj_plugin($nom_meta_base_version, $version_cible, $maj, $table_meta='m
  * @param string $redirect
  * @return void
  */
-function relance_maj($meta, $table, $redirect=''){
+function relance_maj($meta, $table, $redirect = ''){
 	include_spip('inc/headers');
 	if (!$redirect){
 		// recuperer la valeur installee en cours
@@ -271,7 +271,7 @@ function relance_maj($meta, $table, $redirect=''){
  * @param string $table
  * @return void
  */
-function maj_debut_page($installee,$meta,$table){
+function maj_debut_page($installee, $meta, $table){
 	static $done = false;
 	if ($done) return;
 	include_spip('inc/minipres');
@@ -336,7 +336,7 @@ define('_UPGRADE_TIME_OUT', 20);
  *    - tableau (étape, sous-étape) en cas d'échec,
  *    - tableau vide sinon.
  */
-function maj_while($installee, $cible, $maj, $meta='', $table='meta', $redirect='', $debut_page = false)
+function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redirect = '', $debut_page = false)
 {
 	# inclusions pour que les procedures d'upgrade disposent des fonctions de base
 	include_spip('base/create');
@@ -408,7 +408,7 @@ function maj_while($installee, $cible, $maj, $meta='', $table='meta', $redirect=
  *   url de redirection en cas d'interruption
  * @return int
  */
-function serie_alter($serie, $q = array(), $meta='', $table='meta', $redirect='') {
+function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirect = '') {
 	$meta2 = $meta . '_maj_' . $serie;
 	$etape = intval(@$GLOBALS[$table][$meta2]);
 	foreach ($q as $i => $r) {

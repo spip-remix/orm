@@ -61,7 +61,7 @@ include_spip('base/objets');
  *     
  *
 **/
-function base_trouver_table_dist($nom, $serveur='', $table_spip = true){
+function base_trouver_table_dist($nom, $serveur = '', $table_spip = true){
 	static $nom_cache_desc_sql=array();
 	global $tables_principales, $tables_auxiliaires, $table_des_tables;
 

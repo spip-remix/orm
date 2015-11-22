@@ -39,7 +39,7 @@ require_once _ROOT_RESTREINT . 'base/objets.php';
  *     - false si la connexion a échouée,
  *     - tableau décrivant la connexion sinon
 **/
-function spip_connect($serveur='', $version='') {
+function spip_connect($serveur = '', $version = '') {
 	global $connexions, $spip_sql_version;
 
 	$serveur = !is_string($serveur) ? '' : strtolower($serveur);
@@ -146,7 +146,7 @@ function spip_connect($serveur='', $version='') {
  *
  * @param string $serveur Nom du connecteur de bdd utilisé
 **/
-function spip_sql_erreur($serveur='')
+function spip_sql_erreur($serveur = '')
 {
 	$connexion = spip_connect($serveur);
 	$e = sql_errno($serveur);
@@ -174,7 +174,7 @@ function spip_sql_erreur($serveur='')
  *     - false : si la connexion a échouée
  *     - array : description de la connexion, si l'instruction sql est indisponible pour cette connexion
 **/
-function spip_connect_sql($version, $ins='', $serveur='', $cont=false) {
+function spip_connect_sql($version, $ins = '', $serveur = '', $cont = false) {
 	$desc = spip_connect($serveur, $version);
 	if (function_exists($f = @$desc[$version][$ins])) return $f;
 	if ($cont) return $desc;
@@ -207,7 +207,7 @@ function spip_connect_sql($version, $ins='', $serveur='', $cont=false) {
  * @param string $charset Charset de la connexion SQL (optionnel)
  * @return array          Description de la connexion
  */
-function spip_connect_db($host, $port, $login, $pass, $db='', $type='mysql', $prefixe='', $auth='', $charset='') {
+function spip_connect_db($host, $port, $login, $pass, $db = '', $type = 'mysql', $prefixe = '', $auth = '', $charset = '') {
 	// temps avant nouvelle tentative de connexion
 	// suite a une connection echouee
 	if (!defined('_CONNECT_RETRY_DELAY'))
@@ -285,7 +285,7 @@ function spip_connect_db($host, $port, $login, $pass, $db='', $type='mysql', $pr
  *     - -1 charset non renseigné
  *     - nom du charset sinon
 **/
-function spip_connect_main($connexion, $charset_sql_connexion='')
+function spip_connect_main($connexion, $charset_sql_connexion = '')
 {
 	if ($GLOBALS['spip_connect_version']< 0.1 AND _DIR_RESTREINT){
 		include_spip('inc/headers');
@@ -318,7 +318,7 @@ function spip_connect_main($connexion, $charset_sql_connexion='')
  * @param string $serveur Nom du connecteur
  * @return array
  */
-function spip_connect_ldap($serveur='') {
+function spip_connect_ldap($serveur = '') {
 	include_spip('auth/ldap');
 	return auth_ldap_connect($serveur);
 }
@@ -453,7 +453,7 @@ function query_reinjecte_textes($query, $textes){
  *     - false si on ne peut pas exécuter la requête
  *     - indéfini sinon.
 **/
-function spip_query($query, $serveur='') {
+function spip_query($query, $serveur = '') {
 	global $spip_sql_version;
 	$f = spip_connect_sql($spip_sql_version, 'query', $serveur, true);
 	return function_exists($f) ? $f($query, $serveur) : false;

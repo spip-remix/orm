@@ -18,7 +18,7 @@ $GLOBALS['spip_sqlite2_functions_1'] = _sqlite_ref_fonctions();
 
 
 // http://code.spip.net/@req_sqlite2_dist
-function req_sqlite2_dist($addr, $port, $login, $pass, $db='', $prefixe='') {	
+function req_sqlite2_dist($addr, $port, $login, $pass, $db = '', $prefixe = '') {	
 	return req_sqlite_dist($addr, $port, $login, $pass, $db, $prefixe, $sqlite_version=2);
 }
 

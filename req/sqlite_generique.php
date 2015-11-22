@@ -513,7 +513,7 @@ function spip_sqlite_create_view($nom, $query_select, $serveur = '', $requeter =
  * @return bool|string
  *    string : requête, false si erreur, true sinon.
  */
-function spip_sqlite_create_index($nom, $table, $champs, $unique='', $serveur = '', $requeter = true){
+function spip_sqlite_create_index($nom, $table, $champs, $unique = '', $serveur = '', $requeter = true){
 	if (!($nom OR $table OR $champs)){
 		spip_log("Champ manquant pour creer un index sqlite ($nom, $table, (".join(',', $champs)."))", 'sqlite.'._LOG_ERREUR);
 		return false;
@@ -1329,7 +1329,7 @@ function spip_sqlite_date_proche($champ, $interval, $unite){
  *     Tableau avec clé 0 pouvant avoir " OK " ou " ERROR " indiquant
  *     l'état de la table après la réparation
  */
-function spip_sqlite_repair($table, $serveur='',$requeter=true)
+function spip_sqlite_repair($table, $serveur = '', $requeter = true)
 {
 	if ($desc = spip_sqlite_showtable($table, $serveur)
 	  AND isset($desc['field'])
@@ -2569,7 +2569,7 @@ class spip_sqlite {
 	 * @param string $serveur     Nom de la connexion
 	 * @param null|bool $tracer   Demander des statistiques (temps) ?
 	**/
-	static function executer_requete($query, $serveur, $tracer=null){
+	static function executer_requete($query, $serveur, $tracer = null){
 		$requeteur = spip_sqlite::requeteur($serveur);
 		return $requeteur->executer_requete($query, $tracer);
 	}
@@ -2670,7 +2670,7 @@ class sqlite_requeteur {
 	 *     true pour tracer la requête
 	 * @return bool|SQLiteResult
 	 */
-	function executer_requete($query, $tracer=null){
+	function executer_requete($query, $tracer = null){
 		if (is_null($tracer))
 			$tracer = $this->tracer;
 		$err = "";

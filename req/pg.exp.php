@@ -29,7 +29,7 @@ define('_DEFAULT_DB', 'spip');
 // si ca ne marche toujours pas, echec.
 
 // http://code.spip.net/@req_pg_dist
-function req_pg_dist($addr, $port, $login, $pass, $db='', $prefixe='') {
+function req_pg_dist($addr, $port, $login, $pass, $db = '', $prefixe = '') {
 	static $last_connect = array();
 	if (!charger_php_extension('pgsql')) return false;
 	
@@ -120,7 +120,7 @@ $GLOBALS['spip_pg_functions_1'] = array(
 
 // Par ou ca passe une fois les traductions faites
 // http://code.spip.net/@spip_pg_trace_query
-function spip_pg_trace_query($query, $serveur='')
+function spip_pg_trace_query($query, $serveur = '')
 {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
@@ -144,7 +144,7 @@ function spip_pg_trace_query($query, $serveur='')
 // Elle change juste le noms des tables ($table_prefix) dans le FROM etc
 
 // http://code.spip.net/@spip_pg_query
-function spip_pg_query($query, $serveur='',$requeter=true)
+function spip_pg_query($query, $serveur = '', $requeter = true)
 {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
@@ -176,7 +176,7 @@ function spip_pg_query_simple($link, $query){
  * stocke le resultat pour ne pas faire 
  * de requetes showtable intempestives
  */
-function spip_pg_ajouter_champs_timestamp($table, $couples, $desc='', $serveur=''){
+function spip_pg_ajouter_champs_timestamp($table, $couples, $desc = '', $serveur = ''){
 	static $tables = array();
 	
 	if (!isset($tables[$table])){
@@ -212,7 +212,7 @@ function spip_pg_ajouter_champs_timestamp($table, $couples, $desc='', $serveur='
 	
 // Alter en PG ne traite pas les index
 // http://code.spip.net/@spip_pg_alter
-function spip_pg_alter($query, $serveur='',$requeter=true) {
+function spip_pg_alter($query, $serveur = '', $requeter = true) {
 	// il faudrait une regexp pour eviter de spliter ADD PRIMARY KEY (colA, colB)
 	// tout en cassant en deux alter distincts "ADD PRIMARY KEY (colA, colB), ADD INDEX (chose)"... 
 	// ou revoir l'api de sql_alter en creant un 
@@ -255,7 +255,7 @@ function spip_pg_alter($query, $serveur='',$requeter=true) {
 }
 	      
 // http://code.spip.net/@spip_pg_alter_change
-function spip_pg_alter_change($table, $arg, $serveur='',$requeter=true)
+function spip_pg_alter_change($table, $arg, $serveur = '', $requeter = true)
 {
 	if (!preg_match('/^`?(\w+)`?\s+`?(\w+)`?\s+(.*?)\s*(DEFAULT .*?)?(NOT\s+NULL)?\s*(DEFAULT .*?)?$/i',$arg, $r)) {
 	  spip_log("alter change: $arg  incompris", 'pg.'._LOG_ERREUR);
@@ -280,7 +280,7 @@ function spip_pg_alter_change($table, $arg, $serveur='',$requeter=true)
 }
 
 // http://code.spip.net/@spip_pg_alter_add
-function spip_pg_alter_add($table, $arg, $serveur='',$requeter=true) {
+function spip_pg_alter_add($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^(COLUMN|INDEX|KEY|PRIMARY\s+KEY|)\s*(.*)$/', $arg, $r)) {
 		spip_log("alter add $arg  incompris", 'pg.'._LOG_ERREUR);
 		return NULL;
@@ -327,7 +327,7 @@ function spip_pg_alter_add($table, $arg, $serveur='',$requeter=true) {
 }
 
 // http://code.spip.net/@spip_pg_alter_drop
-function spip_pg_alter_drop($table, $arg, $serveur='',$requeter=true) {
+function spip_pg_alter_drop($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^(COLUMN|INDEX|KEY|PRIMARY\s+KEY|)\s*`?(\w*)`?/', $arg, $r))
 	  spip_log("alter drop: $arg  incompris", 'pg.'._LOG_ERREUR);
 	else {
@@ -341,7 +341,7 @@ function spip_pg_alter_drop($table, $arg, $serveur='',$requeter=true) {
 	}
 }
 
-function spip_pg_alter_modify($table, $arg, $serveur='',$requeter=true) {
+function spip_pg_alter_modify($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^`?(\w+)`?\s+(.*)$/',$arg, $r)) {
 		spip_log("alter modify: $arg  incompris", 'pg.'._LOG_ERREUR);
 	} else {
@@ -353,7 +353,7 @@ function spip_pg_alter_modify($table, $arg, $serveur='',$requeter=true) {
 // - alter table A rename to X = changer le nom de la table
 // - alter table A rename X to Y = changer le nom de la colonne X en Y 
 // pour l'instant, traiter simplement RENAME TO X
-function spip_pg_alter_rename($table, $arg, $serveur='',$requeter=true) {
+function spip_pg_alter_rename($table, $arg, $serveur = '', $requeter = true) {
 	$rename="";
 	// si TO, mais pas au debut
 	if (!stripos($arg,'TO ')){
@@ -379,7 +379,7 @@ function spip_pg_alter_rename($table, $arg, $serveur='',$requeter=true) {
  * 
  * @return bool ou requete
  */
-function spip_pg_create_index($nom, $table, $champs, $serveur='', $requeter=true) {
+function spip_pg_create_index($nom, $table, $champs, $serveur = '', $requeter = true) {
 	if (!($nom OR $table OR $champs)) {
 		spip_log("Champ manquant pour creer un index pg ($nom, $table, (".@join(',',$champs)."))",'pg.'._LOG_ERREUR);
 		return false;
@@ -404,7 +404,7 @@ function spip_pg_create_index($nom, $table, $champs, $serveur='', $requeter=true
 
 
 // http://code.spip.net/@spip_pg_explain
-function spip_pg_explain($query, $serveur='',$requeter=true){
+function spip_pg_explain($query, $serveur = '', $requeter = true){
 	if (strpos(ltrim($query), 'SELECT') !== 0) return array();
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
@@ -435,7 +435,7 @@ function spip_pg_explain($query, $serveur='',$requeter=true){
  *     - Nom de la base en cas de succès.
  *     - False en cas d'erreur.
 **/
-function spip_pg_selectdb($db, $serveur='',$requeter=true) {
+function spip_pg_selectdb($db, $serveur = '', $requeter = true) {
 	// se connecter a la base indiquee
 	// avec les identifiants connus
 	$index = $serveur ? strtolower($serveur) : 0;
@@ -462,7 +462,7 @@ function spip_pg_listdbs($serveur) {
 }
 
 // http://code.spip.net/@spip_pg_select
-function spip_pg_select($select, $from, $where='',
+function spip_pg_select($select, $from, $where = '', 
 			$groupby=array(), $orderby='', $limit='',
                            $having='', $serveur='',$requeter=true){
 
@@ -749,19 +749,19 @@ function spip_pg_select_as($args)
 }
 
 // http://code.spip.net/@spip_pg_fetch
-function spip_pg_fetch($res, $t='', $serveur='',$requeter=true) {
+function spip_pg_fetch($res, $t = '', $serveur = '', $requeter = true) {
 
 	if ($res) $res = pg_fetch_array($res, NULL, PGSQL_ASSOC);
 	return $res;
 }
 
-function spip_pg_seek($r, $row_number, $serveur='',$requeter=true) {
+function spip_pg_seek($r, $row_number, $serveur = '', $requeter = true) {
 	if ($r) return pg_result_seek($r,$row_number);
 }
 
 
 // http://code.spip.net/@spip_pg_countsel
-function spip_pg_countsel($from = array(), $where = array(), $groupby=array(),
+function spip_pg_countsel($from = array(), $where = array(), $groupby = array(), 
 			  $having = array(), $serveur='',$requeter=true) 
 {
 	$c = !$groupby ? '*' : ('DISTINCT ' . (is_string($groupby) ? $groupby : join(',', $groupby)));
@@ -773,17 +773,17 @@ function spip_pg_countsel($from = array(), $where = array(), $groupby=array(),
 }
 
 // http://code.spip.net/@spip_pg_count
-function spip_pg_count($res, $serveur='',$requeter=true) {
+function spip_pg_count($res, $serveur = '', $requeter = true) {
 	return !$res ? 0 : pg_numrows($res);
 }
   
 // http://code.spip.net/@spip_pg_free
-function spip_pg_free($res, $serveur='',$requeter=true) {
+function spip_pg_free($res, $serveur = '', $requeter = true) {
   // rien a faire en postgres
 }
 
 // http://code.spip.net/@spip_pg_delete
-function spip_pg_delete($table, $where='', $serveur='',$requeter=true) {
+function spip_pg_delete($table, $where = '', $serveur = '', $requeter = true) {
 
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
@@ -805,7 +805,7 @@ function spip_pg_delete($table, $where='', $serveur='',$requeter=true) {
 }
 
 // http://code.spip.net/@spip_pg_insert
-function spip_pg_insert($table, $champs, $valeurs, $desc=array(), $serveur='',$requeter=true) {
+function spip_pg_insert($table, $champs, $valeurs, $desc = array(), $serveur = '', $requeter = true) {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
 	$link = $connexion['link'];
@@ -843,7 +843,7 @@ function spip_pg_insert($table, $champs, $valeurs, $desc=array(), $serveur='',$r
 }
 
 // http://code.spip.net/@spip_pg_insertq
-function spip_pg_insertq($table, $couples=array(), $desc=array(), $serveur='',$requeter=true) {
+function spip_pg_insertq($table, $couples = array(), $desc = array(), $serveur = '', $requeter = true) {
 
 	if (!$desc) $desc = description_table($table, $serveur);
 	if (!$desc) die("$table insertion sans description");
@@ -862,7 +862,7 @@ function spip_pg_insertq($table, $couples=array(), $desc=array(), $serveur='',$r
 
 
 // http://code.spip.net/@spip_pg_insertq_multi
-function spip_pg_insertq_multi($table, $tab_couples=array(), $desc=array(), $serveur='',$requeter=true) {
+function spip_pg_insertq_multi($table, $tab_couples = array(), $desc = array(), $serveur = '', $requeter = true) {
 
 	if (!$desc) $desc = description_table($table, $serveur);
 	if (!$desc) die("$table insertion sans description");
@@ -891,7 +891,7 @@ function spip_pg_insertq_multi($table, $tab_couples=array(), $desc=array(), $ser
 
 
 // http://code.spip.net/@spip_pg_update
-function spip_pg_update($table, $couples, $where='', $desc='', $serveur='',$requeter=true) {
+function spip_pg_update($table, $couples, $where = '', $desc = '', $serveur = '', $requeter = true) {
 
 	if (!$couples) return;
 	$connexion = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
@@ -921,7 +921,7 @@ function spip_pg_update($table, $couples, $where='', $desc='', $serveur='',$requ
 // idem, mais les valeurs sont des constantes a mettre entre apostrophes
 // sauf les expressions de date lorsqu'il s'agit de fonctions SQL (NOW etc)
 // http://code.spip.net/@spip_pg_updateq
-function spip_pg_updateq($table, $couples, $where='', $desc=array(), $serveur='',$requeter=true) {
+function spip_pg_updateq($table, $couples, $where = '', $desc = array(), $serveur = '', $requeter = true) {
 	if (!$couples) return;
 	if (!$desc) $desc = description_table($table, $serveur);
 	$fields = $desc['field'];
@@ -934,7 +934,7 @@ function spip_pg_updateq($table, $couples, $where='', $desc=array(), $serveur=''
 
 
 // http://code.spip.net/@spip_pg_replace
-function spip_pg_replace($table, $values, $desc, $serveur='',$requeter=true) {
+function spip_pg_replace($table, $values, $desc, $serveur = '', $requeter = true) {
 	if (!$values) {spip_log("replace vide $table",'pg.'._LOG_AVERTISSEMENT); return 0;}
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
@@ -999,7 +999,7 @@ function spip_pg_replace($table, $values, $desc, $serveur='',$requeter=true) {
 
 
 // http://code.spip.net/@spip_pg_replace_multi
-function spip_pg_replace_multi($table, $tab_couples, $desc=array(), $serveur='',$requeter=true) {
+function spip_pg_replace_multi($table, $tab_couples, $desc = array(), $serveur = '', $requeter = true) {
 	// boucler pour traiter chaque requete independemment
 	foreach ($tab_couples as $couples){
 		$retour = spip_pg_replace($table, $couples, $desc, $serveur,$requeter);
@@ -1014,7 +1014,7 @@ function spip_pg_replace_multi($table, $tab_couples, $desc=array(), $serveur='',
 // Pas extensible pour le moment,
 
 // http://code.spip.net/@spip_pg_sequence
-function spip_pg_sequence($table,$raw=false)
+function spip_pg_sequence($table, $raw = false)
 {
 	global $tables_principales;
 	include_spip('base/serial');
@@ -1063,7 +1063,7 @@ function spip_pg_hex($v)
 	return "CAST(x'" . $v . "' as bigint)";
 }
 
-function spip_pg_quote($v, $type='')
+function spip_pg_quote($v, $type = '')
 {
 	if (!is_array($v))
 		return spip_pg_cite($v,$type);
@@ -1089,7 +1089,7 @@ function spip_pg_date_proche($champ, $interval, $unite)
 }
 
 // http://code.spip.net/@spip_pg_in
-function spip_pg_in($val, $valeurs, $not='', $serveur) {
+function spip_pg_in($val, $valeurs, $not = '', $serveur) {
 //
 // IN (...) souvent limite a 255  elements, d'ou cette fonction assistante
 //
@@ -1115,7 +1115,7 @@ function spip_pg_in($val, $valeurs, $not='', $serveur) {
 }
 
 // http://code.spip.net/@spip_pg_error
-function spip_pg_error($query='', $serveur, $requeter=true) {
+function spip_pg_error($query = '', $serveur, $requeter = true) {
 	$link = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0]['link'];
 	$s = $link ? pg_last_error($link) : pg_last_error();
 	if ($s) {
@@ -1126,14 +1126,14 @@ function spip_pg_error($query='', $serveur, $requeter=true) {
 }
 
 // http://code.spip.net/@spip_pg_errno
-function spip_pg_errno($serveur='') {
+function spip_pg_errno($serveur = '') {
   // il faudrait avoir la derniere ressource retournee et utiliser
   // http://fr2.php.net/manual/fr/function.pg-result-error.php
 	return 0;
 }
 
 // http://code.spip.net/@spip_pg_drop_table
-function spip_pg_drop_table($table, $exist='', $serveur='',$requeter=true)
+function spip_pg_drop_table($table, $exist = '', $serveur = '', $requeter = true)
 {
 	if ($exist) $exist =" IF EXISTS";
 	if (spip_pg_query("DROP TABLE$exist $table", $serveur, $requeter))
@@ -1143,7 +1143,7 @@ function spip_pg_drop_table($table, $exist='', $serveur='',$requeter=true)
 
 // supprime une vue 
 // http://code.spip.net/@spip_pg_drop_view
-function spip_pg_drop_view($view, $exist='', $serveur='',$requeter=true) {
+function spip_pg_drop_view($view, $exist = '', $serveur = '', $requeter = true) {
 	if ($exist) $exist =" IF EXISTS";
 	return spip_pg_query("DROP VIEW$exist $view", $serveur, $requeter);
 }
@@ -1161,7 +1161,7 @@ function spip_pg_drop_view($view, $exist='', $serveur='',$requeter=true) {
  * @return ressource
  *     Ressource à utiliser avec sql_fetch()
 **/
-function spip_pg_showbase($match, $serveur='',$requeter=true)
+function spip_pg_showbase($match, $serveur = '', $requeter = true)
 {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$link = $connexion['link'];
@@ -1170,7 +1170,7 @@ function spip_pg_showbase($match, $serveur='',$requeter=true)
 }
 
 // http://code.spip.net/@spip_pg_showtable
-function spip_pg_showtable($nom_table, $serveur='',$requeter=true)
+function spip_pg_showtable($nom_table, $serveur = '', $requeter = true)
 {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$link = $connexion['link'];
@@ -1205,7 +1205,7 @@ function spip_pg_showtable($nom_table, $serveur='',$requeter=true)
 // si $autoinc, c'est une auto-increment (i.e. serial) sur la Primary Key
 // Le nom des index est prefixe par celui de la table pour eviter les conflits
 // http://code.spip.net/@spip_pg_create
-function spip_pg_create($nom, $champs, $cles, $autoinc=false, $temporary=false, $serveur='',$requeter=true) {
+function spip_pg_create($nom, $champs, $cles, $autoinc = false, $temporary = false, $serveur = '', $requeter = true) {
 
 	$connexion = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
@@ -1283,13 +1283,13 @@ function spip_pg_create($nom, $champs, $cles, $autoinc=false, $temporary=false, 
 }
 
 
-function spip_pg_create_base($nom, $serveur='',$requeter=true) {
+function spip_pg_create_base($nom, $serveur = '', $requeter = true) {
   return spip_pg_query("CREATE DATABASE $nom", $serveur, $requeter);
 }
 
 // Fonction de creation d'une vue SQL nommee $nom
 // http://code.spip.net/@spip_pg_create_view
-function spip_pg_create_view($nom, $query_select, $serveur='',$requeter=true) {
+function spip_pg_create_view($nom, $query_select, $serveur = '', $requeter = true) {
 	if (!$query_select) return false;
 	// vue deja presente
 	if (sql_showtable($nom, false, $serveur)) {
@@ -1303,7 +1303,7 @@ function spip_pg_create_view($nom, $query_select, $serveur='',$requeter=true) {
 
 
 // http://code.spip.net/@spip_pg_set_connect_charset
-function spip_pg_set_connect_charset($charset, $serveur='',$requeter=true){
+function spip_pg_set_connect_charset($charset, $serveur = '', $requeter = true){
 	spip_log("changement de charset sql a ecrire en PG",'pg.'._LOG_ERREUR);
 }
 
@@ -1317,7 +1317,7 @@ function spip_pg_set_connect_charset($charset, $serveur='',$requeter=true){
  * @return bool|string true / false / requete
 **/
 // http://code.spip.net/@spip_sqlite_optimize
-function spip_pg_optimize($table, $serveur='',$requeter=true){
+function spip_pg_optimize($table, $serveur = '', $requeter = true){
 	return spip_pg_query("VACUUM ". $table, $serveur, $requeter);
 }
 

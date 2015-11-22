@@ -29,11 +29,11 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  *     Sous tableau à merger dans la clé.
  * @return void
 **/
-function array_set_merge(&$table,$index,$valeur){
+function array_set_merge(&$table, $index, $valeur) {
 	if (!isset($table[$index]))
 		$table[$index] = $valeur;
 	else
-		$table[$index] = array_merge($table[$index],$valeur);
+		$table[$index] = array_merge($table[$index], $valeur);
 }
 
 /**
@@ -49,7 +49,7 @@ function array_set_merge(&$table,$index,$valeur){
  *   description connue de la table sql demandee
  * @return array|bool
  */
-function lister_tables_objets_sql($table_sql=null, $desc=array()){
+function lister_tables_objets_sql($table_sql = null, $desc = array()){
 	static $deja_la = false;
 	static $infos_tables = null;
 	static $md5 = null;
@@ -59,13 +59,12 @@ function lister_tables_objets_sql($table_sql=null, $desc=array()){
 	$_PLUGINS_HASH = defined('_PLUGINS_HASH') ? _PLUGINS_HASH : '!_CACHE_PLUGINS_OPT';
 
 	// prealablement recuperer les tables_principales
-	if (is_null($infos_tables)
-	  OR $plugin_hash!==$_PLUGINS_HASH){
+	if (is_null($infos_tables) OR $plugin_hash !== $_PLUGINS_HASH){
 		// pas de reentrance (cas base/serial)
 		if ($deja_la) {
 			spip_log ("Re-entrance anormale sur lister_tables_objets_sql :"
-				. var_export(debug_backtrace(),true),_LOG_CRITIQUE);
-			return ($table_sql==="::md5"?$md5:array());
+				. var_export(debug_backtrace(), true), _LOG_CRITIQUE);
+			return ($table_sql === "::md5" ? $md5 : array());
 		}
 		$deja_la = true;
 		$plugin_hash = $_PLUGINS_HASH; // avant de lancer les pipelines
@@ -586,13 +585,13 @@ $tables_auxiliaires['spip_jobs_liens'] = array(
  * @param array $infos
  * @return array
  */
-function renseigner_table_objet_sql($table_sql,&$infos){
+function renseigner_table_objet_sql($table_sql , &$infos){
 	if (!isset($infos['type'])){
 		// si on arrive de base/trouver_table, on a la cle primaire :
 		// s'en servir pour extrapoler le type
-		if (isset($infos['key']["PRIMARY KEY"])){
+		if (isset($infos['key']["PRIMARY KEY"])) {
 			$primary = $infos['key']["PRIMARY KEY"];
-			$primary = explode(',',$primary);
+			$primary = explode(',', $primary);
 			$primary = reset($primary);
 			$infos['type'] = preg_replace(',^spip_|^id_|s$,', '', $primary);
 		}
@@ -608,26 +607,28 @@ function renseigner_table_objet_sql($table_sql,&$infos){
 		$infos['table_objet_surnoms'] = array();
 
 	if (!isset($infos['principale']))
-		$infos['principale'] = (isset($GLOBALS['tables_principales'][$table_sql])?'oui':false);
+		$infos['principale'] = (isset($GLOBALS['tables_principales'][$table_sql]) ? 'oui' : false);
 
 	// normaliser pour pouvoir tester en php $infos['principale']?
 	// et dans une boucle {principale=oui}
-	$infos['principale'] = (($infos['principale'] AND $infos['principale']!='non')?'oui':false);
+	$infos['principale'] = (($infos['principale'] AND $infos['principale'] != 'non') ? 'oui' : false);
 
 	// declarer et normaliser pour pouvoir tester en php $infos['editable']?
 	// et dans une boucle {editable=oui}
-	if (!isset($infos['editable'])) $infos['editable'] = 'oui';
-	$infos['editable'] = (($infos['editable'] AND $infos['editable']!='non')?'oui':false);
+	if (!isset($infos['editable']))
+		$infos['editable'] = 'oui';
+	
+	$infos['editable'] = (($infos['editable'] AND $infos['editable'] != 'non') ? 'oui' : false);
 
 	// les urls publiques sont par defaut page=type pour les tables principales, et rien pour les autres
 	// seules les exceptions sont donc a declarer
 	if (!isset($infos['page']))
-		$infos['page'] = ($infos['principale']?$infos['type']:'');
+		$infos['page'] = ($infos['principale'] ? $infos['type'] : '');
 
 	if (!isset($infos['url_voir']))
 		$infos['url_voir'] = $infos['type'];
 	if (!isset($infos['url_edit']))
-		$infos['url_edit'] = $infos['url_voir'].($infos['editable']?"_edit":'');
+		$infos['url_edit'] = $infos['url_voir'] . ($infos['editable'] ? '_edit' : '');
 	if (!isset($infos['icone_objet']))
 		$infos['icone_objet'] = $infos['type'];
 
@@ -636,23 +637,23 @@ function renseigner_table_objet_sql($table_sql,&$infos){
 	if (!isset($infos['texte_retour']))
 		$infos['texte_retour'] = 'icone_retour';
 	if (!isset($infos['texte_modifier']))
-		$infos['texte_modifier'] = $infos['type'].':'.'icone_modifier_'.$infos['type'];
+		$infos['texte_modifier'] = $infos['type'] . ':' . 'icone_modifier_' . $infos['type'];
 	if (!isset($infos['texte_creer']))
-		$infos['texte_creer'] = $infos['type'].':'.'icone_creer_'.$infos['type'];
+		$infos['texte_creer'] = $infos['type'] . ':' . 'icone_creer_' . $infos['type'];
 	if (!isset($infos['texte_creer_associer']))
-		$infos['texte_creer_associer'] = $infos['type'].':'.'texte_creer_associer_'.$infos['type'];
+		$infos['texte_creer_associer'] = $infos['type'] . ':' . 'texte_creer_associer_' . $infos['type'];
 	if (!isset($infos['texte_ajouter'])) // Ajouter un X
-		$infos['texte_ajouter'] = $infos['type'].':'.'texte_ajouter_'.$infos['type'];
+		$infos['texte_ajouter'] = $infos['type'] . ':' . 'texte_ajouter_' . $infos['type'];
 	if (!isset($infos['texte_objets']))
-		$infos['texte_objets'] = $infos['type'].':'.'titre_'.$infos['table_objet'];
+		$infos['texte_objets'] = $infos['type'] . ':' . 'titre_' . $infos['table_objet'];
 	if (!isset($infos['texte_objet']))
-		$infos['texte_objet'] = $infos['type'].':'.'titre_'.$infos['type'];
+		$infos['texte_objet'] = $infos['type'] . ':' . 'titre_' . $infos['type'];
 	if (!isset($infos['texte_logo_objet']))  // objet:titre_logo_objet "Logo de ce X"
-		$infos['texte_logo_objet'] = $infos['type'].':'.'titre_logo_'.$infos['type'];
+		$infos['texte_logo_objet'] = $infos['type'] . ':' . 'titre_logo_' . $infos['type'];
 	if (!isset($infos['texte_langue_objet']))  // objet:texte_langue_objet "Langue de ce X"
-		$infos['texte_langue_objet'] = $infos['type'].':'.'titre_langue_'.$infos['type'];
+		$infos['texte_langue_objet'] = $infos['type'] . ':' . 'titre_langue_' . $infos['type'];
 	if (!isset($infos['texte_definir_comme_traduction_objet']))  // "Ce X est une traduction du X numéro :"
-		$infos['texte_definir_comme_traduction_objet'] = $infos['type'].':'.'texte_definir_comme_traduction_'.$infos['type'];
+		$infos['texte_definir_comme_traduction_objet'] = $infos['type'] . ':' . 'texte_definir_comme_traduction_' . $infos['type'];
 
 
 	// objet:info_aucun_objet
@@ -694,27 +695,27 @@ function renseigner_table_objet_sql($table_sql,&$infos){
  * @param $infos
  * @return array
  */
-function renseigner_table_objet_interfaces($table_sql,&$infos){
+function renseigner_table_objet_interfaces($table_sql, &$infos){
 	if (!isset($infos['titre'])){
 		if (isset($infos['table_objet']) AND isset($GLOBALS['table_titre'][$infos['table_objet']]))
 			$infos['titre'] = $GLOBALS['table_titre'][$infos['table_objet']];
 		else {
-			$infos['titre'] = ((isset($infos['field']['titre']))?"titre,":"'' as titre,");
-			$infos['titre'] .= ((isset($infos['field']['lang']))?"lang":"'' as lang");
+			$infos['titre'] = ((isset($infos['field']['titre'])) ? "titre," : "'' as titre,");
+			$infos['titre'] .= ((isset($infos['field']['lang'])) ? "lang" : "'' as lang");
 		}
 	}
 	if (!isset($infos['date'])){
 		if (isset($infos['table_objet']) and isset($GLOBALS['table_date'][$infos['table_objet']]))
 			$infos['date'] = $GLOBALS['table_date'][$infos['table_objet']];
 		else
-			$infos['date'] = ((isset($infos['field']['date']))?"date":'');
+			$infos['date'] = ((isset($infos['field']['date'])) ? "date" : '');
 	}
 	if (!isset($infos['statut']))
 		$infos['statut'] = isset($GLOBALS['table_statut'][$table_sql]) ? $GLOBALS['table_statut'][$table_sql] : '';
 	if (!isset($infos['tables_jointures']))
 		$infos['tables_jointures'] = array();
 	if (isset($GLOBALS['tables_jointures'][$table_sql]))
-		$infos['tables_jointures'] = array_merge($infos['tables_jointures'],$GLOBALS['tables_jointures'][$table_sql]);
+		$infos['tables_jointures'] = array_merge($infos['tables_jointures'], $GLOBALS['tables_jointures'][$table_sql]);
 	return $infos;
 }
 
@@ -830,7 +831,7 @@ function lister_types_surnoms(){
  * @return array
  *     Couples (nom de la table SQL => même nom, sans 'spip_' devant)
 **/
-function lister_tables_spip($serveur=''){
+function lister_tables_spip($serveur = ''){
 	static $tables = array();
 	if (!isset($tables[$serveur])){
 		$tables[$serveur] = array();
@@ -863,7 +864,7 @@ function lister_tables_spip($serveur=''){
  * @return string
  *     Nom de l'objet
 **/
-function table_objet($type,$serveur='') {
+function table_objet($type, $serveur = '') {
 	$surnoms = lister_tables_objets_surnoms();
 	$type = preg_replace(',^spip_|^id_|s$,', '', $type);
 	if (!$type) return;
@@ -908,7 +909,7 @@ function table_objet($type,$serveur='') {
  * @return string
  *     Nom de la table SQL
 **/
-function table_objet_sql($type,$serveur='') {
+function table_objet_sql($type, $serveur = '') {
 	global $table_des_tables;
 	$nom = table_objet($type, $serveur);
 	if (!isset($table_des_tables['articles'])) // eviter de multiples inclusions
@@ -949,7 +950,7 @@ function table_objet_sql($type,$serveur='') {
  * @return string
  *     Nom de la clé primaire
 **/
-function id_table_objet($type,$serveur='') {
+function id_table_objet($type, $serveur = '') {
 	static $trouver_table = null;
 	$type = objet_type($type,$serveur);
 	if (!$type) return;
@@ -986,7 +987,7 @@ function id_table_objet($type,$serveur='') {
  * @return string
  *     Type de l'objet
 **/
-function objet_type($table_objet, $serveur=''){
+function objet_type($table_objet, $serveur = '') {
 	if (!$table_objet) return;
 	$surnoms = lister_types_surnoms();
 
@@ -999,13 +1000,13 @@ function objet_type($table_objet, $serveur=''){
 		return $surnoms[$type];
 
 	// securite : eliminer les caracteres non \w
-	$type = preg_replace(',[^\w-],','',$type);
+	$type = preg_replace(',[^\w-],','', $type);
 
 	// si le type redonne bien la table c'est bon
 	// oui si table_objet ressemblait deja a un type
 	if ( $type==$table_objet
-		OR (table_objet($type,$serveur)==$table_objet)
-	  OR (table_objet_sql($type,$serveur)==$table_objet))
+		OR (table_objet($type,$serveur) == $table_objet)
+	  OR (table_objet_sql($type,$serveur) == $table_objet))
 	  return $type;
 
 	// si on ne veut pas chercher en base
@@ -1019,12 +1020,12 @@ function objet_type($table_objet, $serveur=''){
 	// une declaration jeu => jeux, journal => journaux
 	// dans le pipeline declarer_tables_objets_surnoms
 	$trouver_table = charger_fonction('trouver_table', 'base');
-	$ts=lister_tables_spip($serveur);
+	$ts = lister_tables_spip($serveur);
 	$desc = false;
 	if (in_array($table_objet,$ts))
 		$desc = $trouver_table($table_objet);
-	if (!$desc AND in_array($table_objet=table_objet($type,$serveur),$ts))
-		$desc = $trouver_table($table_objet,$serveur);
+	if (!$desc AND in_array($table_objet = table_objet($type, $serveur), $ts))
+		$desc = $trouver_table($table_objet, $serveur);
 	// si le type est declare : bingo !
 	if ($desc AND isset($desc['type']))
 			return $desc['type'];
@@ -1045,11 +1046,11 @@ function objet_type($table_objet, $serveur=''){
  * @param string $serveur
  * @return bool
  */
-function objet_test_si_publie($objet,$id_objet, $serveur=''){
+function objet_test_si_publie($objet, $id_objet, $serveur = '') {
 	// voir si une fonction est definie pour faire le boulot
 	// elle a la priorite dans ce cas
-	if ($f = charger_fonction($objet."_test_si_publie","base",true))
-		return $f($objet,$id_objet, $serveur);
+	if ($f = charger_fonction($objet."_test_si_publie", "base", true))
+		return $f($objet, $id_objet, $serveur);
 
 	// sinon on se fie a la declaration de l'objet si presente
 	$id_table = $table_objet = table_objet($objet);
@@ -1066,12 +1067,12 @@ function objet_test_si_publie($objet,$id_objet, $serveur=''){
 		$boucle->sql_serveur = $serveur;
 		$boucle->select[] = $id_table_objet;
 		$boucle->from[$table_objet] = table_objet_sql($objet, $serveur);
-		$boucle->where[] = $id_table.".".$id_table_objet.'='.intval($id_objet);
+		$boucle->where[] = $id_table . '.' . $id_table_objet . '=' . intval($id_objet);
 
 		include_spip('public/compiler');
 		include_spip('public/composer');
 		instituer_boucle($boucle, false, true);
-		$res = calculer_select($boucle->select,$boucle->from,$boucle->from_type,$boucle->where,$boucle->join,$boucle->group,$boucle->order,$boucle->limit,$boucle->having,$table_objet,$id_table,$serveur);
+		$res = calculer_select($boucle->select, $boucle->from, $boucle->from_type, $boucle->where, $boucle->join, $boucle->group, $boucle->order, $boucle->limit, $boucle->having, $table_objet, $id_table, $serveur);
 		if (sql_fetch($res))
 			return true;
 		return false;
