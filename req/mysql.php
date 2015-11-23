@@ -535,7 +535,7 @@ function spip_mysql_selectdb($db, $serveur = '', $requeter = true) {
 	$link = _mysql_link($serveur);
 	$ok = mysqli_select_db($link, $db);
 	if (!$ok)
-		spip_log('Echec mysql_selectdb. Erreur : ' . mysqli_error($link), 'mysql.'._LOG_CRITIQUE);
+		spip_log('Echec mysqli_selectdb. Erreur : ' . mysqli_error($link), 'mysql.'._LOG_CRITIQUE);
 	return $ok;
 }
 
