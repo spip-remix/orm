@@ -2515,7 +2515,6 @@ class spip_sqlite {
 	/** @var bool[] Pour chaque connexion, flag pour savoir si une transaction est en cours */
 	static $transaction_en_cours = array();
 
-	function spip_sqlite(){}
 
 	/**
 	 * Retourne une unique instance du requêteur
@@ -2643,7 +2642,7 @@ class sqlite_requeteur {
 	 * @param string $serveur
 	 * @return bool
 	 */
-	function sqlite_requeteur($serveur = ''){
+	function __construct($serveur = ''){
 		_sqlite_init();
 		$this->serveur = strtolower($serveur);
 
@@ -2766,7 +2765,7 @@ class sqlite_traducteur {
 	 * @param string $prefixe   Prefixe des tables à utiliser
 	 * @param string $sqlite_version Version SQLite (2 ou 3)
 	 */
-	function sqlite_traducteur($query, $prefixe, $sqlite_version){
+	function __construct($query, $prefixe, $sqlite_version){
 		$this->query = $query;
 		$this->prefixe = $prefixe;
 		$this->sqlite_version = $sqlite_version;
