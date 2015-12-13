@@ -53,5 +53,3 @@ function base_delete_all_dist($titre) {
 	$r = count($res);
 	spip_log("Tables detruites: $r sur $d: " . join(', ', $res), _LOG_INFO_IMPORTANTE);
 }
-
-?>

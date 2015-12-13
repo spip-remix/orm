@@ -741,5 +741,3 @@ function base_inserer_copie($table, $rows, $desc_dest, $serveur_dest) {
 
 	return $r;
 }
-
-?>

@@ -1767,5 +1767,3 @@ function test_sql_mode_mysql($server_db) {
 
 	return '';
 }
-
-?>

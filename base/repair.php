@@ -174,5 +174,3 @@ function admin_repair_tables() {
 
 	return $res;
 }
-
-?>

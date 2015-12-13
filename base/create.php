@@ -204,5 +204,3 @@ function maj_tables($upgrade_tables = array(), $serveur = '') {
 		$serveur
 	);
 }
-
-?>

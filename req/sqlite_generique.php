@@ -3189,5 +3189,3 @@ class sqlite_traducteur {
 	}
 
 }
-
-?>

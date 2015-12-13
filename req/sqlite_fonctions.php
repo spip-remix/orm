@@ -439,6 +439,3 @@ function _sqlite_func_date($quoi, $d) {
 function _sqlite_func_vide() {
 	return;
 }
-
-
-?>

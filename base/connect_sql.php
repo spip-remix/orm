@@ -529,5 +529,3 @@ function spip_query($query, $serveur = '') {
 
 	return function_exists($f) ? $f($query, $serveur) : false;
 }
-
-?>

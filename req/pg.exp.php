@@ -1560,5 +1560,3 @@ function spip_versions_pg() {
 
 	return function_exists('pg_connect');
 }
-
-?>

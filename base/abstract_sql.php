@@ -2265,6 +2265,3 @@ function description_table($nom, $serveur = '') {
 
 	return false;
 }
-
-
-?>

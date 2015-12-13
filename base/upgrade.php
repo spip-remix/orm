@@ -569,5 +569,3 @@ function upgrade_vers($version, $version_installee, $version_cible = 0) {
 		AND (($version_cible >= $version) OR ($version_cible == 0))
 	);
 }
-
-?>

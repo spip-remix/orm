@@ -36,5 +36,3 @@ function spip_sqlite2_constantes() {
 function spip_versions_sqlite2() {
 	return _sqlite_charger_version(2) ? 2 : false;
 }
-
-?>

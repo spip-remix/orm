@@ -189,5 +189,3 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true) {
 
 	return $res;
 }
-
-?>

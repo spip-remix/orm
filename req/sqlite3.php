@@ -38,5 +38,3 @@ function spip_sqlite3_constantes() {
 function spip_versions_sqlite3() {
 	return _sqlite_charger_version(3) ? 3 : false;
 }
-
-?>

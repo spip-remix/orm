@@ -26,5 +26,3 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 include_spip('base/objets');
 lister_tables_objets_sql();
-
-?>
