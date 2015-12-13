@@ -122,12 +122,12 @@ function maj_base($version_cible = 0, $redirect = '') {
 	$cible = ($version_cible ? $version_cible : $GLOBALS['spip_version_base']);
 
 	if ($version_installee <= 1.926) {
-		$n = floor($version_installee*10);
+		$n = floor($version_installee * 10);
 		while ($n < 19) {
 			$nom = sprintf("v%03d", $n);
 			$f = charger_fonction($nom, 'maj', true);
 			if ($f) {
-				spip_log("$f repercute les modifications de la version " . ($n/10), "maj." . _LOG_INFO_IMPORTANTE);
+				spip_log("$f repercute les modifications de la version " . ($n / 10), "maj." . _LOG_INFO_IMPORTANTE);
 				$f($version_installee, $GLOBALS['spip_version_base']);
 			} else {
 				spip_log("pas de fonction pour la maj $n $nom", "maj." . _LOG_INFO_IMPORTANTE);
@@ -139,12 +139,12 @@ function maj_base($version_cible = 0, $redirect = '') {
 	}
 	if ($version_installee < 2000) {
 		if ($version_installee < 2) {
-			$version_installee = $version_installee*1000;
+			$version_installee = $version_installee * 1000;
 		}
 		include_spip('maj/v019');
 	}
 	if ($cible < 2) {
-		$cible = $cible*1000;
+		$cible = $cible * 1000;
 	}
 
 	include_spip('maj/svn10000');
@@ -293,14 +293,14 @@ function maj_debut_page($installee, $meta, $table) {
 	}
 	include_spip('inc/minipres');
 	@ini_set("zlib.output_compression", "0"); // pour permettre l'affichage au fur et a mesure
-	$timeout = _UPGRADE_TIME_OUT*2;
+	$timeout = _UPGRADE_TIME_OUT * 2;
 	$titre = _T('titre_page_upgrade');
 	$balise_img = charger_filtre('balise_img');
 	$titre .= $balise_img(chemin_image('searching.gif'));
 	echo(install_debut_html($titre));
 	// script de rechargement auto sur timeout
 	$redirect = generer_url_ecrire('upgrade', "reinstall=$installee&meta=$meta&table=$table", true);
-	echo http_script("window.setTimeout('location.href=\"" . $redirect . "\";'," . ($timeout*1000) . ")");
+	echo http_script("window.setTimeout('location.href=\"" . $redirect . "\";'," . ($timeout * 1000) . ")");
 	echo "<div style='text-align: left'>\n";
 	ob_flush();
 	flush();
@@ -372,7 +372,7 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 		 *
 		 * @var int
 		 */
-		define('_TIME_OUT', $time+_UPGRADE_TIME_OUT);
+		define('_TIME_OUT', $time + _UPGRADE_TIME_OUT);
 	}
 
 	reset($maj);
@@ -393,7 +393,7 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 			if ($etape) {
 				return array($v, $etape);
 			}
-			$n = time()-$time;
+			$n = time() - $time;
 			spip_log("$table $meta: $v en $n secondes", 'maj.' . _LOG_INFO_IMPORTANTE);
 			if ($meta) {
 				ecrire_meta($meta, $installee = $v, 'oui', $table);
@@ -452,7 +452,7 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 				// il faut les rejouer jusqu'a achevement.
 				// C'est a elle d'assurer qu'elles progressent a chaque rappel
 				if (strncmp($f, "sql_", 4) == 0) {
-					ecrire_meta($meta2, $i+1, 'non', $table);
+					ecrire_meta($meta2, $i + 1, 'non', $table);
 				}
 				echo " <span title='$i'>.</span>";
 				call_user_func_array($f, $r);
@@ -461,7 +461,7 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 				if (time() >= _TIME_OUT) {
 					relance_maj($meta, $table, $redirect);
 				}
-				ecrire_meta($meta2, $i+1, 'non', $table);
+				ecrire_meta($meta2, $i + 1, 'non', $table);
 				spip_log("$meta2: ok", 'maj.' . _LOG_INFO_IMPORTANTE);
 			} else {
 				if (!is_array($r)) {
@@ -471,7 +471,7 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 				}
 				// en cas d'erreur serieuse, on s'arrete
 				// mais on permet de passer par dessus en rechargeant la page.
-				return $i+1;
+				return $i + 1;
 			}
 		}
 	}

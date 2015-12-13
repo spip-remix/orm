@@ -288,7 +288,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 				// en tenant compte de la cle primaire (ce qui est mieux)
 				$def = trim($defo);
 				$colonne_destination = substr($def, 0, strpos($def, ' '));
-				$def = substr($def, strlen($colonne_destination)+1);
+				$def = substr($def, strlen($colonne_destination) + 1);
 
 				if (!_sqlite_modifier_table(
 					$table,
@@ -403,7 +403,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 				else {
 					$def = trim(substr($do, 3));
 					$colonne_ajoutee = substr($def, 0, strpos($def, ' '));
-					$def = substr($def, strlen($colonne_ajoutee)+1);
+					$def = substr($def, strlen($colonne_ajoutee) + 1);
 					$opts = array();
 					if (preg_match(',primary\s+key,i', $def)) {
 						$opts['key'] = array('PRIMARY KEY' => $colonne_ajoutee);
@@ -970,7 +970,7 @@ function spip_sqlite_fetch($r, $t = '', $serveur = '', $requeter = true) {
 	) {
 		foreach ($retour as $cle => $val) {
 			if (($pos = strpos($cle, '.')) !== false) {
-				$retour[substr($cle, $pos+1)] = &$retour[$cle];
+				$retour[substr($cle, $pos + 1)] = &$retour[$cle];
 				unset($retour[$cle]);
 			}
 		}
@@ -1075,13 +1075,13 @@ function spip_sqlite_hex($v) {
 function spip_sqlite_in($val, $valeurs, $not = '', $serveur = '', $requeter = true) {
 	$n = $i = 0;
 	$in_sql = "";
-	while ($n = strpos($valeurs, ',', $n+1)) {
+	while ($n = strpos($valeurs, ',', $n + 1)) {
 		if ((++$i) >= 255) {
 			$in_sql .= "($val $not IN (" .
 				substr($valeurs, 0, $n) .
 				"))\n" .
 				($not ? "AND\t" : "OR\t");
-			$valeurs = substr($valeurs, $n+1);
+			$valeurs = substr($valeurs, $n + 1);
 			$i = $n = 0;
 		}
 	}

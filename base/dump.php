@@ -532,7 +532,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 	$fonction_base_inserer = isset($options['fonction_base_inserer']) ? $options['fonction_base_inserer'] : 'inserer_copie';
 	$desc_tables_dest = isset($options['desc_tables_dest']) ? $options['desc_tables_dest'] : array();
 	$racine_fonctions = (isset($options['racine_fonctions_dest']) ? $options['racine_fonctions_dest'] : 'base');
-	$data_pool = (isset($options['data_pool']) ? $options['data_pool'] : 50*1024);
+	$data_pool = (isset($options['data_pool']) ? $options['data_pool'] : 50 * 1024);
 
 	spip_log("Copier " . count($tables) . " tables de '$serveur_source' vers '$serveur_dest'",
 		'dump.' . _LOG_INFO_IMPORTANTE);
@@ -722,8 +722,8 @@ function base_inserer_copie($table, $rows, $desc_dest, $serveur_dest) {
 	// si l'enregistrement est deja en base, ca fera un echec ou un doublon
 	$r = sql_insertq_multi($table, $rows, $desc_dest, $serveur_dest);
 	$nb = sql_countsel($table, '', '', '', $serveur_dest);
-	if ($nb-$nb1 < count($rows)) {
-		spip_log("base_inserer_copie : " . ($nb-$nb1) . " insertions au lieu de " . count($rows) . ". On retente 1 par 1",
+	if ($nb - $nb1 < count($rows)) {
+		spip_log("base_inserer_copie : " . ($nb - $nb1) . " insertions au lieu de " . count($rows) . ". On retente 1 par 1",
 			"dump" . _LOG_INFO_IMPORTANTE);
 		foreach ($rows as $row) {
 			// si l'enregistrement est deja en base, ca fera un echec ou un doublon
@@ -732,8 +732,8 @@ function base_inserer_copie($table, $rows, $desc_dest, $serveur_dest) {
 		// on reverifie le total
 		$r = 0;
 		$nb = sql_countsel($table, '', '', '', $serveur_dest);
-		if ($nb-$nb1 < count($rows)) {
-			spip_log("base_inserer_copie : " . ($nb-$nb1) . " insertions au lieu de " . count($rows) . " apres insertion 1 par 1",
+		if ($nb - $nb1 < count($rows)) {
+			spip_log("base_inserer_copie : " . ($nb - $nb1) . " insertions au lieu de " . count($rows) . " apres insertion 1 par 1",
 				"dump" . _LOG_ERREUR);
 			$r = false;
 		}

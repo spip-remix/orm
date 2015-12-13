@@ -256,7 +256,7 @@ function spip_connect_db(
 
 	if ($f
 		and @file_exists($f)
-		and (time()-@filemtime($f) < _CONNECT_RETRY_DELAY)
+		and (time() - @filemtime($f) < _CONNECT_RETRY_DELAY)
 	) {
 		spip_log("Echec : $f recent. Pas de tentative de connexion", _LOG_HS);
 

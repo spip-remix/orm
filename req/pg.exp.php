@@ -1244,7 +1244,7 @@ function spip_pg_date_proche($champ, $interval, $unite) {
 	. '('
 	. sql_quote(date('Y-m-d H:i:s'))
 	. ', INTERVAL '
-	. (($interval > 0) ? $interval : (0-$interval))
+	. (($interval > 0) ? $interval : (0 - $interval))
 	. ' '
 	. $unite
 	. '))';
@@ -1264,13 +1264,13 @@ function spip_pg_in($val, $valeurs, $not = '', $serveur) {
 	}
 	$n = $i = 0;
 	$in_sql = "";
-	while ($n = strpos($valeurs, ',', $n+1)) {
+	while ($n = strpos($valeurs, ',', $n + 1)) {
 		if ((++$i) >= 255) {
 			$in_sql .= "($val $not IN (" .
 				substr($valeurs, 0, $n) .
 				"))\n" .
 				($not ? "AND\t" : "OR\t");
-			$valeurs = substr($valeurs, $n+1);
+			$valeurs = substr($valeurs, $n + 1);
 			$i = $n = 0;
 		}
 	}

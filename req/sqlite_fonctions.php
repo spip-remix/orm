@@ -261,7 +261,7 @@ function _sqlite_func_rand() {
 
 // http://code.spip.net/@_sqlite_func_right
 function _sqlite_func_right($s, $length) {
-	return substr($s, 0-$length);
+	return substr($s, 0 - $length);
 }
 
 
@@ -293,7 +293,7 @@ function _sqlite_func_strftime($date, $conv) {
  */
 function _sqlite_func_to_days($d) {
 	static $offset = 719528; // nb de jour entre 0000-00-00 et timestamp 0=1970-01-01
-	$result = $offset+(int)ceil(_sqlite_func_unix_timestamp($d)/(24*3600));
+	$result = $offset + (int)ceil(_sqlite_func_unix_timestamp($d) / (24 * 3600));
 
 	#spip_log("Passage avec TO_DAYS : $d, $result",'sqlite.'._LOG_DEBUG);
 	return $result;
@@ -301,7 +301,7 @@ function _sqlite_func_to_days($d) {
 
 function _sqlite_func_substring($string, $start, $len = null) {
 	// SQL compte a partir de 1, php a partir de 0
-	$start = ($start > 0) ? $start-1 : $start;
+	$start = ($start > 0) ? $start - 1 : $start;
 	if (is_null($len)) {
 		return substr($string, $start);
 	} else {
@@ -327,24 +327,24 @@ function _sqlite_timestampdiff($unit, $date1, $date2) {
 		$inv = $diff->invert ? -1 : 1;
 		switch ($unit) {
 			case "YEAR":
-				return $inv*$diff->y;
+				return $inv * $diff->y;
 			case "QUARTER":
-				return $inv*(4*$diff->y+intval(floor($diff->m/3)));
+				return $inv * (4 * $diff->y + intval(floor($diff->m / 3)));
 			case "MONTH":
-				return $inv*(12*$diff->y+$diff->m);
+				return $inv * (12 * $diff->y + $diff->m);
 			case "WEEK":
-				return $inv*intval(floor($diff->days/7));
+				return $inv * intval(floor($diff->days / 7));
 			case "DAY":
 				#var_dump($inv*$diff->days);
-				return $inv*$diff->days;
+				return $inv * $diff->days;
 			case "HOUR":
-				return $inv*(24*$diff->days+$diff->h);
+				return $inv * (24 * $diff->days + $diff->h);
 			case "MINUTE":
-				return $inv*((24*$diff->days+$diff->h)*60+$diff->i);
+				return $inv * ((24 * $diff->days + $diff->h) * 60 + $diff->i);
 			case "SECOND":
-				return $inv*(((24*$diff->days+$diff->h)*60+$diff->i)*60+$diff->s);
+				return $inv * (((24 * $diff->days + $diff->h) * 60 + $diff->i) * 60 + $diff->s);
 			case "MICROSECOND":
-				return $inv*(((24*$diff->days+$diff->h)*60+$diff->i)*60+$diff->s)*1000000;
+				return $inv * (((24 * $diff->days + $diff->h) * 60 + $diff->i) * 60 + $diff->s) * 1000000;
 		}
 
 		return 0;
@@ -352,30 +352,30 @@ function _sqlite_timestampdiff($unit, $date1, $date2) {
 	else {
 		$d1 = strtotime($date1);
 		$d2 = strtotime($date2);
-		$diff = $d2-$d1;
+		$diff = $d2 - $d1;
 		$sign = ($diff < 0 ? -1 : 1);
-		$diff = $sign*$diff;
+		$diff = $sign * $diff;
 		switch ($unit) {
 			case "YEAR":
-				$diff = $d2-$d1;
+				$diff = $d2 - $d1;
 
-				return $sign*(date('Y', abs($diff))-date('Y', 0));
+				return $sign * (date('Y', abs($diff)) - date('Y', 0));
 			case "QUARTER":
-				return $sign*(4*(date('Y', abs($diff))-date('Y', 0))+intval(floor((date('m', $diff)-1)/3)));
+				return $sign * (4 * (date('Y', abs($diff)) - date('Y', 0)) + intval(floor((date('m', $diff) - 1) / 3)));
 			case "MONTH":
-				return $sign*((date('Y', $diff)-date('Y', 0))*12+date('m', $diff)-1);
+				return $sign * ((date('Y', $diff) - date('Y', 0)) * 12 + date('m', $diff) - 1);
 			case "WEEK":
-				return intval(floor(($d2-$d1)/3600/7));
+				return intval(floor(($d2 - $d1) / 3600 / 7));
 			case "DAY":
-				return intval(floor(($d2-$d1)/3600/24));
+				return intval(floor(($d2 - $d1) / 3600 / 24));
 			case "HOUR":
-				return intval(floor(($d2-$d1)/3600));
+				return intval(floor(($d2 - $d1) / 3600));
 			case "MINUTE":
-				return intval(floor(($d2-$d1)/60));
+				return intval(floor(($d2 - $d1) / 60));
 			case "SECOND":
-				return $d2-$d1;
+				return $d2 - $d1;
 			case "MICROSECOND":
-				return $d2-$d1*1000000;
+				return $d2 - $d1 * 1000000;
 		}
 	}
 }

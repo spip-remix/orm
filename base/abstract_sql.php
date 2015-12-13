@@ -2125,7 +2125,7 @@ function sql_skip($res, $pos, $saut, $count, $serveur = '', $option = true) {
 		return $pos;
 	}
 
-	$seek = $pos+$saut;
+	$seek = $pos + $saut;
 	// si le saut fait depasser le maxi, on libere la resource
 	// et on sort
 	if ($seek >= $count) {
