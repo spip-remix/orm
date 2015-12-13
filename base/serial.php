@@ -18,9 +18,11 @@
  *     Ce fichier mais directement base/objets si nécessaire
  *
  * @package SPIP\Core\SQL\Tables
-**/
+ **/
 
-if (!defined('_ECRIRE_INC_VERSION')) return;
+if (!defined('_ECRIRE_INC_VERSION')) {
+	return;
+}
 
 include_spip('base/objets');
 lister_tables_objets_sql();

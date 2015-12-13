@@ -12,31 +12,35 @@
 
 /**
  * Gestion d'affichage de la page de destruction des tables de SPIP
+ *
  * @package SPIP\Core\Base
  */
- 
-if (!defined('_ECRIRE_INC_VERSION')) return;
+
+if (!defined('_ECRIRE_INC_VERSION')) {
+	return;
+}
 
 /**
  * Destruction des tables SQL de SPIP
- * 
+ *
  * La liste des tables à supprimer est à poster sur le nom (tableau) `delete`
  *
  * @pipeline_appel delete_tables
  * @param string $titre Inutilisé
-**/
-function base_delete_all_dist($titre)
-{
+ **/
+function base_delete_all_dist($titre) {
 	$delete = _request('delete');
 	$res = array();
 	if (is_array($delete)) {
 		foreach ($delete as $table) {
-			if (sql_drop_table($table))
+			if (sql_drop_table($table)) {
 				$res[] = $table;
-			else spip_log( "SPIP n'a pas pu detruire $table.", _LOG_ERREUR);
+			} else {
+				spip_log("SPIP n'a pas pu detruire $table.", _LOG_ERREUR);
+			}
 		}
 
-	// un pipeline pour detruire les tables installees par les plugins
+		// un pipeline pour detruire les tables installees par les plugins
 		pipeline('delete_tables', '');
 
 		spip_unlink(_FILE_CONNECT);
@@ -47,6 +51,7 @@ function base_delete_all_dist($titre)
 	}
 	$d = count($delete);
 	$r = count($res);
-	spip_log("Tables detruites: $r sur $d: " . join(', ',$res), _LOG_INFO_IMPORTANTE);
+	spip_log("Tables detruites: $r sur $d: " . join(', ', $res), _LOG_INFO_IMPORTANTE);
 }
+
 ?>
