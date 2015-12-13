@@ -105,7 +105,7 @@ function maj_base($version_cible = 0, $redirect = '') {
 
 	spip_log("Version anterieure: $version_installee. Courante: " . $GLOBALS['spip_version_base'],
 		"maj." . _LOG_INFO_IMPORTANTE);
-	if (!$version_installee OR ($GLOBALS['spip_version_base'] < $version_installee)) {
+	if (!$version_installee or ($GLOBALS['spip_version_base'] < $version_installee)) {
 		sql_replace('spip_meta',
 			array(
 				'nom' => 'version_installee',
@@ -378,9 +378,9 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 	reset($maj);
 	while (list($v,) = each($maj)) {
 		// si une maj pour cette version
-		if ($v == 'init' OR
+		if ($v == 'init' or
 			(spip_version_compare($v, $installee, '>')
-				AND spip_version_compare($v, $cible, '<='))
+				and spip_version_compare($v, $cible, '<='))
 		) {
 			if ($debut_page) {
 				maj_debut_page($v, $meta, $table);
@@ -441,7 +441,7 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 		if ($i >= $etape) {
 			$msg = "maj $table $meta2 etape $i";
 			if (is_array($r)
-				AND function_exists($f = array_shift($r))
+				and function_exists($f = array_shift($r))
 			) {
 				// note: $r (arguments de la fonction $f) peut avoir des données tabulaires
 				spip_log("$msg: $f " . @join(',', $r), 'maj.' . _LOG_INFO_IMPORTANTE);
@@ -499,7 +499,7 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
  **/
 function upgrade_types_documents() {
 	if (include_spip('base/medias')
-		AND function_exists('creer_base_types_doc')
+		and function_exists('creer_base_types_doc')
 	) {
 		creer_base_types_doc();
 	}
@@ -566,6 +566,6 @@ function maj_version($version, $test = true) {
  **/
 function upgrade_vers($version, $version_installee, $version_cible = 0) {
 	return ($version_installee < $version
-		AND (($version_cible >= $version) OR ($version_cible == 0))
+		and (($version_cible >= $version) or ($version_cible == 0))
 	);
 }

@@ -216,7 +216,7 @@ function spip_pg_ajouter_champs_timestamp($table, $couples, $desc = '', $serveur
 		foreach ($desc['field'] as $k => $v) {
 			$v = strtolower(ltrim($v));
 			// ne pas ajouter de timestamp now() si un default est specifie
-			if (strpos($v, 'timestamp') === 0 AND strpos($v, 'default') === false) {
+			if (strpos($v, 'timestamp') === 0 and strpos($v, 'default') === false) {
 				$tables[$table][] = $k;
 			}
 		}
@@ -257,7 +257,7 @@ function spip_pg_alter($query, $serveur = '', $requeter = true) {
 		$todo2[$i] = isset($todo2[$i]) ? $todo2[$i] . "," . $do : $do;
 		$o = (false !== strpos($do, "("));
 		$f = (false !== strpos($do, ")"));
-		if ($o AND !$f) {
+		if ($o and !$f) {
 			$ouverte = true;
 		} elseif ($f) {
 			$ouverte = false;
@@ -323,7 +323,7 @@ function spip_pg_alter_add($table, $arg, $serveur = '', $requeter = true) {
 
 		return null;
 	}
-	if (!$r[1] OR $r[1] == 'COLUMN') {
+	if (!$r[1] or $r[1] == 'COLUMN') {
 		preg_match('/`?(\w+)`?(.*)/', $r[2], $m);
 		if (preg_match('/^(.*)(BEFORE|AFTER|FIRST)(.*)$/is', $m[2], $n)) {
 			$m[2] = $n[1];
@@ -371,7 +371,7 @@ function spip_pg_alter_drop($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^(COLUMN|INDEX|KEY|PRIMARY\s+KEY|)\s*`?(\w*)`?/', $arg, $r)) {
 		spip_log("alter drop: $arg  incompris", 'pg.' . _LOG_ERREUR);
 	} else {
-		if (!$r[1] OR $r[1] == 'COLUMN') {
+		if (!$r[1] or $r[1] == 'COLUMN') {
 			return spip_pg_query("ALTER TABLE $table DROP " . $r[2], $serveur);
 		} elseif ($r[1][0] == 'P') {
 			return spip_pg_query("ALTER TABLE $table DROP CONSTRAINT $table" . '_pkey', $serveur);
@@ -420,7 +420,7 @@ function spip_pg_alter_rename($table, $arg, $serveur = '', $requeter = true) {
  * @return bool ou requete
  */
 function spip_pg_create_index($nom, $table, $champs, $serveur = '', $requeter = true) {
-	if (!($nom OR $table OR $champs)) {
+	if (!($nom or $table or $champs)) {
 		spip_log("Champ manquant pour creer un index pg ($nom, $table, (" . @join(',', $champs) . "))",
 			'pg.' . _LOG_ERREUR);
 
@@ -620,7 +620,7 @@ function spip_pg_groupby($groupby, $from, $select) {
 		$select = preg_replace('/\w+\(\s*([^(),\']*),\s*\'[^\']*\'[^)]*\)/', '\\1', $select);
 	}
 
-	if ($join OR $groupby) {
+	if ($join or $groupby) {
 		$join = is_array($select) ? $select : explode(", ", $select);
 	}
 	if ($join) {
@@ -637,7 +637,7 @@ function spip_pg_groupby($groupby, $from, $select) {
 			// des AS simples : on garde le cote droit du AS
 			$v = preg_replace('/^.*\sAS\s+(\w+)\s*$/i', '\\1', $v);
 			// ne reste plus que les vrais colonnes, ou des constantes a virer
-			if (preg_match(',^[\'"],', $v) OR is_numeric($v)) {
+			if (preg_match(',^[\'"],', $v) or is_numeric($v)) {
 				unset($join[$k]);
 			} else {
 				$join[$k] = trim($v);
@@ -1176,7 +1176,7 @@ function spip_pg_sequence($table, $raw = false) {
 	$desc = $GLOBALS['tables_principales'][$table];
 	$prim = @$desc['key']['PRIMARY KEY'];
 	if (!preg_match('/^\w+$/', $prim)
-		OR strpos($desc['field'][$prim], 'int') === false
+		or strpos($desc['field'][$prim], 'int') === false
 	) {
 		return '';
 	} else {
@@ -1194,7 +1194,7 @@ function spip_pg_cite($v, $t) {
 	} // null php se traduit en NULL SQL
 
 	if (sql_test_date($t)) {
-		if ($v AND (strpos("0123456789", $v[0]) === false)) {
+		if ($v and (strpos("0123456789", $v[0]) === false)) {
 			return spip_pg_frommysql($v);
 		} else {
 			if (strncmp($v, '0000', 4) == 0) {
@@ -1208,9 +1208,9 @@ function spip_pg_cite($v, $t) {
 		}
 	} elseif (!sql_test_int($t)) {
 		return ("'" . pg_escape_string($v) . "'");
-	} elseif (is_numeric($v) OR (strpos($v, 'CAST(') === 0)) {
+	} elseif (is_numeric($v) or (strpos($v, 'CAST(') === 0)) {
 		return $v;
-	} elseif ($v[0] == '0' AND $v[1] !== 'x' AND ctype_xdigit(substr($v, 1))) {
+	} elseif ($v[0] == '0' and $v[1] !== 'x' and ctype_xdigit(substr($v, 1))) {
 		return substr($v, 1);
 	} else {
 		spip_log("Warning: '$v'  n'est pas de type $t", 'pg.' . _LOG_AVERTISSEMENT);
@@ -1429,7 +1429,7 @@ function spip_pg_create($nom, $champs, $cles, $autoinc = false, $temporary = fal
 	foreach ($champs as $k => $v) {
 		$k = str_replace('`', '"', $k);
 		if (preg_match(',([a-z]*\s*(\(\s*[0-9]*\s*\))?(\s*binary)?),i', $v, $defs)) {
-			if (preg_match(',(char|text),i', $defs[1]) AND !preg_match(',binary,i', $defs[1])) {
+			if (preg_match(',(char|text),i', $defs[1]) and !preg_match(',binary,i', $defs[1])) {
 				$v = $defs[1] . $character_set . ' ' . substr($v, strlen($defs[1]));
 			}
 		}

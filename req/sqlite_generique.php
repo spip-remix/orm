@@ -53,13 +53,13 @@ function req_sqlite_dist($addr, $port, $login, $pass, $db = '', $prefixe = '', $
 
 	// determiner le dossier de la base : $addr ou _DIR_DB
 	$f = _DIR_DB;
-	if ($addr AND strpos($addr, '/') !== false) {
+	if ($addr and strpos($addr, '/') !== false) {
 		$f = rtrim($addr, '/') . '/';
 	}
 
 	// un nom de base demande et impossible d'obtenir la base, on s'en va :
 	// il faut que la base existe ou que le repertoire parent soit writable
-	if ($db AND !is_file($f .= $db . '.sqlite') AND !is_writable(dirname($f))) {
+	if ($db and !is_file($f .= $db . '.sqlite') and !is_writable(dirname($f))) {
 		spip_log("base $f non trouvee ou droits en ecriture manquants", 'sqlite.' . _LOG_HS);
 
 		return false;
@@ -207,7 +207,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 		$todo2[$i] = isset($todo2[$i]) ? $todo2[$i] . "," . $do : $do;
 		$o = (false !== strpos($do, "("));
 		$f = (false !== strpos($do, ")"));
-		if ($o AND !$f) {
+		if ($o and !$f) {
 			$ouverte = true;
 		} elseif ($f) {
 			$ouverte = false;
@@ -387,7 +387,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 				$do = "ADD" . substr($do, 10);
 			case 'ADD':
 			default:
-				if (_sqlite_is_version(3, '', $serveur) AND !preg_match(',primary\s+key,i', $do)) {
+				if (_sqlite_is_version(3, '', $serveur) and !preg_match(',primary\s+key,i', $do)) {
 					if (!spip_sqlite::executer_requete("$debut $do", $serveur)) {
 						spip_log("SQLite : Erreur ALTER TABLE / ADD : $query", 'sqlite.' . _LOG_ERREUR);
 
@@ -563,7 +563,7 @@ function spip_sqlite_create_view($nom, $query_select, $serveur = '', $requeter =
  *    string : requête, false si erreur, true sinon.
  */
 function spip_sqlite_create_index($nom, $table, $champs, $unique = '', $serveur = '', $requeter = true) {
-	if (!($nom OR $table OR $champs)) {
+	if (!($nom or $table or $champs)) {
 		spip_log("Champ manquant pour creer un index sqlite ($nom, $table, (" . join(',', $champs) . "))",
 			'sqlite.' . _LOG_ERREUR);
 
@@ -589,7 +589,7 @@ function spip_sqlite_create_index($nom, $table, $champs, $unique = '', $serveur 
 		include_spip('plugins/installer');
 	}
 
-	if ($version AND spip_version_compare($version['sqlite_version'], '3.3.0', '>=')) {
+	if ($version and spip_version_compare($version['sqlite_version'], '3.3.0', '>=')) {
 		$ifnotexists = ' IF NOT EXISTS';
 	} else {
 		/* simuler le IF EXISTS - version 2 et sqlite < 3.3a */
@@ -640,7 +640,7 @@ function spip_sqlite_count($r, $serveur = '', $requeter = true) {
 			$query = "SELECT count(*) as zzzzsqlitecount FROM ($query)";
 			$l = $link->query($query);
 			$i = 0;
-			if ($l AND $z = $l->fetch()) {
+			if ($l and $z = $l->fetch()) {
 				$i = $z['zzzzsqlitecount'];
 			}
 			$r->spipSqliteRowCount = $i;
@@ -803,7 +803,7 @@ function spip_sqlite_drop_view($view, $exist = '', $serveur = '', $requeter = tr
  * @return bool ou requete
  */
 function spip_sqlite_drop_index($nom, $table, $serveur = '', $requeter = true) {
-	if (!($nom OR $table)) {
+	if (!($nom or $table)) {
 		spip_log("Champ manquant pour supprimer un index sqlite ($nom, $table)", 'sqlite.' . _LOG_ERREUR);
 
 		return false;
@@ -966,7 +966,7 @@ function spip_sqlite_fetch($r, $t = '', $serveur = '', $requeter = true) {
 	// suppression de 'table.' pour toutes les cles (c'est un peu violent !)
 	// c'est couteux : on ne verifie que la premiere ligne pour voir si on le fait ou non
 	if ($retour
-		AND strpos(implode('', array_keys($retour)), '.') !== false
+		and strpos(implode('', array_keys($retour)), '.') !== false
 	) {
 		foreach ($retour as $cle => $val) {
 			if (($pos = strpos($cle, '.')) !== false) {
@@ -1458,33 +1458,33 @@ function spip_sqlite_date_proche($champ, $interval, $unite) {
  */
 function spip_sqlite_repair($table, $serveur = '', $requeter = true) {
 	if ($desc = spip_sqlite_showtable($table, $serveur)
-		AND isset($desc['field'])
-		AND is_array($desc['field'])
+		and isset($desc['field'])
+		and is_array($desc['field'])
 	) {
 		foreach ($desc['field'] as $c => $d) {
 			if (preg_match(",^(tinytext|mediumtext|text|longtext|varchar|char),i", $d)
-				AND stripos($d, "NOT NULL") !== false
-				AND stripos($d, "DEFAULT") === false
+				and stripos($d, "NOT NULL") !== false
+				and stripos($d, "DEFAULT") === false
 				/* pas touche aux cles primaires */
-				AND (!isset($desc['key']['PRIMARY KEY']) OR $desc['key']['PRIMARY KEY'] !== $c)
+				and (!isset($desc['key']['PRIMARY KEY']) or $desc['key']['PRIMARY KEY'] !== $c)
 			) {
 				spip_sqlite_alter($q = "TABLE $table CHANGE $c $c $d DEFAULT ''", $serveur);
 				spip_log("ALTER $q", "repair" . _LOG_INFO_IMPORTANTE);
 			}
 			if (preg_match(",^(INTEGER),i", $d)
-				AND stripos($d, "NOT NULL") !== false
-				AND stripos($d, "DEFAULT") === false
+				and stripos($d, "NOT NULL") !== false
+				and stripos($d, "DEFAULT") === false
 				/* pas touche aux cles primaires */
-				AND (!isset($desc['key']['PRIMARY KEY']) OR $desc['key']['PRIMARY KEY'] !== $c)
+				and (!isset($desc['key']['PRIMARY KEY']) or $desc['key']['PRIMARY KEY'] !== $c)
 			) {
 				spip_sqlite_alter($q = "TABLE $table CHANGE $c $c $d DEFAULT '0'", $serveur);
 				spip_log("ALTER $q", "repair" . _LOG_INFO_IMPORTANTE);
 			}
 			if (preg_match(",^(datetime),i", $d)
-				AND stripos($d, "NOT NULL") !== false
-				AND stripos($d, "DEFAULT") === false
+				and stripos($d, "NOT NULL") !== false
+				and stripos($d, "DEFAULT") === false
 				/* pas touche aux cles primaires */
-				AND (!isset($desc['key']['PRIMARY KEY']) OR $desc['key']['PRIMARY KEY'] !== $c)
+				and (!isset($desc['key']['PRIMARY KEY']) or $desc['key']['PRIMARY KEY'] !== $c)
 			) {
 				spip_sqlite_alter($q = "TABLE $table CHANGE $c $c $d DEFAULT '0000-00-00 00:00:00'", $serveur);
 				spip_log("ALTER $q", "repair" . _LOG_INFO_IMPORTANTE);
@@ -2059,18 +2059,18 @@ function _sqlite_link($serveur = '') {
 function _sqlite_calculer_cite($v, $type) {
 	if ($type) {
 		if (is_null($v)
-			AND stripos($type, "NOT NULL") === false
+			and stripos($type, "NOT NULL") === false
 		) {
 			return 'NULL';
 		} // null php se traduit en NULL SQL
 
-		if (sql_test_date($type) AND preg_match('/^\w+\(/', $v)) {
+		if (sql_test_date($type) and preg_match('/^\w+\(/', $v)) {
 			return $v;
 		}
 		if (sql_test_int($type)) {
 			if (is_numeric($v)) {
 				return $v;
-			} elseif (ctype_xdigit(substr($v, 2)) AND strncmp($v, '0x', 2) == 0) {
+			} elseif (ctype_xdigit(substr($v, 2)) and strncmp($v, '0x', 2) == 0) {
 				return hexdec(substr($v, 2));
 			} else {
 				return intval($v);
@@ -2313,7 +2313,7 @@ function _sqlite_modifier_table($table, $colonne, $opt = array(), $serveur = '')
 	$meme_table = ($table_origine == $table_destination);
 
 	$def_origine = sql_showtable($table_origine, false, $serveur);
-	if (!$def_origine OR !isset($def_origine['field'])) {
+	if (!$def_origine or !isset($def_origine['field'])) {
 		spip_log("Alter table impossible sur $table_origine : table non trouvee", 'sqlite' . _LOG_ERREUR);
 
 		return false;
@@ -2368,9 +2368,9 @@ function _sqlite_modifier_table($table, $colonne, $opt = array(), $serveur = '')
 	// copier dans destination (si differente de origine), sinon tmp
 	$table_copie = ($meme_table) ? $table_tmp : $table_destination;
 	$autoinc = (isset($keys['PRIMARY KEY'])
-		AND $keys['PRIMARY KEY']
-		AND stripos($keys['PRIMARY KEY'], ',') === false
-		AND stripos($fields[$keys['PRIMARY KEY']], 'default') === false);
+		and $keys['PRIMARY KEY']
+		and stripos($keys['PRIMARY KEY'], ',') === false
+		and stripos($fields[$keys['PRIMARY KEY']], 'default') === false);
 
 	if ($q = _sqlite_requete_create(
 		$table_copie,
@@ -2545,7 +2545,7 @@ function _sqlite_remplacements_definitions_table($query, $autoinc = false) {
 
 	if (is_string($query)) {
 		$query = preg_replace(array_keys($remplace), $remplace, $query);
-		if ($autoinc OR preg_match(',AUTO_INCREMENT,is', $query)) {
+		if ($autoinc or preg_match(',AUTO_INCREMENT,is', $query)) {
 			$query = preg_replace(array_keys($remplace_autocinc), $remplace_autocinc, $query);
 		} else {
 			$query = preg_replace(array_keys($remplace_nonautocinc), $remplace_nonautocinc, $query);
@@ -2628,7 +2628,7 @@ function _sqlite_requete_create(
 	// Il gere par contre primary key !
 	// Soit la PK est definie dans les cles, soit dans un champs
 	$c = ""; // le champ de cle primaire
-	if (!isset($cles[$pk = "PRIMARY KEY"]) OR !$c = $cles[$pk]) {
+	if (!isset($cles[$pk = "PRIMARY KEY"]) or !$c = $cles[$pk]) {
 		foreach ($champs as $k => $v) {
 			if (false !== stripos($v, $pk)) {
 				$c = $k;
@@ -2643,7 +2643,7 @@ function _sqlite_requete_create(
 	}
 	// Pas de DEFAULT 0 sur les cles primaires en auto-increment
 	if (isset($champs[$c])
-		AND stripos($champs[$c], "default 0") !== false
+		and stripos($champs[$c], "default 0") !== false
 	) {
 		$champs[$c] = trim(str_ireplace("default 0", "", $champs[$c]));
 	}
@@ -2663,7 +2663,7 @@ function _sqlite_requete_create(
 			include_spip('plugins/installer');
 		}
 
-		if ($version AND spip_version_compare($version['sqlite_version'], '3.3.0', '>=')) {
+		if ($version and spip_version_compare($version['sqlite_version'], '3.3.0', '>=')) {
 			$ifnotexists = ' IF NOT EXISTS';
 		} else {
 			/* simuler le IF EXISTS - version 2 et sqlite < 3.3a */
@@ -2842,7 +2842,7 @@ class spip_sqlite {
 	static function finir_transaction($serveur) {
 		// si pas de transaction en cours, ne rien faire et le dire
 		if (!isset(spip_sqlite::$transaction_en_cours[$serveur])
-			OR spip_sqlite::$transaction_en_cours[$serveur] == false
+			or spip_sqlite::$transaction_en_cours[$serveur] == false
 		) {
 			return false;
 		}
@@ -2955,7 +2955,7 @@ class sqlite_requeteur {
 			}
 
 			// loger les warnings/erreurs eventuels de sqlite remontant dans PHP
-			if ($err = (function_exists('error_get_last') ? error_get_last() : "") AND $err != $e) {
+			if ($err = (function_exists('error_get_last') ? error_get_last() : "") and $err != $e) {
 				$err = strip_tags($err['message']) . " in " . $err['file'] . " line " . $err['line'];
 				spip_log("$err - " . $query, 'sqlite.' . _LOG_ERREUR);
 			} else {

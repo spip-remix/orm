@@ -69,7 +69,7 @@ function spip_connect($serveur = '', $version = '') {
 		if ($f) {
 			if (is_readable($f)) {
 				include($f);
-			} elseif ($serveur AND !$install) {
+			} elseif ($serveur and !$install) {
 				// chercher une declaration de serveur dans le path
 				// qui pourra un jour servir a declarer des bases sqlite
 				// par des plugins. Et sert aussi aux boucles POUR.
@@ -81,7 +81,7 @@ function spip_connect($serveur = '', $version = '') {
 			if ($install) {
 				return false;
 			}
-			if ($f AND is_readable($f)) {
+			if ($f and is_readable($f)) {
 				spip_log("spip_connect: fichier de connexion '$f' OK.", _LOG_INFO_IMPORTANTE);
 			} else {
 				spip_log("spip_connect: fichier de connexion '$f' non trouve", _LOG_INFO_IMPORTANTE);
@@ -138,8 +138,8 @@ function spip_connect($serveur = '', $version = '') {
 		// spip_meta n'existe pas toujours dans la base
 		// C'est le cas d'un dump sqlite par exemple 
 		elseif ($GLOBALS['connexions'][$index]['spip_connect_version']
-			AND sql_showtable('spip_meta', true, $serveur)
-			AND $r = sql_getfetsel('valeur', 'spip_meta', "nom='charset_sql_connexion'", '', '', '', '', $serveur)
+			and sql_showtable('spip_meta', true, $serveur)
+			and $r = sql_getfetsel('valeur', 'spip_meta', "nom='charset_sql_connexion'", '', '', '', '', $serveur)
 		) {
 			$charset = $r;
 		} else {
@@ -248,15 +248,15 @@ function spip_connect_db(
 	// pour ne pas declarer tout indisponible d'un coup
 	// si en cours d'installation ou si db=@test@ on ne pose rien
 	// car c'est un test de connexion
-	if (!defined('_ECRIRE_INSTALL') AND !$db == "@test@") {
+	if (!defined('_ECRIRE_INSTALL') and !$db == "@test@") {
 		$f = _DIR_TMP . $type . '.' . substr(md5($host . $port . $db), 0, 8) . '.out';
 	} elseif ($db == '@test@') {
 		$db = '';
 	}
 
 	if ($f
-		AND @file_exists($f)
-		AND (time()-@filemtime($f) < _CONNECT_RETRY_DELAY)
+		and @file_exists($f)
+		and (time()-@filemtime($f) < _CONNECT_RETRY_DELAY)
 	) {
 		spip_log("Echec : $f recent. Pas de tentative de connexion", _LOG_HS);
 
@@ -322,7 +322,7 @@ function spip_connect_db(
  *     - nom du charset sinon
  **/
 function spip_connect_main($connexion, $charset_sql_connexion = '') {
-	if ($GLOBALS['spip_connect_version'] < 0.1 AND _DIR_RESTREINT) {
+	if ($GLOBALS['spip_connect_version'] < 0.1 and _DIR_RESTREINT) {
 		include_spip('inc/headers');
 		redirige_url_ecrire('upgrade', 'reinstall=oui');
 	}
@@ -337,7 +337,7 @@ function spip_connect_main($connexion, $charset_sql_connexion = '') {
 	// sinon on regarde la table spip_meta
 	// en cas d'erreur select retourne la requette (is_string=true donc)
 	if (!$r = $f('valeur', 'spip_meta', "nom='charset_sql_connexion'")
-		OR is_string($r)
+		or is_string($r)
 	) {
 		return false;
 	}

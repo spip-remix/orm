@@ -33,15 +33,15 @@ include_spip('base/abstract_sql');
  * @return bool
  */
 function base_determine_autoinc($table, $desc = array()) {
-	if ($t = lister_tables_principales() AND isset($t[$table])) {
+	if ($t = lister_tables_principales() and isset($t[$table])) {
 		$autoinc = true;
-	} elseif ($t = lister_tables_auxiliaires() AND isset($t[$table])) {
+	} elseif ($t = lister_tables_auxiliaires() and isset($t[$table])) {
 		$autoinc = false;
 	} else {
 		// essayer de faire au mieux !
 		$autoinc = (isset($desc['key']['PRIMARY KEY'])
-			AND strpos($desc['key']['PRIMARY KEY'], ',') === false
-			AND strpos($desc['field'][$desc['key']['PRIMARY KEY']], 'default') === false);
+			and strpos($desc['key']['PRIMARY KEY'], ',') === false
+			and strpos($desc['field'][$desc['key']['PRIMARY KEY']], 'default') === false);
 	}
 
 	return $autoinc;
@@ -101,7 +101,7 @@ function creer_ou_upgrader_table($table, $desc, $autoinc, $upgrade = false, $ser
 		foreach ($desc['key'] as $key => $type) {
 			// Ne pas oublier les cas des cles non nommees dans la declaration et qui sont retournees
 			// par le showtable sous la forme d'un index de tableau "KEY $type" et non "KEY"
-			if (!isset($sql_desc['key'][$key]) AND !isset($sql_desc['key']["$key $type"])) {
+			if (!isset($sql_desc['key'][$key]) and !isset($sql_desc['key']["$key $type"])) {
 				sql_alter("TABLE $table ADD $key ($type)", $serveur);
 			}
 			$last = $field;
@@ -139,13 +139,13 @@ function alterer_base($tables_inc, $tables_noinc, $up = false, $serveur = '') {
 		}
 	}
 	foreach ($tables_inc as $k => $v) {
-		if (!$old OR in_array($k, $up)) {
+		if (!$old or in_array($k, $up)) {
 			creer_ou_upgrader_table($k, $v, true, $old, $serveur);
 		}
 	}
 
 	foreach ($tables_noinc as $k => $v) {
-		if (!$old OR in_array($k, $up)) {
+		if (!$old or in_array($k, $up)) {
 			creer_ou_upgrader_table($k, $v, false, $old, $serveur);
 		}
 	}

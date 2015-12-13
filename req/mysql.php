@@ -62,7 +62,7 @@ function req_mysql_dist($host, $port, $login, $pass, $db = '', $prefixe = '') {
 	} else {
 		$ok = mysqli_select_db($link, $db);
 		if (defined('_MYSQL_SET_SQL_MODE')
-			OR defined('_MYSQL_SQL_MODE_TEXT_NOT_NULL') // compatibilite
+			or defined('_MYSQL_SQL_MODE_TEXT_NOT_NULL') // compatibilite
 		) {
 			mysqli_query($link, $last = "set sql_mode=''");
 		}
@@ -232,7 +232,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 
 	// ajouter un debug utile dans log/mysql-slow.log ?
 	$debug = '';
-	if (defined('_DEBUG_SLOW_QUERIES') AND _DEBUG_SLOW_QUERIES) {
+	if (defined('_DEBUG_SLOW_QUERIES') and _DEBUG_SLOW_QUERIES) {
 		if (isset($GLOBALS['debug']['aucasou'])) {
 			list(, $id, , $infos) = $GLOBALS['debug']['aucasou'];
 			$debug .= " BOUCLE$id @ " . $infos[0] . " | ";
@@ -520,7 +520,7 @@ define('_SQL_PREFIXE_TABLE_MYSQL', '/([,\s])spip_/S');
  */
 function _mysql_traite_query($query, $db = '', $prefixe = '') {
 
-	if ($GLOBALS['mysql_rappel_nom_base'] AND $db) {
+	if ($GLOBALS['mysql_rappel_nom_base'] and $db) {
 		$pref = '`' . $db . '`.';
 	} else {
 		$pref = '';
@@ -549,7 +549,7 @@ function _mysql_traite_query($query, $db = '', $prefixe = '') {
 	$r = preg_replace(_SQL_PREFIXE_TABLE_MYSQL, '\1' . $pref, $query) . $suite;
 
 	// en option, remplacer les emoji (que mysql ne sait pas gérer) en &#128169;
-	if (defined('_MYSQL_NOPLANES') AND _MYSQL_NOPLANES AND lire_meta('charset_sql_connexion') == 'utf8') {
+	if (defined('_MYSQL_NOPLANES') and _MYSQL_NOPLANES and lire_meta('charset_sql_connexion') == 'utf8') {
 		include_spip('inc/charsets');
 		$r = utf8_noplanes($r);
 	}
@@ -676,7 +676,7 @@ function spip_mysql_create(
 		$v = _mysql_remplacements_definitions_table($v);
 		if (preg_match(',([a-z]*\s*(\(\s*[0-9]*\s*\))?(\s*binary)?),i', $v, $defs)) {
 			if (preg_match(',(char|text),i', $defs[1])
-				AND !preg_match(',(binary|CHARACTER|COLLATE),i', $v)
+				and !preg_match(',(binary|CHARACTER|COLLATE),i', $v)
 			) {
 				$v = $defs[1] . $character_set . ' ' . substr($v, strlen($defs[1]));
 			}
@@ -1626,16 +1626,16 @@ function calcul_mysql_in($val, $valeurs, $not = '') {
  */
 function spip_mysql_cite($v, $type) {
 	if (is_null($v)
-		AND stripos($type, "NOT NULL") === false
+		and stripos($type, "NOT NULL") === false
 	) {
 		return 'NULL';
 	} // null php se traduit en NULL SQL
-	if (sql_test_date($type) AND preg_match('/^\w+\(/', $v)) {
+	if (sql_test_date($type) and preg_match('/^\w+\(/', $v)) {
 		return $v;
 	}
 	if (sql_test_int($type)) {
-		if (is_numeric($v) OR (ctype_xdigit(substr($v, 2))
-				AND $v[0] == '0' AND $v[1] == 'x')
+		if (is_numeric($v) or (ctype_xdigit(substr($v, 2))
+				and $v[0] == '0' and $v[1] == 'x')
 		) {
 			return $v;
 		} // si pas numerique, forcer le intval

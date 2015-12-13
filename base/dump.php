@@ -99,7 +99,7 @@ function base_lister_toutes_tables(
 	foreach (sql_alltable(null, $serveur) as $t) {
 		if (preg_match($p, $t)) {
 			$t1 = preg_replace($p, 'spip', $t);
-			if (!in_array($t1, $tables) AND !in_array($t1, $exclude)) {
+			if (!in_array($t1, $tables) and !in_array($t1, $exclude)) {
 				$res[] = ($affiche_vrai_prefixe ? $t : $t1);
 			}
 		}
@@ -268,14 +268,14 @@ function base_liste_table_for_dump($exclude_tables = array()) {
 	$tables_jointures = $GLOBALS['tables_jointures'];
 
 	if (include_spip('base/objets')
-		AND function_exists('lister_tables_objets_sql')
+		and function_exists('lister_tables_objets_sql')
 	) {
 		$tables = lister_tables_objets_sql();
 		foreach ($tables as $t => $infos) {
-			if ($infos['principale'] AND !isset($tables_principales[$t])) {
+			if ($infos['principale'] and !isset($tables_principales[$t])) {
 				$tables_principales[$t] = true;
 			}
-			if (!$infos['principale'] AND !isset($tables_auxiliaires[$t])) {
+			if (!$infos['principale'] and !isset($tables_auxiliaires[$t])) {
 				$tables_auxiliaires[$t] = true;
 			}
 			if (count($infos['tables_jointures'])) {
@@ -358,7 +358,7 @@ function base_vider_tables_destination_copie($tables, $exclure_tables = array(),
 	foreach ($tables as $table) {
 		if (!in_array($table, $exclure_tables)) {
 			// sur le serveur principal, il ne faut pas supprimer l'auteur loge !
-			if (($table != 'spip_auteurs') OR $serveur != '') {
+			if (($table != 'spip_auteurs') or $serveur != '') {
 				// regarder si il y a au moins un champ impt='non'
 				$desc = $trouver_table($table, $serveur);
 				if (isset($desc['field']['impt'])) {
@@ -373,8 +373,8 @@ function base_vider_tables_destination_copie($tables, $exclure_tables = array(),
 	// sur le serveur principal, il ne faut pas supprimer l'auteur loge !
 	// Bidouille pour garder l'acces admin actuel pendant toute la restauration
 	if ($serveur == ''
-		AND in_array('spip_auteurs', $tables)
-		AND !in_array('spip_auteurs', $exclure_tables)
+		and in_array('spip_auteurs', $tables)
+		and !in_array('spip_auteurs', $exclure_tables)
 	) {
 		base_conserver_copieur(true, $serveur);
 		sql_delete("spip_auteurs", "id_auteur>0", $serveur);
@@ -390,7 +390,7 @@ function base_vider_tables_destination_copie($tables, $exclure_tables = array(),
  */
 function base_conserver_copieur($move = true, $serveur = '') {
 	// s'asurer qu'on a pas deja fait la manip !
-	if ($GLOBALS['visiteur_session']['id_auteur'] > 0 AND sql_countsel("spip_auteurs", "id_auteur>0")) {
+	if ($GLOBALS['visiteur_session']['id_auteur'] > 0 and sql_countsel("spip_auteurs", "id_auteur>0")) {
 		spip_log('Conserver copieur ' . $GLOBALS['visiteur_statut']['id_auteur'] . " dans id_auteur=" . $GLOBALS['visiteur_statut']['id_auteur'] . " pour le serveur '$serveur'",
 			'dump.' . _LOG_INFO_IMPORTANTE);
 		sql_delete("spip_auteurs", "id_auteur<0", $serveur);
@@ -447,8 +447,8 @@ function base_detruire_copieur_si_besoin($serveur = '') {
 function base_preparer_table_dest($table, $desc, $serveur_dest, $init = false) {
 	$upgrade = false;
 	// si la table existe et qu'on est a l'init, la dropper
-	if ($desc_dest = sql_showtable($table, true, $serveur_dest) AND $init) {
-		if ($serveur_dest == '' AND in_array($table, array('spip_meta', 'spip_auteurs'))) {
+	if ($desc_dest = sql_showtable($table, true, $serveur_dest) and $init) {
+		if ($serveur_dest == '' and in_array($table, array('spip_meta', 'spip_auteurs'))) {
 			// ne pas dropper auteurs et meta sur le serveur principal
 			// faire un simple upgrade a la place
 			// pour ajouter les champs manquants
@@ -549,7 +549,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 	}
 
 	if (!lire_fichier($status_file, $status)
-		OR !$status = unserialize($status)
+		or !$status = unserialize($status)
 	) {
 		$status = array();
 	}
@@ -594,7 +594,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 		if (strncmp($table, "spip_", 5) == 0) {
 			$desc_source = $trouver_table(preg_replace(",^spip_,", "", $table), $serveur_source, true);
 		}
-		if (!$desc_source OR !isset($desc_source['exist']) OR !$desc_source['exist']) {
+		if (!$desc_source or !isset($desc_source['exist']) or !$desc_source['exist']) {
 			$desc_source = $trouver_table($table, $serveur_source, false);
 		}
 
@@ -607,8 +607,8 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 			}
 
 			if (is_numeric($status['tables_copiees'][$table])
-				AND $status['tables_copiees'][$table] >= 0
-				AND $desc_dest = $preparer_table_dest(
+				and $status['tables_copiees'][$table] >= 0
+				and $desc_dest = $preparer_table_dest(
 					$table,
 					isset($desc_tables_dest[$table]) ? $desc_tables_dest[$table] : $desc_source,
 					$serveur_dest,
@@ -628,7 +628,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 						// (permet un envoi par lot vers la destination)
 						if ($data_pool > 0) {
 							$s = strlen(serialize($row));
-							while ($s < $data_pool AND $row = sql_fetch($res, $serveur_source)) {
+							while ($s < $data_pool and $row = sql_fetch($res, $serveur_source)) {
 								$s += strlen(serialize($row));
 								$rows[] = $row;
 							}
@@ -645,7 +645,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 							return true;
 						}
 						$status['tables_copiees'][$table] += count($rows);
-						if ($max_time AND time() > $max_time) {
+						if ($max_time and time() > $max_time) {
 							break;
 						}
 					}
@@ -657,7 +657,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 						$callback_progression($status['tables_copiees'][$table], 0, $table);
 					}
 					ecrire_fichier($status_file, serialize($status));
-					if ($max_time AND time() > $max_time) {
+					if ($max_time and time() > $max_time) {
 						return false;
 					} // on a pas fini, mais le temps imparti est ecoule
 				}
@@ -677,7 +677,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 				}
 				if ($callback_progression) {
 					$callback_progression(0, $status['tables_copiees'][$table],
-						"$table" . ((is_numeric($status['tables_copiees'][$table]) AND $status['tables_copiees'][$table] >= 0) ? "[Echec]" : ""));
+						"$table" . ((is_numeric($status['tables_copiees'][$table]) and $status['tables_copiees'][$table] >= 0) ? "[Echec]" : ""));
 				}
 			}
 		} else {

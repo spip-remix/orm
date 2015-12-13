@@ -268,7 +268,7 @@ function _sqlite_func_right($s, $length) {
 // http://code.spip.net/@_sqlite_func_regexp_match
 function _sqlite_func_regexp_match($cherche, $quoi) {
 	// optimiser un cas tres courant avec les requetes en base
-	if (!$quoi AND !strlen($quoi)) {
+	if (!$quoi and !strlen($quoi)) {
 		return false;
 	}
 	$u = isset($GLOBALS['meta']['pcre_u']) ? $GLOBALS['meta']['pcre_u'] : 'u';

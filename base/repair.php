@@ -85,7 +85,7 @@ function admin_repair_plat() {
 			$src = $row['fichier'];
 			$dest = $d . substr($src, strlen($d));
 			if (@copy(_DIR_IMG . $src, _DIR_IMG . $dest)
-				AND file_exists(_DIR_IMG . $dest)
+				and file_exists(_DIR_IMG . $dest)
 			) {
 				sql_updateq('spip_documents', array('fichier' => $dest), 'id_document=' . intval($row['id_document']));
 				spip_unlink(_DIR_IMG . $src);
@@ -158,9 +158,9 @@ function admin_repair_tables() {
 			}
 
 			if ($result_repair
-				AND $msg = join(" ",
+				and $msg = join(" ",
 						(is_resource($result_repair) or is_object($result_repair)) ? sql_fetch($result_repair) : $result_repair) . ' '
-				AND strpos($msg, ' OK ') === false
+				and strpos($msg, ' OK ') === false
 			) {
 				$class = " class='notice'";
 				$m .= "<br /><tt>" . spip_htmlentities($msg) . "</tt>\n";
