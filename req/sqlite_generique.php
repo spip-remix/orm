@@ -2746,9 +2746,9 @@ function spip_versions_sqlite() {
  **/
 class spip_sqlite {
 	/** @var sqlite_requeteur[] Liste des instances de requêteurs créés */
-	static $requeteurs = array();
+	public static $requeteurs = array();
 	/** @var bool[] Pour chaque connexion, flag pour savoir si une transaction est en cours */
-	static $transaction_en_cours = array();
+	public static $transaction_en_cours = array();
 
 
 	/**
@@ -2762,7 +2762,7 @@ class spip_sqlite {
 	 * @return sqlite_requeteur
 	 *    Instance unique du requêteur
 	 **/
-	static function requeteur($serveur) {
+	public static function requeteur($serveur) {
 		if (!isset(spip_sqlite::$requeteurs[$serveur])) {
 			spip_sqlite::$requeteurs[$serveur] = new sqlite_requeteur($serveur);
 		}
@@ -2782,7 +2782,7 @@ class spip_sqlite {
 	 * @param string $serveur Nom de la connexion
 	 * @return string           Requête préparée
 	 */
-	static function traduire_requete($query, $serveur) {
+	public static function traduire_requete($query, $serveur) {
 		$requeteur = spip_sqlite::requeteur($serveur);
 		$traducteur = new sqlite_traducteur($query, $requeteur->prefixe, $requeteur->sqlite_version);
 
@@ -2794,7 +2794,7 @@ class spip_sqlite {
 	 *
 	 * @param string $serveur Nom de la connexion
 	 **/
-	static function demarrer_transaction($serveur) {
+	public static function demarrer_transaction($serveur) {
 		spip_sqlite::executer_requete("BEGIN TRANSACTION", $serveur);
 		spip_sqlite::$transaction_en_cours[$serveur] = true;
 	}
@@ -2806,7 +2806,7 @@ class spip_sqlite {
 	 * @param string $serveur Nom de la connexion
 	 * @param null|bool $tracer Demander des statistiques (temps) ?
 	 **/
-	static function executer_requete($query, $serveur, $tracer = null) {
+	public static function executer_requete($query, $serveur, $tracer = null) {
 		$requeteur = spip_sqlite::requeteur($serveur);
 
 		return $requeteur->executer_requete($query, $tracer);
@@ -2818,7 +2818,7 @@ class spip_sqlite {
 	 * @param string $serveur Nom de la connexion
 	 * return int                Identifiant
 	 **/
-	static function last_insert_id($serveur) {
+	public static function last_insert_id($serveur) {
 		$requeteur = spip_sqlite::requeteur($serveur);
 
 		return $requeteur->last_insert_id($serveur);
@@ -2829,7 +2829,7 @@ class spip_sqlite {
 	 *
 	 * @param string $serveur Nom de la connexion
 	 **/
-	static function annuler_transaction($serveur) {
+	public static function annuler_transaction($serveur) {
 		spip_sqlite::executer_requete("ROLLBACK", $serveur);
 		spip_sqlite::$transaction_en_cours[$serveur] = false;
 	}
@@ -2839,7 +2839,7 @@ class spip_sqlite {
 	 *
 	 * @param string $serveur Nom de la connexion
 	 **/
-	static function finir_transaction($serveur) {
+	public static function finir_transaction($serveur) {
 		// si pas de transaction en cours, ne rien faire et le dire
 		if (!isset(spip_sqlite::$transaction_en_cours[$serveur])
 			or spip_sqlite::$transaction_en_cours[$serveur] == false
@@ -2865,20 +2865,20 @@ class spip_sqlite {
 
 class sqlite_requeteur {
 	/** @var string Texte de la requête */
-	var $query = ''; // la requete
+	public $query = ''; // la requete
 	/** @var string Nom de la connexion */
-	var $serveur = '';
+	public $serveur = '';
 	/** @var Ressource Identifiant de la connexion SQLite */
-	var $link = '';
+	public $link = '';
 	/** @var string Prefixe des tables SPIP */
-	var $prefixe = '';
+	public $prefixe = '';
 	/** @var string Nom de la base de donnée */
-	var $db = '';
+	public $db = '';
 	/** @var bool Doit-on tracer les requetes (var_profile) ? */
-	var $tracer = false; // doit-on tracer les requetes (var_profile)
+	public $tracer = false; // doit-on tracer les requetes (var_profile)
 
 	/** @var string Version de SQLite (2 ou 3) */
-	var $sqlite_version = '';
+	public $sqlite_version = '';
 
 	/**
 	 * Constructeur
@@ -2886,7 +2886,7 @@ class sqlite_requeteur {
 	 * @param string $serveur
 	 * @return bool
 	 */
-	function __construct($serveur = '') {
+	public function __construct($serveur = '') {
 		_sqlite_init();
 		$this->serveur = strtolower($serveur);
 
@@ -2914,7 +2914,7 @@ class sqlite_requeteur {
 	 *     true pour tracer la requête
 	 * @return bool|SQLiteResult
 	 */
-	function executer_requete($query, $tracer = null) {
+	public function executer_requete($query, $tracer = null) {
 		if (is_null($tracer)) {
 			$tracer = $this->tracer;
 		}
@@ -2978,7 +2978,7 @@ class sqlite_requeteur {
 	 *
 	 * @return int
 	 **/
-	function last_insert_id() {
+	public function last_insert_id() {
 		if ($this->sqlite_version == 3) {
 			return $this->link->lastInsertId();
 		} else {
@@ -2995,17 +2995,17 @@ class sqlite_requeteur {
  */
 class sqlite_traducteur {
 	/** @var string $query Texte de la requête */
-	var $query = '';
+	public $query = '';
 	/** @var string $prefixe Préfixe des tables */
-	var $prefixe = '';
+	public $prefixe = '';
 	/** @var string $sqlite_version Version de sqlite (2 ou 3) */
-	var $sqlite_version = '';
+	public $sqlite_version = '';
 
 	/** Pour les corrections à effectuer sur les requêtes : array(code=>'texte') trouvé
 	 *
 	 * @var array
 	 */
-	var $textes = array();
+	public $textes = array();
 
 	/**
 	 * Constructeur
@@ -3014,7 +3014,7 @@ class sqlite_traducteur {
 	 * @param string $prefixe Prefixe des tables à utiliser
 	 * @param string $sqlite_version Version SQLite (2 ou 3)
 	 */
-	function __construct($query, $prefixe, $sqlite_version) {
+	public function __construct($query, $prefixe, $sqlite_version) {
 		$this->query = $query;
 		$this->prefixe = $prefixe;
 		$this->sqlite_version = $sqlite_version;
@@ -3027,7 +3027,7 @@ class sqlite_traducteur {
 	 * bien interprétée par SQLite, puis remet les textes
 	 * la fonction affecte `$this->query`
 	 */
-	function traduire_requete() {
+	public function traduire_requete() {
 		//
 		// 1) Protection des textes en les remplacant par des codes
 		//
@@ -3160,7 +3160,7 @@ class sqlite_traducteur {
 	 * @param array $matches Captures
 	 * @return string Texte de date compris par SQLite
 	 */
-	function _remplacerDateParTime($matches) {
+	public function _remplacerDateParTime($matches) {
 		$op = strtoupper($matches[1] == 'ADD') ? '+' : '-';
 
 		return "datetime$matches[2] '$op$matches[3] $matches[4]')";
@@ -3173,7 +3173,7 @@ class sqlite_traducteur {
 	 * @param array $matches Captures
 	 * @return string Texte de liste ordonnée compris par SQLite
 	 */
-	function _remplacerFieldParCase($matches) {
+	public function _remplacerFieldParCase($matches) {
 		$fields = substr($matches[0], 6, -1); // ne recuperer que l'interieur X de field(X)
 		$t = explode(',', $fields);
 		$index = array_shift($t);
