@@ -376,7 +376,7 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 	}
 
 	reset($maj);
-	while (list($v,) = each($maj)) {
+	while (list($v, ) = each($maj)) {
 		// si une maj pour cette version
 		if ($v == 'init' or
 			(spip_version_compare($v, $installee, '>')

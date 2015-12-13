@@ -255,7 +255,7 @@ function sql_select(
 		}
 		// le debug, c'est pour ce qui a ete produit par le compilateur
 		if (isset($GLOBALS['debug']['aucasou'])) {
-			list($table, $id,) = $GLOBALS['debug']['aucasou'];
+			list($table, $id, ) = $GLOBALS['debug']['aucasou'];
 			$nom = $GLOBALS['debug_objets']['courant'] . $id;
 			$GLOBALS['debug_objets']['requete'][$nom] = $query;
 		}
