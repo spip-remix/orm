@@ -2841,7 +2841,7 @@ class spip_sqlite {
 	 **/
 	static function finir_transaction($serveur) {
 		// si pas de transaction en cours, ne rien faire et le dire
-		if (!isset (spip_sqlite::$transaction_en_cours[$serveur])
+		if (!isset(spip_sqlite::$transaction_en_cours[$serveur])
 			OR spip_sqlite::$transaction_en_cours[$serveur] == false
 		) {
 			return false;
