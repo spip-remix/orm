@@ -1963,7 +1963,6 @@ function sql_format_date($annee = 0, $mois = 0, $jour = 0, $h = 0, $m = 0, $s = 
 **/
 function description_table($nom, $serveur = ''){
 
-	global $tables_principales, $tables_auxiliaires;
 	static $trouver_table;
 
 	/* toujours utiliser trouver_table
@@ -1977,12 +1976,12 @@ function description_table($nom, $serveur = ''){
 
 	// sauf a l'installation :
 	include_spip('base/serial');
-	if (isset($tables_principales[$nom]))
-		return $tables_principales[$nom];
+	if (isset($GLOBALS['tables_principales'][$nom]))
+		return $GLOBALS['tables_principales'][$nom];
 
 	include_spip('base/auxiliaires');
-	if (isset($tables_auxiliaires[$nom]))
-		return $tables_auxiliaires[$nom];
+	if (isset($GLOBALS['tables_auxiliaires'][$nom]))
+		return $GLOBALS['tables_auxiliaires'][$nom];
 
 	return false;
 }

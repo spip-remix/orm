@@ -40,18 +40,17 @@ require_once _ROOT_RESTREINT . 'base/objets.php';
  *     - tableau décrivant la connexion sinon
 **/
 function spip_connect($serveur = '', $version = '') {
-	global $connexions, $spip_sql_version;
 
 	$serveur = !is_string($serveur) ? '' : strtolower($serveur);
 	$index = $serveur ? $serveur : 0;
-	if (!$version) $version = $spip_sql_version;
-	if (isset($connexions[$index][$version])) return $connexions[$index];
+	if (!$version) $version = $GLOBALS['spip_sql_version'];
+	if (isset($GLOBALS['connexions'][$index][$version])) return $GLOBALS['connexions'][$index];
 
 	include_spip('base/abstract_sql');
 	$install = (_request('exec') == 'install');
 
 	// Premiere connexion ?
-	if (!($old = isset($connexions[$index]))) {
+	if (!($old = isset($GLOBALS['connexions'][$index]))) {
 		$f = (!preg_match('/^[\w\.]*$/', $serveur))
 		? '' // nom de serveur mal ecrit
 		: ($serveur ?
@@ -81,12 +80,12 @@ function spip_connect($serveur = '', $version = '') {
 				spip_log("spip_connect: fichier de connexion '$f' non trouve", _LOG_INFO_IMPORTANTE);
 			spip_log("spip_connect: echec connexion ou serveur $index mal defini dans '$f'.", _LOG_HS);
 			// ne plus reessayer si ce n'est pas l'install
-			return $connexions[$index]=false;
+			return $GLOBALS['connexions'][$index]=false;
 		}
-		$connexions[$index] = $GLOBALS['db_ok'];
+		$GLOBALS['connexions'][$index] = $GLOBALS['db_ok'];
 	}
 	// si la connexion a deja ete tentee mais a echoue, le dire!
-	if (!$connexions[$index]) return false;
+	if (!$GLOBALS['connexions'][$index]) return false;
 
 	// la connexion a reussi ou etait deja faite.
 	// chargement de la version du jeu de fonctions
@@ -97,13 +96,13 @@ function spip_connect($serveur = '', $version = '') {
 		if (!find_in_path($type . '_' . $version . '.php', 'req/', true)){
 		  spip_log("spip_connect: serveur $index version '$version' non defini pour '$type'", _LOG_HS);
 			// ne plus reessayer
-			return $connexions[$index][$version] = array();
+			return $GLOBALS['connexions'][$index][$version] = array();
 		}
 	}
-	$connexions[$index][$version] = $GLOBALS[$jeu];
-	if ($old) return $connexions[$index];
+	$GLOBALS['connexions'][$index][$version] = $GLOBALS[$jeu];
+	if ($old) return $GLOBALS['connexions'][$index];
 
-	$connexions[$index]['spip_connect_version'] = isset($GLOBALS['spip_connect_version']) ? $GLOBALS['spip_connect_version'] : 0;
+	$GLOBALS['connexions'][$index]['spip_connect_version'] = isset($GLOBALS['spip_connect_version']) ? $GLOBALS['spip_connect_version'] : 0;
 
 	// initialisation de l'alphabet utilise dans les connexions SQL
 	// si l'installation l'a determine.
@@ -113,7 +112,7 @@ function spip_connect($serveur = '', $version = '') {
 	if (!$serveur) {
 		$charset = spip_connect_main($GLOBALS[$jeu],$GLOBALS['db_ok']['charset']);
 		if (!$charset) {
-			unset($connexions[$index]);
+			unset($GLOBALS['connexions'][$index]);
 			spip_log("spip_connect: absence de charset", _LOG_AVERTISSEMENT);
 			return false;
 		}
@@ -124,7 +123,7 @@ function spip_connect($serveur = '', $version = '') {
 		}
 		// spip_meta n'existe pas toujours dans la base
 		// C'est le cas d'un dump sqlite par exemple 
-		elseif ($connexions[$index]['spip_connect_version']
+		elseif ($GLOBALS['connexions'][$index]['spip_connect_version']
 		  AND sql_showtable('spip_meta', true, $serveur)
 		  AND $r = sql_getfetsel('valeur', 'spip_meta', "nom='charset_sql_connexion'",'','','','',$serveur)){
 			$charset = $r;
@@ -138,7 +137,7 @@ function spip_connect($serveur = '', $version = '') {
 		if (function_exists($f))
 			$f($charset, $serveur);
 	}
-	return $connexions[$index];
+	return $GLOBALS['connexions'][$index];
 }
 
 /**
@@ -454,8 +453,7 @@ function query_reinjecte_textes($query, $textes){
  *     - indéfini sinon.
 **/
 function spip_query($query, $serveur = '') {
-	global $spip_sql_version;
-	$f = spip_connect_sql($spip_sql_version, 'query', $serveur, true);
+	$f = spip_connect_sql($GLOBALS['spip_sql_version'], 'query', $serveur, true);
 	return function_exists($f) ? $f($query, $serveur) : false;
 }
 

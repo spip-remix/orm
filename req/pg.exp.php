@@ -1016,10 +1016,10 @@ function spip_pg_replace_multi($table, $tab_couples, $desc = array(), $serveur =
 // http://code.spip.net/@spip_pg_sequence
 function spip_pg_sequence($table, $raw = false)
 {
-	global $tables_principales;
+
 	include_spip('base/serial');
-	if (!isset($tables_principales[$table])) return false;
-	$desc = $tables_principales[$table];
+	if (!isset($GLOBALS['tables_principales'][$table])) return false;
+	$desc = $GLOBALS['tables_principales'][$table];
 	$prim = @$desc['key']['PRIMARY KEY'];
 	if (!preg_match('/^\w+$/', $prim)
 	OR strpos($desc['field'][$prim], 'int') === false)

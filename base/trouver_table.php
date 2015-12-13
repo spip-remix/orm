@@ -63,7 +63,6 @@ include_spip('base/objets');
 **/
 function base_trouver_table_dist($nom, $serveur = '', $table_spip = true){
 	static $nom_cache_desc_sql=array();
-	global $tables_principales, $tables_auxiliaires, $table_des_tables;
 
 	if (!spip_connect($serveur)
 	OR !preg_match('/^[a-zA-Z0-9._-]*/',$nom))
@@ -103,8 +102,8 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true){
 
 	// base sous SPIP: gerer les abreviations explicites des noms de table
 	if ($connexion['spip_connect_version']) {
-		if ($table_spip AND isset($table_des_tables[$nom])) {
-			$nom = $table_des_tables[$nom];
+		if ($table_spip AND isset($GLOBALS['table_des_tables'][$nom])) {
+			$nom = $GLOBALS['table_des_tables'][$nom];
 			$nom_sql = 'spip_' . $nom;
 		}
 	}
@@ -122,19 +121,19 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true){
 	}
 	if ($table_spip AND !isset($connexion['tables'][$nom_sql])) {
 
-		if (isset($tables_principales[$nom_sql]))
-			$fdesc = $tables_principales[$nom_sql];
+		if (isset($GLOBALS['tables_principales'][$nom_sql]))
+			$fdesc = $GLOBALS['tables_principales'][$nom_sql];
 		// meme si pas d'abreviation declaree, trouver la table spip_$nom
 		// si c'est une table principale,
 		// puisqu'on le fait aussi pour les tables auxiliaires
-		elseif ($nom_sql==$nom AND isset($tables_principales['spip_' .$nom])){
+		elseif ($nom_sql==$nom AND isset($GLOBALS['tables_principales']['spip_' .$nom])){
 			$nom_sql = 'spip_' . $nom;
-			$fdesc = &$tables_principales[$nom_sql];
+			$fdesc = &$GLOBALS['tables_principales'][$nom_sql];
 		}
-		elseif (isset($tables_auxiliaires[$n=$nom])
-		  OR isset($tables_auxiliaires[$n='spip_'.$nom])) {
+		elseif (isset($GLOBALS['tables_auxiliaires'][$n=$nom])
+		  OR isset($GLOBALS['tables_auxiliaires'][$n='spip_'.$nom])) {
 			$nom_sql = $n;
-			$fdesc = &$tables_auxiliaires[$n];
+			$fdesc = &$GLOBALS['tables_auxiliaires'][$n];
 		}  # table locale a cote de SPIP, comme non SPIP:
 	}
 	if (!isset($connexion['tables'][$nom_sql])) {

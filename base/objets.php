@@ -910,12 +910,12 @@ function table_objet($type, $serveur = '') {
  *     Nom de la table SQL
 **/
 function table_objet_sql($type, $serveur = '') {
-	global $table_des_tables;
+
 	$nom = table_objet($type, $serveur);
-	if (!isset($table_des_tables['articles'])) // eviter de multiples inclusions
+	if (!isset($GLOBALS['table_des_tables']['articles'])) // eviter de multiples inclusions
 		include_spip('public/interfaces');
-	if (isset($table_des_tables[$nom])) {
-		$nom = $table_des_tables[$nom];
+	if (isset($GLOBALS['table_des_tables'][$nom])) {
+		$nom = $GLOBALS['table_des_tables'][$nom];
 		$nom = "spip_$nom";
 	}
 	else {
