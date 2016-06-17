@@ -65,10 +65,10 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 	if (is_null($infos_tables) or $plugin_hash !== $_PLUGINS_HASH) {
 		// pas de reentrance (cas base/serial)
 		if ($deja_la) {
-			spip_log("Re-entrance anormale sur lister_tables_objets_sql :"
+			spip_log('Re-entrance anormale sur lister_tables_objets_sql : '
 				. var_export(debug_backtrace(), true), _LOG_CRITIQUE);
 
-			return ($table_sql === "::md5" ? $md5 : array());
+			return ($table_sql === '::md5' ? $md5 : array());
 		}
 		$deja_la = true;
 		$plugin_hash = $_PLUGINS_HASH; // avant de lancer les pipelines
@@ -122,44 +122,44 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 					'ps'
 				),
 				'field' => array(
-					"id_article" => "bigint(21) NOT NULL",
-					"surtitre" => "text DEFAULT '' NOT NULL",
-					"titre" => "text DEFAULT '' NOT NULL",
-					"soustitre" => "text DEFAULT '' NOT NULL",
-					"id_rubrique" => "bigint(21) DEFAULT '0' NOT NULL",
-					"descriptif" => "text DEFAULT '' NOT NULL",
-					"chapo" => "mediumtext DEFAULT '' NOT NULL",
-					"texte" => "longtext DEFAULT '' NOT NULL",
-					"ps" => "mediumtext DEFAULT '' NOT NULL",
-					"date" => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-					"statut" => "varchar(10) DEFAULT '0' NOT NULL",
-					"id_secteur" => "bigint(21) DEFAULT '0' NOT NULL",
-					"maj" => "TIMESTAMP",
-					"export" => "VARCHAR(10) DEFAULT 'oui'",
-					"date_redac" => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-					"visites" => "integer DEFAULT '0' NOT NULL",
-					"referers" => "integer DEFAULT '0' NOT NULL",
-					"popularite" => "DOUBLE DEFAULT '0' NOT NULL",
-					"accepter_forum" => "CHAR(3) DEFAULT '' NOT NULL",
-					"date_modif" => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-					"lang" => "VARCHAR(10) DEFAULT '' NOT NULL",
-					"langue_choisie" => "VARCHAR(3) DEFAULT 'non'",
-					"id_trad" => "bigint(21) DEFAULT '0' NOT NULL",
-					"nom_site" => "tinytext DEFAULT '' NOT NULL",
-					"url_site" => "text DEFAULT '' NOT NULL",
-					"virtuel" => "text DEFAULT '' NOT NULL",
+					'id_article' => 'bigint(21) NOT NULL',
+					'surtitre' => "text DEFAULT '' NOT NULL",
+					'titre' => "text DEFAULT '' NOT NULL",
+					'soustitre' => "text DEFAULT '' NOT NULL",
+					'id_rubrique' => "bigint(21) DEFAULT '0' NOT NULL",
+					'descriptif' => "text DEFAULT '' NOT NULL",
+					'chapo' => "mediumtext DEFAULT '' NOT NULL",
+					'texte' => "longtext DEFAULT '' NOT NULL",
+					'ps' => "mediumtext DEFAULT '' NOT NULL",
+					'date' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+					'statut' => "varchar(10) DEFAULT '0' NOT NULL",
+					'id_secteur' => "bigint(21) DEFAULT '0' NOT NULL",
+					'maj' => 'TIMESTAMP',
+					'export' => "VARCHAR(10) DEFAULT 'oui'",
+					'date_redac' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+					'visites' => "integer DEFAULT '0' NOT NULL",
+					'referers' => "integer DEFAULT '0' NOT NULL",
+					'popularite' => "DOUBLE DEFAULT '0' NOT NULL",
+					'accepter_forum' => "CHAR(3) DEFAULT '' NOT NULL",
+					'date_modif' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+					'lang' => "VARCHAR(10) DEFAULT '' NOT NULL",
+					'langue_choisie' => "VARCHAR(3) DEFAULT 'non'",
+					'id_trad' => "bigint(21) DEFAULT '0' NOT NULL",
+					'nom_site' => "tinytext DEFAULT '' NOT NULL",
+					'url_site' => "text DEFAULT '' NOT NULL",
+					'virtuel' => "text DEFAULT '' NOT NULL",
 				),
 				'key' => array(
-					"PRIMARY KEY" => "id_article",
-					"KEY id_rubrique" => "id_rubrique",
-					"KEY id_secteur" => "id_secteur",
-					"KEY id_trad" => "id_trad",
-					"KEY lang" => "lang",
-					"KEY statut" => "statut, date",
+					'PRIMARY KEY' => 'id_article',
+					'KEY id_rubrique' => 'id_rubrique',
+					'KEY id_secteur' => 'id_secteur',
+					'KEY id_trad' => 'id_trad',
+					'KEY lang' => 'lang',
+					'KEY statut' => 'statut, date',
 				),
 				'join' => array(
-					"id_article" => "id_article",
-					"id_rubrique" => "id_rubrique"
+					'id_article' => 'id_article',
+					'id_rubrique' => 'id_rubrique'
 				),
 				'rechercher_champs' => array(
 					'surtitre' => 5,
@@ -223,37 +223,37 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 				'champs_editables' => array('nom', 'email', 'bio', 'nom_site', 'url_site', 'imessage', 'pgp'),
 				'champs_versionnes' => array('nom', 'bio', 'email', 'nom_site', 'url_site', 'login'),
 				'field' => array(
-					"id_auteur" => "bigint(21) NOT NULL",
-					"nom" => "text DEFAULT '' NOT NULL",
-					"bio" => "text DEFAULT '' NOT NULL",
-					"email" => "tinytext DEFAULT '' NOT NULL",
-					"nom_site" => "tinytext DEFAULT '' NOT NULL",
-					"url_site" => "text DEFAULT '' NOT NULL",
-					"login" => "VARCHAR(255) BINARY",
-					"pass" => "tinytext DEFAULT '' NOT NULL",
-					"low_sec" => "tinytext DEFAULT '' NOT NULL",
-					"statut" => "varchar(255)  DEFAULT '0' NOT NULL",
-					"webmestre" => "varchar(3)  DEFAULT 'non' NOT NULL",
-					"maj" => "TIMESTAMP",
-					"pgp" => "TEXT DEFAULT '' NOT NULL",
-					"htpass" => "tinytext DEFAULT '' NOT NULL",
-					"en_ligne" => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-					"alea_actuel" => "tinytext",
-					"alea_futur" => "tinytext",
-					"prefs" => "tinytext",
-					"cookie_oubli" => "tinytext",
-					"source" => "VARCHAR(10) DEFAULT 'spip' NOT NULL",
-					"lang" => "VARCHAR(10) DEFAULT '' NOT NULL"
+					'id_auteur' => 'bigint(21) NOT NULL',
+					'nom' => "text DEFAULT '' NOT NULL",
+					'bio' => "text DEFAULT '' NOT NULL",
+					'email' => "tinytext DEFAULT '' NOT NULL",
+					'nom_site' => "tinytext DEFAULT '' NOT NULL",
+					'url_site' => "text DEFAULT '' NOT NULL",
+					'login' => 'VARCHAR(255) BINARY',
+					'pass' => "tinytext DEFAULT '' NOT NULL",
+					'low_sec' => "tinytext DEFAULT '' NOT NULL",
+					'statut' => "varchar(255)  DEFAULT '0' NOT NULL",
+					'webmestre' => "varchar(3)  DEFAULT 'non' NOT NULL",
+					'maj' => 'TIMESTAMP',
+					'pgp' => "TEXT DEFAULT '' NOT NULL",
+					'htpass' => "tinytext DEFAULT '' NOT NULL",
+					'en_ligne' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+					'alea_actuel' => 'tinytext',
+					'alea_futur' => 'tinytext',
+					'prefs' => 'tinytext',
+					'cookie_oubli' => 'tinytext',
+					'source' => "VARCHAR(10) DEFAULT 'spip' NOT NULL",
+					'lang' => "VARCHAR(10) DEFAULT '' NOT NULL"
 				),
 				'key' => array(
-					"PRIMARY KEY" => "id_auteur",
-					"KEY login" => "login",
-					"KEY statut" => "statut",
-					"KEY en_ligne" => "en_ligne",
+					'PRIMARY KEY' => 'id_auteur',
+					'KEY login' => 'login',
+					'KEY statut' => 'statut',
+					'KEY en_ligne' => 'en_ligne',
 				),
 				'join' => array(
-					"id_auteur" => "id_auteur",
-					"login" => "login"
+					'id_auteur' => 'id_auteur',
+					'login' => 'login'
 				),
 				'rechercher_champs' => array(
 					'nom' => 5,
@@ -329,25 +329,25 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 				'champs_editables' => array('titre', 'texte', 'descriptif', 'extra'),
 				'champs_versionnes' => array('titre', 'descriptif', 'texte'),
 				'field' => array(
-					"id_rubrique" => "bigint(21) NOT NULL",
-					"id_parent" => "bigint(21) DEFAULT '0' NOT NULL",
-					"titre" => "text DEFAULT '' NOT NULL",
-					"descriptif" => "text DEFAULT '' NOT NULL",
-					"texte" => "longtext DEFAULT '' NOT NULL",
-					"id_secteur" => "bigint(21) DEFAULT '0' NOT NULL",
-					"maj" => "TIMESTAMP",
-					"statut" => "varchar(10) DEFAULT '0' NOT NULL",
-					"date" => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-					"lang" => "VARCHAR(10) DEFAULT '' NOT NULL",
-					"langue_choisie" => "VARCHAR(3) DEFAULT 'non'",
-					"statut_tmp" => "varchar(10) DEFAULT '0' NOT NULL",
-					"date_tmp" => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
-					"profondeur" => "smallint(5) DEFAULT '0' NOT NULL"
+					'id_rubrique' => 'bigint(21) NOT NULL',
+					'id_parent' => "bigint(21) DEFAULT '0' NOT NULL",
+					'titre' => "text DEFAULT '' NOT NULL",
+					'descriptif' => "text DEFAULT '' NOT NULL",
+					'texte' => "longtext DEFAULT '' NOT NULL",
+					'id_secteur' => "bigint(21) DEFAULT '0' NOT NULL",
+					'maj' => 'TIMESTAMP',
+					'statut' => "varchar(10) DEFAULT '0' NOT NULL",
+					'date' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+					'lang' => "VARCHAR(10) DEFAULT '' NOT NULL",
+					'langue_choisie' => "VARCHAR(3) DEFAULT 'non'",
+					'statut_tmp' => "varchar(10) DEFAULT '0' NOT NULL",
+					'date_tmp' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
+					'profondeur' => "smallint(5) DEFAULT '0' NOT NULL"
 				),
 				'key' => array(
-					"PRIMARY KEY" => "id_rubrique",
-					"KEY lang" => "lang",
-					"KEY id_parent" => "id_parent",
+					'PRIMARY KEY' => 'id_rubrique',
+					'KEY lang' => 'lang',
+					'KEY id_parent' => 'id_parent',
 				),
 				'rechercher_champs' => array(
 					'titre' => 8,
@@ -410,8 +410,10 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 					}
 					$infos_tables[$t][$i] = array_merge(isset($infos_tables[$t][$i]) ? $infos_tables[$t][$i] : array(), $add);
 				} else {
-					$infos_tables[$t][$i] = array_merge_recursive(isset($infos_tables[$t][$i]) ? $infos_tables[$t][$i] : array(),
-						$all[$i]);
+					$infos_tables[$t][$i] = array_merge_recursive(
+						isset($infos_tables[$t][$i]) ? $infos_tables[$t][$i] : array(),
+						$all[$i]
+					);
 				}
 			}
 		}
@@ -440,8 +442,10 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 			if (count($mem)) {
 				foreach (array_keys($mem) as $k) {
 					if (isset($GLOBALS[$principale_ou_auxiliaire][$table][$k])) {
-						$GLOBALS[$principale_ou_auxiliaire][$table][$k] = array_merge($GLOBALS[$principale_ou_auxiliaire][$table][$k],
-							$mem[$k]);
+						$GLOBALS[$principale_ou_auxiliaire][$table][$k] = array_merge(
+							$GLOBALS[$principale_ou_auxiliaire][$table][$k],
+							$mem[$k]
+						);
 					} else {
 						$GLOBALS[$principale_ou_auxiliaire][$table][$k] = $mem[$k];
 					}
@@ -461,7 +465,7 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 		// signature
 		$md5 = md5(serialize($infos_tables));
 	}
-	if ($table_sql === "::md5") {
+	if ($table_sql === '::md5') {
 		return $md5;
 	}
 	if ($table_sql and !isset($infos_tables[$table_sql])) {
@@ -490,21 +494,21 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 function base_serial(&$tables_principales) {
 
 	$spip_jobs = array(
-		"id_job" => "bigint(21) NOT NULL",
-		"descriptif" => "text DEFAULT '' NOT NULL",
-		"fonction" => "varchar(255) NOT NULL", //nom de la fonction
-		"args" => "longblob DEFAULT '' NOT NULL", // arguments
-		"md5args" => "char(32) NOT NULL default ''", // signature des arguments
-		"inclure" => "varchar(255) NOT NULL", // fichier a inclure ou path/ pour charger_fonction
-		"priorite" => "smallint(6) NOT NULL default 0",
-		"date" => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL", // date au plus tot
-		"status" => "tinyint NOT NULL default 1",
+		'id_job' => 'bigint(21) NOT NULL',
+		'descriptif' => "text DEFAULT '' NOT NULL",
+		'fonction' => 'varchar(255) NOT NULL', //nom de la fonction
+		'args' => "longblob DEFAULT '' NOT NULL", // arguments
+		'md5args' => "char(32) NOT NULL default ''", // signature des arguments
+		'inclure' => 'varchar(255) NOT NULL', // fichier a inclure ou path/ pour charger_fonction
+		'priorite' => 'smallint(6) NOT NULL default 0',
+		'date' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL", // date au plus tot
+		'status' => 'tinyint NOT NULL default 1',
 	);
 
 	$spip_jobs_key = array(
-		"PRIMARY KEY" => "id_job",
-		"KEY date" => "date",
-		"KEY status" => "status",
+		'PRIMARY KEY' => 'id_job',
+		'KEY date' => 'date',
+		'KEY status' => 'status',
 	);
 
 	/// Attention: mes_fonctions peut avoir deja defini cette variable
@@ -522,51 +526,51 @@ function base_serial(&$tables_principales) {
  **/
 function base_auxiliaires(&$tables_auxiliaires) {
 	$spip_resultats = array(
-		"recherche" => "char(16) DEFAULT '' NOT NULL",
-		"id" => "INT UNSIGNED NOT NULL",
-		"points" => "INT UNSIGNED DEFAULT '0' NOT NULL",
-		"table_objet" => "varchar(30) DEFAULT '' NOT NULL",
-		"serveur" => "char(16) DEFAULT '' NOT NULL", // hash md5 partiel du serveur de base ('' pour le serveur principal)
-		"maj" => "TIMESTAMP"
+		'recherche' => "char(16) DEFAULT '' NOT NULL",
+		'id' => 'INT UNSIGNED NOT NULL',
+		'points' => "INT UNSIGNED DEFAULT '0' NOT NULL",
+		'table_objet' => "varchar(30) DEFAULT '' NOT NULL",
+		'serveur' => "char(16) DEFAULT '' NOT NULL", // hash md5 partiel du serveur de base ('' pour le serveur principal)
+		'maj' => 'TIMESTAMP'
 	);
 
 	$spip_resultats_key = array(// pas de cle ni index, ca fait des insertions plus rapides et les requetes jointes utilisees en recheche ne sont pas plus lentes ...
 	);
 
 	$spip_auteurs_liens = array(
-		"id_auteur" => "bigint(21) DEFAULT '0' NOT NULL",
-		"id_objet" => "bigint(21) DEFAULT '0' NOT NULL",
-		"objet" => "VARCHAR (25) DEFAULT '' NOT NULL",
-		"vu" => "VARCHAR(6) DEFAULT 'non' NOT NULL"
+		'id_auteur' => "bigint(21) DEFAULT '0' NOT NULL",
+		'id_objet' => "bigint(21) DEFAULT '0' NOT NULL",
+		'objet' => "VARCHAR (25) DEFAULT '' NOT NULL",
+		'vu' => "VARCHAR(6) DEFAULT 'non' NOT NULL"
 	);
 
 	$spip_auteurs_liens_key = array(
-		"PRIMARY KEY" => "id_auteur,id_objet,objet",
-		"KEY id_auteur" => "id_auteur",
-		"KEY id_objet" => "id_objet",
-		"KEY objet" => "objet",
+		'PRIMARY KEY' => 'id_auteur,id_objet,objet',
+		'KEY id_auteur' => 'id_auteur',
+		'KEY id_objet' => 'id_objet',
+		'KEY objet' => 'objet',
 	);
 
 	$spip_meta = array(
-		"nom" => "VARCHAR (255) NOT NULL",
-		"valeur" => "text DEFAULT ''",
-		"impt" => "ENUM('non', 'oui') DEFAULT 'oui' NOT NULL",
-		"maj" => "TIMESTAMP"
+		'nom' => 'VARCHAR (255) NOT NULL',
+		'valeur' => "text DEFAULT ''",
+		'impt' => "ENUM('non', 'oui') DEFAULT 'oui' NOT NULL",
+		'maj' => 'TIMESTAMP'
 	);
 
 	$spip_meta_key = array(
-		"PRIMARY KEY" => "nom"
+		'PRIMARY KEY' => 'nom'
 	);
 
 	$spip_jobs_liens = array(
-		"id_job" => "bigint(21) DEFAULT '0' NOT NULL",
-		"id_objet" => "bigint(21) DEFAULT '0' NOT NULL",
-		"objet" => "VARCHAR (25) DEFAULT '' NOT NULL",
+		'id_job' => "bigint(21) DEFAULT '0' NOT NULL",
+		'id_objet' => "bigint(21) DEFAULT '0' NOT NULL",
+		'objet' => "VARCHAR (25) DEFAULT '' NOT NULL",
 	);
 
 	$spip_jobs_liens_key = array(
-		"PRIMARY KEY" => "id_job,id_objet,objet",
-		"KEY id_job" => "id_job"
+		'PRIMARY KEY' => 'id_job,id_objet,objet',
+		'KEY id_job' => 'id_job'
 	);
 
 	$tables_auxiliaires['spip_auteurs_liens'] = array(
@@ -646,8 +650,8 @@ function renseigner_table_objet_sql($table_sql, &$infos) {
 	if (!isset($infos['type'])) {
 		// si on arrive de base/trouver_table, on a la cle primaire :
 		// s'en servir pour extrapoler le type
-		if (isset($infos['key']["PRIMARY KEY"])) {
-			$primary = $infos['key']["PRIMARY KEY"];
+		if (isset($infos['key']['PRIMARY KEY'])) {
+			$primary = $infos['key']['PRIMARY KEY'];
 			$primary = explode(',', $primary);
 			$primary = reset($primary);
 			$infos['type'] = preg_replace(',^spip_|^id_|s$,', '', $primary);
@@ -712,8 +716,8 @@ function renseigner_table_objet_sql($table_sql, &$infos) {
 	if (!isset($infos['texte_creer_associer'])) {
 		$infos['texte_creer_associer'] = $infos['type'] . ':' . 'texte_creer_associer_' . $infos['type'];
 	}
-	if (!isset($infos['texte_ajouter'])) // Ajouter un X
-	{
+	if (!isset($infos['texte_ajouter'])) {
+		// Ajouter un X
 		$infos['texte_ajouter'] = $infos['type'] . ':' . 'texte_ajouter_' . $infos['type'];
 	}
 	if (!isset($infos['texte_objets'])) {
@@ -722,19 +726,18 @@ function renseigner_table_objet_sql($table_sql, &$infos) {
 	if (!isset($infos['texte_objet'])) {
 		$infos['texte_objet'] = $infos['type'] . ':' . 'titre_' . $infos['type'];
 	}
-	if (!isset($infos['texte_logo_objet']))  // objet:titre_logo_objet "Logo de ce X"
-	{
+	if (!isset($infos['texte_logo_objet'])) {
+		// objet:titre_logo_objet "Logo de ce X"
 		$infos['texte_logo_objet'] = $infos['type'] . ':' . 'titre_logo_' . $infos['type'];
 	}
-	if (!isset($infos['texte_langue_objet']))  // objet:texte_langue_objet "Langue de ce X"
-	{
+	if (!isset($infos['texte_langue_objet'])) {
+		// objet:texte_langue_objet "Langue de ce X"
 		$infos['texte_langue_objet'] = $infos['type'] . ':' . 'titre_langue_' . $infos['type'];
 	}
-	if (!isset($infos['texte_definir_comme_traduction_objet']))  // "Ce X est une traduction du X numéro :"
-	{
+	if (!isset($infos['texte_definir_comme_traduction_objet'])) {
+		// "Ce X est une traduction du X numéro :"
 		$infos['texte_definir_comme_traduction_objet'] = $infos['type'] . ':' . 'texte_definir_comme_traduction_' . $infos['type'];
 	}
-
 
 	// objet:info_aucun_objet
 	if (!isset($infos['info_aucun_objet'])) {
@@ -748,7 +751,6 @@ function renseigner_table_objet_sql($table_sql, &$infos) {
 	if (!isset($infos['info_nb_objets'])) {
 		$infos['info_nb_objets'] = $infos['type'] . ':' . 'info_nb_' . $infos['table_objet'];
 	}
-
 
 	if (!isset($infos['champs_editables'])) {
 		$infos['champs_editables'] = array();
@@ -788,15 +790,15 @@ function renseigner_table_objet_interfaces($table_sql, &$infos) {
 		if (isset($infos['table_objet']) and isset($GLOBALS['table_titre'][$infos['table_objet']])) {
 			$infos['titre'] = $GLOBALS['table_titre'][$infos['table_objet']];
 		} else {
-			$infos['titre'] = ((isset($infos['field']['titre'])) ? "titre," : "'' as titre,");
-			$infos['titre'] .= ((isset($infos['field']['lang'])) ? "lang" : "'' as lang");
+			$infos['titre'] = ((isset($infos['field']['titre'])) ? 'titre,' : "'' as titre,");
+			$infos['titre'] .= ((isset($infos['field']['lang'])) ? 'lang' : "'' as lang");
 		}
 	}
 	if (!isset($infos['date'])) {
 		if (isset($infos['table_objet']) and isset($GLOBALS['table_date'][$infos['table_objet']])) {
 			$infos['date'] = $GLOBALS['table_date'][$infos['table_objet']];
 		} else {
-			$infos['date'] = ((isset($infos['field']['date'])) ? "date" : '');
+			$infos['date'] = ((isset($infos['field']['date'])) ? 'date' : '');
 		}
 	}
 	if (!isset($infos['statut'])) {
@@ -860,14 +862,16 @@ function lister_tables_objets_surnoms() {
 		// passer dans un pipeline qui permet aux plugins de declarer leurs exceptions
 		// pour compatibilite, car il faut dorenavent utiliser
 		// declarer_table_objets_sql
-		$surnoms = pipeline('declarer_tables_objets_surnoms',
+		$surnoms = pipeline(
+			'declarer_tables_objets_surnoms',
 			array(
 				# pour les modeles
 				# a enlever ?
 				'doc' => 'documents',
 				'img' => 'documents',
 				'emb' => 'documents',
-			));
+			)
+		);
 		$infos_tables = lister_tables_objets_sql();
 		foreach ($infos_tables as $t => $infos) {
 			// cas de base type=>table
@@ -940,8 +944,8 @@ function lister_tables_spip($serveur = '') {
 	static $tables = array();
 	if (!isset($tables[$serveur])) {
 		$tables[$serveur] = array();
-		if (!function_exists("sql_alltable")) {
-			include_spip("base/abstract_sql");
+		if (!function_exists('sql_alltable')) {
+			include_spip('base/abstract_sql');
 		}
 		$ts = sql_alltable(null, $serveur); // toutes les tables "spip_" (ou prefixe perso)
 		$connexion = $GLOBALS['connexions'][$serveur ? $serveur : 0];
@@ -984,14 +988,12 @@ function table_objet($type, $serveur = '') {
 	if ($serveur !== false) {
 		$t = lister_tables_spip($serveur);
 		$trouver_table = charger_fonction('trouver_table', 'base');
-		$typetrim = rtrim($type, 's') . "s";
-		if (
-			(isset($t[$typetrim]) or in_array($typetrim, $t))
-			and ($desc = $trouver_table(rtrim($type, 's') . "s", $serveur))
+		$typetrim = rtrim($type, 's') . 's';
+		if ((isset($t[$typetrim]) or in_array($typetrim, $t))
+			and ($desc = $trouver_table(rtrim($type, 's') . 's', $serveur))
 		) {
 			return $desc['id_table'];
-		} elseif (
-			(isset($t[$type]) or in_array($type, $t))
+		} elseif ((isset($t[$type]) or in_array($type, $t))
 			and ($desc = $trouver_table($type, $serveur))
 		) {
 			return $desc['id_table'];
@@ -1001,7 +1003,7 @@ function table_objet($type, $serveur = '') {
 		#spip_log(debug_backtrace(),'db');
 	}
 
-	return rtrim($type, 's') . "s"; # cas historique ne devant plus servir, sauf si $serveur=false
+	return rtrim($type, 's') . 's'; # cas historique ne devant plus servir, sauf si $serveur=false
 }
 
 /**
@@ -1023,8 +1025,8 @@ function table_objet($type, $serveur = '') {
 function table_objet_sql($type, $serveur = '') {
 
 	$nom = table_objet($type, $serveur);
-	if (!isset($GLOBALS['table_des_tables']['articles'])) // eviter de multiples inclusions
-	{
+	if (!isset($GLOBALS['table_des_tables']['articles'])) {
+		// eviter de multiples inclusions
 		include_spip('public/interfaces');
 	}
 	if (isset($GLOBALS['table_des_tables'][$nom])) {
@@ -1178,7 +1180,7 @@ function objet_type($table_objet, $serveur = '') {
 function objet_test_si_publie($objet, $id_objet, $serveur = '') {
 	// voir si une fonction est definie pour faire le boulot
 	// elle a la priorite dans ce cas
-	if ($f = charger_fonction($objet . "_test_si_publie", "base", true)) {
+	if ($f = charger_fonction($objet . '_test_si_publie', 'base', true)) {
 		return $f($objet, $id_objet, $serveur);
 	}
 
@@ -1203,8 +1205,20 @@ function objet_test_si_publie($objet, $id_objet, $serveur = '') {
 		include_spip('public/compiler');
 		include_spip('public/composer');
 		instituer_boucle($boucle, false, true);
-		$res = calculer_select($boucle->select, $boucle->from, $boucle->from_type, $boucle->where, $boucle->join,
-			$boucle->group, $boucle->order, $boucle->limit, $boucle->having, $table_objet, $id_table, $serveur);
+		$res = calculer_select(
+			$boucle->select,
+			$boucle->from,
+			$boucle->from_type,
+			$boucle->where,
+			$boucle->join,
+			$boucle->group,
+			$boucle->order,
+			$boucle->limit,
+			$boucle->having,
+			$table_objet,
+			$id_table,
+			$serveur
+		);
 		if (sql_fetch($res)) {
 			return true;
 		}
