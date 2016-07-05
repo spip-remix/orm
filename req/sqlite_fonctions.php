@@ -10,19 +10,31 @@
  *  Pour plus de details voir le fichier COPYING.txt ou l'aide en ligne.   *
 \***************************************************************************/
 
-
+/**
+ * Ce fichier déclare des fonctions étendant les fonctions natives de SQLite
+ *
+ * @package SPIP\Core\SQL\SQLite\Fonctions
+ */
+ 
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
-/*
- * Des fonctions pour les requetes SQL
+/**
+ * Déclarer à SQLite des fonctions spécifiques utilisables dans les requêtes SQL
  * 
- * Voir la liste des fonctions natives : http://www.sqlite.org/lang_corefunc.html
- * Et la liste des evolutions pour : http://sqlite.org/changes.html
+ * SQLite ne supporte nativement que certaines fonctions dans les requêtes SQL.
+ * Cependant, il permet d'étendre très facilement celles-ci en déclarant de 
+ * nouvelles fonctions.
  * 
+ * C'est ce qui est fait ici, en ajoutant des fonctions qui existent aussi 
+ * dans d'autres moteurs, notamment en MySQL.
+ * 
+ * @link http://www.sqlite.org/lang_corefunc.html Liste des fonctions natives
+ * @link http://sqlite.org/changes.html Liste des évolutions
+ * 
+ * @param PDO|resource $sqlite Représente la connexion Sqlite
  */
-// http://code.spip.net/@_sqlite_init_functions
 function _sqlite_init_functions(&$sqlite) {
 
 	if (!$sqlite) {
@@ -31,64 +43,69 @@ function _sqlite_init_functions(&$sqlite) {
 
 
 	$fonctions = array(
+
+		// C
+		'CEIL'   => array('_sqlite_func_ceil', 1),
 		'CONCAT' => array('_sqlite_func_concat', -1),
-		'CEIL' => array('_sqlite_func_ceil', 1),
-		// absent de sqlite2
 
+		// D
 		'DATE_FORMAT' => array('_sqlite_func_strftime', 2),
-		'DAYOFMONTH' => array('_sqlite_func_dayofmonth', 1),
+		'DAYOFMONTH'  => array('_sqlite_func_dayofmonth', 1),
 
-		'EXTRAIRE_MULTI' => array('_sqlite_func_extraire_multi', 2),
-		// specifique a SPIP/sql_multi()
-		'EXP' => array('exp', 1),
-		//exponentielle
+		// E
+		'EXTRAIRE_MULTI' => array('_sqlite_func_extraire_multi', 2), // specifique a SPIP/sql_multi()
+		'EXP'            => array('exp', 1),
+
+		// F
 		'FIND_IN_SET' => array('_sqlite_func_find_in_set', 2),
-		'FLOOR' => array('_sqlite_func_floor', 1),
-		// absent de sqlite2
+		'FLOOR'       => array('_sqlite_func_floor', 1),
 
-		'IF' => array('_sqlite_func_if', 3),
+		// I
+		'IF'     => array('_sqlite_func_if', 3),
 		'INSERT' => array('_sqlite_func_insert', 4),
-		'INSTR' => array('_sqlite_func_instr', 2),
+		'INSTR'  => array('_sqlite_func_instr', 2),
 
-		'LEAST' => array('_sqlite_func_least', 3),
-		'_LEFT' => array('_sqlite_func_left', 2),
-#		'LENGTH'		=> array( 'strlen'						,1), // present v1.0.4
-#		'LOWER'			=> array( 'strtolower'					,1), // present v2.4
-#		'LTRIM'			=> array( 'ltrim'						,1), // present en theorie
+		// L
+		'LEAST'  => array('_sqlite_func_least', 3),
+		'_LEFT'  => array('_sqlite_func_left', 2),
+#		'LENGTH' => array('strlen', 1), // present v1.0.4
+#		'LOWER'  => array('strtolower', 1), // present v2.4
+#		'LTRIM'  => array('ltrim', 1), // present
 
+		// N
 		'NOW' => array('_sqlite_func_now', 0),
 
-		'MD5' => array('md5', 1),
+		// M
+		'MD5'   => array('md5', 1),
 		'MONTH' => array('_sqlite_func_month', 1),
 
+		// P
 		'PREG_REPLACE' => array('_sqlite_func_preg_replace', 3),
 
-		'RAND' => array('_sqlite_func_rand', 0),
-		// sinon random() v2.4
-		'REGEXP' => array('_sqlite_func_regexp_match', 2),
-		// critere REGEXP supporte a partir de v3.3.2
-		//'REGEXP_MATCH'	=> array( '_sqlite_func_regexp_match'	,2), // critere REGEXP supporte a partir de v3.3.2
+		// R
+		'RAND'   => array('_sqlite_func_rand', 0), // sinon random() v2.4
+		'REGEXP' => array('_sqlite_func_regexp_match', 2), // critere REGEXP supporte a partir de v3.3.2
+		'RIGHT'  => array('_sqlite_func_right', 2),
+#		'RTRIM'  => array('rtrim', 1), // present
 
-		'RIGHT' => array('_sqlite_func_right', 2),
-#		'RTRIM'			=> array( 'rtrim'						,1), // present en theorie
+		// S
+		'SETTYPE'   => array('settype', 2), // CAST present en v3.2.3
+		'SQRT'      => array('sqrt', 1),
+		'SUBSTRING' => array('_sqlite_func_substring' /*, 3*/), // peut etre appelee avec 2 ou 3 arguments, index base 1 et non 0
 
-		'SETTYPE' => array('settype', 2),
-		// CAST present en v3.2.3
-		'SQRT' => array('sqrt', 1),
-		'SUBSTRING' => array('_sqlite_func_substring'            /*,3*/),
-		// peut etre appelee avec 2 ou 3 arguments, index base 1 et non 0
+		// T
+		'TIMESTAMPDIFF' => array('_sqlite_timestampdiff'    /*, 3*/),
+		'TO_DAYS'       => array('_sqlite_func_to_days', 1),
+#		'TRIM'          => array('trim', 1), // present
 
-		'TO_DAYS' => array('_sqlite_func_to_days', 1),
-#		'TRIM'			=> array( 'trim'						,1), // present en theorie
-
-		'TIMESTAMPDIFF' => array('_sqlite_timestampdiff'    /*,3*/),
-
+		// U
 		'UNIX_TIMESTAMP' => array('_sqlite_func_unix_timestamp', 1),
-#		'UPPER'			=> array( 'strtoupper'					,1), // present v2.4		
+#		'UPPER'          => array('strtoupper', 1), // present v2.4
 
-		'VIDE' => array('_sqlite_func_vide', 0),
-		// du vide pour SELECT 0 as x ... ORDER BY x -> ORDER BY vide()
+		// V
+		'VIDE' => array('_sqlite_func_vide', 0), // du vide pour SELECT 0 as x ... ORDER BY x -> ORDER BY vide()
 
+		// Y
 		'YEAR' => array('_sqlite_func_year', 1)
 	);
 
@@ -100,8 +117,23 @@ function _sqlite_init_functions(&$sqlite) {
 	#spip_log('functions sqlite chargees ','sqlite.'._LOG_DEBUG);
 }
 
-// permet au besoin de charger des fonctions ailleurs par _sqlite_init_functions();
-// http://code.spip.net/@_sqlite_add_function
+
+/**
+ * Déclare une fonction à SQLite
+ *
+ * @note 
+ *     Permet au besoin de charger des fonctions 
+ *     ailleurs par _sqlite_init_functions();
+ * 
+ * @uses _sqlite_is_version()
+ * 
+ * @param PDO|resource $sqlite Représente la connexion Sqlite
+ * @param string $f Nom de la fonction à créer
+ * @param array $r Tableau indiquant :
+ *     - le nom de la fonction à appeler, 
+ *     - le nombre de paramètres attendus de la fonction (-1 = infini, par défaut)
+ * 
+**/
 function _sqlite_add_function(&$sqlite, &$f, &$r) {
 	if (_sqlite_is_version(3, $sqlite)) {
 		isset($r[1])
