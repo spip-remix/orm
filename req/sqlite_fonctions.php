@@ -43,14 +43,21 @@ function _sqlite_init_functions(&$sqlite) {
 
 
 	$fonctions = array(
+		// A
+		'ACOS'  => array('acos', 1),
+		'ASIN'  => array('asin', 1),
+		'ATAN'  => array('atan', 1), // mysql accepte 2 params comme atan2… hum ?
+		'ATAN2' => array('atan2', 2),
 
 		// C
 		'CEIL'   => array('_sqlite_func_ceil', 1),
 		'CONCAT' => array('_sqlite_func_concat', -1),
+		'COS'    => array('cos', 1),
 
 		// D
 		'DATE_FORMAT' => array('_sqlite_func_strftime', 2),
 		'DAYOFMONTH'  => array('_sqlite_func_dayofmonth', 1),
+		'DEGREES'     => array('rad2deg', 1),
 
 		// E
 		'EXTRAIRE_MULTI' => array('_sqlite_func_extraire_multi', 2), // specifique a SPIP/sql_multi()
@@ -83,17 +90,20 @@ function _sqlite_init_functions(&$sqlite) {
 		'PREG_REPLACE' => array('_sqlite_func_preg_replace', 3),
 
 		// R
-		'RAND'   => array('_sqlite_func_rand', 0), // sinon random() v2.4
-		'REGEXP' => array('_sqlite_func_regexp_match', 2), // critere REGEXP supporte a partir de v3.3.2
-		'RIGHT'  => array('_sqlite_func_right', 2),
-#		'RTRIM'  => array('rtrim', 1), // present
+		'RADIANS' => array('deg2rad', 1),
+		'RAND'    => array('_sqlite_func_rand', 0), // sinon random() v2.4
+		'REGEXP'  => array('_sqlite_func_regexp_match', 2), // critere REGEXP supporte a partir de v3.3.2
+		'RIGHT'   => array('_sqlite_func_right', 2),
+#		'RTRIM'   => array('rtrim', 1), // present
 
 		// S
 		'SETTYPE'   => array('settype', 2), // CAST present en v3.2.3
+		'SIN'       => array('sin', 1),
 		'SQRT'      => array('sqrt', 1),
 		'SUBSTRING' => array('_sqlite_func_substring' /*, 3*/), // peut etre appelee avec 2 ou 3 arguments, index base 1 et non 0
 
 		// T
+		'TAN'           => array('tan', 1),
 		'TIMESTAMPDIFF' => array('_sqlite_timestampdiff'    /*, 3*/),
 		'TO_DAYS'       => array('_sqlite_func_to_days', 1),
 #		'TRIM'          => array('trim', 1), // present
