@@ -1704,7 +1704,7 @@ function spip_release_lock($nom) {
 	$nom = "$bd:$prefixe:$nom" . _LOCK_TIME;
 
 	$connexion['last'] = $q = "SELECT RELEASE_LOCK(" . _q($nom) . ")";
-	mysqli_query($q);
+	mysqli_query(_mysql_link(), $q);
 }
 
 
