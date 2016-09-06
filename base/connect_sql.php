@@ -248,7 +248,7 @@ function spip_connect_db(
 	// pour ne pas declarer tout indisponible d'un coup
 	// si en cours d'installation ou si db=@test@ on ne pose rien
 	// car c'est un test de connexion
-	if (!defined('_ECRIRE_INSTALL') and !$db == "@test@") {
+	if (!defined('_ECRIRE_INSTALL') and $db !== "@test@") {
 		$f = _DIR_TMP . $type . '.' . substr(md5($host . $port . $db), 0, 8) . '.out';
 	} elseif ($db == '@test@') {
 		$db = '';
