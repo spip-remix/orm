@@ -46,7 +46,7 @@ function base_upgrade_dist($titre = '', $reprise = '') {
 	if ($GLOBALS['spip_version_base'] != $GLOBALS['meta']['version_installee']) {
 		if (!is_numeric(_request('reinstall'))) {
 			include_spip('base/create');
-			spip_log("recree les tables eventuellement disparues", "maj." . _LOG_INFO_IMPORTANTE);
+			spip_log('recree les tables eventuellement disparues', 'maj.' . _LOG_INFO_IMPORTANTE);
 			creer_base();
 		}
 
@@ -59,7 +59,7 @@ function base_upgrade_dist($titre = '', $reprise = '') {
 			exit;
 		}
 	}
-	spip_log("Fin de mise a jour SQL. Debut m-a-j acces et config", "maj." . _LOG_INFO_IMPORTANTE);
+	spip_log('Fin de mise a jour SQL. Debut m-a-j acces et config', 'maj.' . _LOG_INFO_IMPORTANTE);
 
 	// supprimer quelques fichiers temporaires qui peuvent se retrouver invalides
 	@spip_unlink(_CACHE_RUBRIQUES);
@@ -68,7 +68,7 @@ function base_upgrade_dist($titre = '', $reprise = '') {
 	@spip_unlink(_CACHE_PLUGINS_OPT);
 	@spip_unlink(_CACHE_PLUGINS_FCT);
 	@spip_unlink(_CACHE_CHEMIN);
-	@spip_unlink(_DIR_TMP . "plugin_xml_cache.gz");
+	@spip_unlink(_DIR_TMP . 'plugin_xml_cache.gz');
 
 	include_spip('inc/auth');
 	auth_synchroniser_distant();
@@ -103,16 +103,19 @@ function maj_base($version_cible = 0, $redirect = '') {
 	//
 	// version_installee = 1.702; quand on a besoin de forcer une MAJ
 
-	spip_log("Version anterieure: $version_installee. Courante: " . $GLOBALS['spip_version_base'],
-		"maj." . _LOG_INFO_IMPORTANTE);
+	spip_log(
+		"Version anterieure: $version_installee. Courante: " . $GLOBALS['spip_version_base'],
+		'maj.' . _LOG_INFO_IMPORTANTE
+	);
 	if (!$version_installee or ($GLOBALS['spip_version_base'] < $version_installee)) {
-		sql_replace('spip_meta',
+		sql_replace(
+			'spip_meta',
 			array(
 				'nom' => 'version_installee',
 				'valeur' => $GLOBALS['spip_version_base'],
 				'impt' => 'non'
-			));
-
+			)
+		);
 		return false;
 	}
 	if (!upgrade_test()) {
@@ -124,13 +127,13 @@ function maj_base($version_cible = 0, $redirect = '') {
 	if ($version_installee <= 1.926) {
 		$n = floor($version_installee * 10);
 		while ($n < 19) {
-			$nom = sprintf("v%03d", $n);
+			$nom = sprintf('v%03d', $n);
 			$f = charger_fonction($nom, 'maj', true);
 			if ($f) {
-				spip_log("$f repercute les modifications de la version " . ($n / 10), "maj." . _LOG_INFO_IMPORTANTE);
+				spip_log("$f repercute les modifications de la version " . ($n / 10), 'maj.' . _LOG_INFO_IMPORTANTE);
 				$f($version_installee, $GLOBALS['spip_version_base']);
 			} else {
-				spip_log("pas de fonction pour la maj $n $nom", "maj." . _LOG_INFO_IMPORTANTE);
+				spip_log("pas de fonction pour la maj $n $nom", 'maj.' . _LOG_INFO_IMPORTANTE);
 			}
 			$n++;
 		}
@@ -152,7 +155,7 @@ function maj_base($version_cible = 0, $redirect = '') {
 	$res = maj_while($version_installee, $cible, $GLOBALS['maj'], 'version_installee', 'meta', $redirect, true);
 	if ($res) {
 		if (!is_array($res)) {
-			spip_log("Pb d'acces SQL a la mise a jour", "maj." . _LOG_INFO_ERREUR);
+			spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_INFO_ERREUR);
 		} else {
 			echo _T('avis_operation_echec') . ' ' . join(' ', $res);
 			echo install_fin_html();
@@ -210,13 +213,12 @@ function maj_plugin($nom_meta_base_version, $version_cible, $maj, $table_meta = 
 	if ((!isset($GLOBALS[$table_meta][$nom_meta_base_version]))
 		|| (!spip_version_compare($current_version = $GLOBALS[$table_meta][$nom_meta_base_version], $version_cible, '='))
 	) {
-
 		// $maj['create'] contient les directives propres a la premiere creation de base
 		// c'est une operation derogatoire qui fait aboutir directement dans la version_cible
 		if (isset($maj['create'])) {
 			if (!isset($GLOBALS[$table_meta][$nom_meta_base_version])) {
 				// installation : on ne fait que l'operation create
-				$maj = array("init" => $maj['create']);
+				$maj = array('init' => $maj['create']);
 				// et on lui ajoute un appel a inc/config
 				// pour creer les metas par defaut
 				$config = charger_fonction('config', 'inc');
@@ -242,9 +244,9 @@ function maj_plugin($nom_meta_base_version, $version_cible, $maj, $table_meta = 
 		$res = maj_while($current_version, $version_cible, $maj, $nom_meta_base_version, $table_meta, $redirect);
 		if ($res) {
 			if (!is_array($res)) {
-				spip_log("Pb d'acces SQL a la mise a jour", "maj." . _LOG_INFO_ERREUR);
+				spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_INFO_ERREUR);
 			} else {
-				echo "<p>" . _T('avis_operation_echec') . ' ' . join(' ', $res) . "</p>";
+				echo '<p>' . _T('avis_operation_echec') . ' ' . join(' ', $res) . '</p>';
 			}
 		}
 	}
@@ -292,7 +294,7 @@ function maj_debut_page($installee, $meta, $table) {
 		return;
 	}
 	include_spip('inc/minipres');
-	@ini_set("zlib.output_compression", "0"); // pour permettre l'affichage au fur et a mesure
+	@ini_set('zlib.output_compression', '0'); // pour permettre l'affichage au fur et a mesure
 	$timeout = _UPGRADE_TIME_OUT * 2;
 	$titre = _T('titre_page_upgrade');
 	$balise_img = charger_filtre('balise_img');
@@ -300,7 +302,7 @@ function maj_debut_page($installee, $meta, $table) {
 	echo(install_debut_html($titre));
 	// script de rechargement auto sur timeout
 	$redirect = generer_url_ecrire('upgrade', "reinstall=$installee&meta=$meta&table=$table", true);
-	echo http_script("window.setTimeout('location.href=\"" . $redirect . "\";'," . ($timeout * 1000) . ")");
+	echo http_script("window.setTimeout('location.href=\"" . $redirect . "\";'," . ($timeout * 1000) . ')');
 	echo "<div style='text-align: left'>\n";
 	ob_flush();
 	flush();
@@ -398,7 +400,7 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 			if ($meta) {
 				ecrire_meta($meta, $installee = $v, 'oui', $table);
 			}
-			echo "<br />";
+			echo '<br />';
 		}
 		if (time() >= _TIME_OUT) {
 			relance_maj($meta, $table, $redirect);
@@ -451,7 +453,7 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 				// mais pour les fonctions complexes,
 				// il faut les rejouer jusqu'a achevement.
 				// C'est a elle d'assurer qu'elles progressent a chaque rappel
-				if (strncmp($f, "sql_", 4) == 0) {
+				if (strncmp($f, 'sql_', 4) == 0) {
 					ecrire_meta($meta2, $i + 1, 'non', $table);
 				}
 				echo " <span title='$i'>.</span>";
@@ -465,9 +467,9 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 				spip_log("$meta2: ok", 'maj.' . _LOG_INFO_IMPORTANTE);
 			} else {
 				if (!is_array($r)) {
-					spip_log("maj $i format incorrect", "maj." . _LOG_ERREUR);
+					spip_log("maj $i format incorrect", 'maj.' . _LOG_ERREUR);
 				} else {
-					spip_log("maj $i fonction $f non definie", "maj." . _LOG_ERREUR);
+					spip_log("maj $i fonction $f non definie", 'maj.' . _LOG_ERREUR);
 				}
 				// en cas d'erreur serieuse, on s'arrete
 				// mais on permet de passer par dessus en rechargeant la page.
@@ -511,16 +513,16 @@ function upgrade_types_documents() {
  * @return bool True si possible.
  **/
 function upgrade_test() {
-	sql_drop_table("spip_test", true);
-	sql_create("spip_test", array('a' => 'int'));
-	sql_alter("TABLE spip_test ADD b INT");
+	sql_drop_table('spip_test', true);
+	sql_create('spip_test', array('a' => 'int'));
+	sql_alter('TABLE spip_test ADD b INT');
 	sql_insertq('spip_test', array('b' => 1), array('field' => array('b' => 'int')));
-	$result = sql_select('b', "spip_test");
-	// ne pas garder le resultat de la requete sinon sqlite3 
+	$result = sql_select('b', 'spip_test');
+	// ne pas garder le resultat de la requete sinon sqlite3
 	// ne peut pas supprimer la table spip_test lors du sql_alter qui suit
 	// car cette table serait alors 'verouillee'
 	$result = $result ? true : false;
-	sql_alter("TABLE spip_test DROP b");
+	sql_alter('TABLE spip_test DROP b');
 
 	return $result;
 }
@@ -543,9 +545,9 @@ function maj_version($version, $test = true) {
 		} else {
 			// on le fait manuellement, car ecrire_meta utilise le champs impt qui est absent sur les vieilles versions
 			$GLOBALS['meta']['version_installee'] = $version;
-			sql_updateq('spip_meta', array('valeur' => $version), "nom=" . sql_quote('version_installee'));
+			sql_updateq('spip_meta', array('valeur' => $version), 'nom=' . sql_quote('version_installee'));
 		}
-		spip_log("mise a jour de la base en $version", "maj." . _LOG_INFO_IMPORTANTE);
+		spip_log("mise a jour de la base en $version", 'maj.' . _LOG_INFO_IMPORTANTE);
 	} else {
 		echo _T('alerte_maj_impossible', array('version' => $version));
 		exit;
