@@ -240,7 +240,7 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 					'en_ligne' => "datetime DEFAULT '0000-00-00 00:00:00' NOT NULL",
 					'alea_actuel' => 'tinytext',
 					'alea_futur' => 'tinytext',
-					'prefs' => 'tinytext',
+					'prefs' => 'text',
 					'cookie_oubli' => 'tinytext',
 					'source' => "VARCHAR(10) DEFAULT 'spip' NOT NULL",
 					'lang' => "VARCHAR(10) DEFAULT '' NOT NULL"
