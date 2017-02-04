@@ -304,7 +304,9 @@ function maj_debut_page($installee, $meta, $table) {
 	$redirect = generer_url_ecrire('upgrade', "reinstall=$installee&meta=$meta&table=$table", true);
 	echo http_script("window.setTimeout('location.href=\"" . $redirect . "\";'," . ($timeout * 1000) . ')');
 	echo "<div style='text-align: left'>\n";
-	ob_flush();
+	if (ob_get_level()) {
+		ob_flush();
+	}
 	flush();
 	$done = true;
 }
