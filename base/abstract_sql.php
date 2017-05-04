@@ -1209,7 +1209,7 @@ function sql_showtable($table, $table_spip = false, $serveur = '', $option = tru
 	if ($table_spip) {
 		$connexion = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 		$prefixe = $connexion['prefixe'];
-		$vraie_table = preg_replace('/^spip/', $prefixe, $table);
+		$vraie_table = prefixer_table_spip($table, $prefixe);
 	} else {
 		$vraie_table = $table;
 	}
@@ -2264,4 +2264,20 @@ function description_table($nom, $serveur = '') {
 	}
 
 	return false;
+}
+
+/**
+ * Corrige le nom d’une table SQL en utilisant le bon préfixe
+ *
+ * Ie: si prefixe 'dev', retournera, pour la table 'spip_articles' : 'dev_articles'.
+ *
+ * @param string $table
+ * @param string $prefixe
+ * @return string Table sql éventuellement renommée
+ */
+function prefixer_table_spip($table, $prefixe) {
+	if ($prefixe) {
+		$table = preg_replace('/^spip_/', $prefixe . '_', $table);
+	}
+	return $table;
 }

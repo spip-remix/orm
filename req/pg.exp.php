@@ -893,12 +893,7 @@ function spip_pg_free($res, $serveur = '', $requeter = true) {
 function spip_pg_delete($table, $where = '', $serveur = '', $requeter = true) {
 
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
-	$prefixe = $connexion['prefixe'];
-	$link = $connexion['link'];
-	$db = $connexion['db'];
-	if ($prefixe) {
-		$table = preg_replace('/^spip/', $prefixe, $table);
-	}
+	$table = prefixer_table_spip($table, $connexion['prefixe']);
 
 	$query = calculer_pg_expression('DELETE FROM', $table, ',')
 		. calculer_pg_expression('WHERE', $where, 'AND');
@@ -921,7 +916,6 @@ function spip_pg_insert($table, $champs, $valeurs, $desc = array(), $serveur = '
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
 	$link = $connexion['link'];
-	$db = $connexion['db'];
 
 	if (!$desc) {
 		$desc = description_table($table, $serveur);
@@ -930,16 +924,11 @@ function spip_pg_insert($table, $champs, $valeurs, $desc = array(), $serveur = '
 	// si pas de cle primaire dans l'insertion, renvoyer curval
 	if (!preg_match(",\b$seq\b,", $champs)) {
 		$seq = spip_pg_sequence($table);
-		if ($prefixe) {
-			$seq = preg_replace('/^spip/', $prefixe, $seq);
-		}
+		$seq = prefixer_table_spip($seq, $prefixe);
 		$seq = "currval('$seq')";
 	}
 
-
-	if ($prefixe) {
-		$table = preg_replace('/^spip/', $prefixe, $table);
-	}
+	$table = prefixer_table_spip($table, $prefixe);
 	$ret = !$seq ? '' : (" RETURNING $seq");
 	$ins = (strlen($champs) < 3)
 		? " DEFAULT VALUES"
@@ -1026,12 +1015,7 @@ function spip_pg_update($table, $couples, $where = '', $desc = '', $serveur = ''
 		return;
 	}
 	$connexion = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
-	$prefixe = $connexion['prefixe'];
-	$link = $connexion['link'];
-	$db = $connexion['db'];
-	if ($prefixe) {
-		$table = preg_replace('/^spip/', $prefixe, $table);
-	}
+	$table = prefixer_table_spip($table, $connexion['prefixe']);
 
 	// recherche de champs 'timestamp' pour mise a jour auto de ceux-ci
 	$couples = spip_pg_ajouter_champs_timestamp($table, $couples, $desc, $serveur);
@@ -1082,7 +1066,6 @@ function spip_pg_replace($table, $values, $desc, $serveur = '', $requeter = true
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$prefixe = $connexion['prefixe'];
 	$link = $connexion['link'];
-	$db = $connexion['db'];
 
 	if (!$desc) {
 		$desc = description_table($table, $serveur);
@@ -1114,10 +1097,8 @@ function spip_pg_replace($table, $values, $desc, $serveur = '', $requeter = true
 	$couples = join(',', $noprims);
 
 	$seq = spip_pg_sequence($table);
-	if ($prefixe) {
-		$table = preg_replace('/^spip/', $prefixe, $table);
-		$seq = preg_replace('/^spip/', $prefixe, $seq);
-	}
+	$table = prefixer_table_spip($table, $prefixe);
+	$seq = prefixer_table_spip($seq, $prefixe);
 
 	$connexion['last'] = $q = "UPDATE $table SET $couples WHERE $where";
 	if ($couples) {
@@ -1381,12 +1362,9 @@ function spip_pg_showtable($nom_table, $serveur = '', $requeter = true) {
 function spip_pg_create($nom, $champs, $cles, $autoinc = false, $temporary = false, $serveur = '', $requeter = true) {
 
 	$connexion = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
-	$prefixe = $connexion['prefixe'];
 	$link = $connexion['link'];
-	$db = $connexion['db'];
-	if ($prefixe) {
-		$nom = preg_replace('/^spip/', $prefixe, $nom);
-	}
+	$nom = prefixer_table_spip($nom, $connexion['prefixe']);
+
 	$query = $prim = $prim_name = $v = $s = $p = '';
 	$keys = array();
 

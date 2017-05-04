@@ -1131,13 +1131,8 @@ function spip_mysql_free($r, $serveur = '', $requeter = true) {
 function spip_mysql_insert($table, $champs, $valeurs, $desc = array(), $serveur = '', $requeter = true) {
 
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
-	$prefixe = $connexion['prefixe'];
 	$link = $connexion['link'];
-	$db = $connexion['db'];
-
-	if ($prefixe) {
-		$table = preg_replace('/^spip/', $prefixe, $table);
-	}
+	$table = prefixer_table_spip($table, $connexion['prefixe']);
 
 	$query = "INSERT INTO $table $champs VALUES $valeurs";
 	if (!$requeter) {
