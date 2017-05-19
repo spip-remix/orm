@@ -327,8 +327,8 @@ function _sqlite_func_strftime($date, $conv) {
 
 /**
  * Nombre de jour entre 0000-00-00 et $d
- * http://code.spip.net/@_sqlite_func_to_days
- * cf http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_to-days
+ *
+ * @link http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_to-days
  *
  * @param string $d
  * @return int
@@ -353,7 +353,8 @@ function _sqlite_func_substring($string, $start, $len = null) {
 
 /**
  * Calcul de la difference entre 2 timestamp, exprimes dans l'unite fournie en premier argument
- * emule https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_timestampdiff
+ *
+ * @link https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_timestampdiff
  *
  * @param string $unit
  * @param string $date1
