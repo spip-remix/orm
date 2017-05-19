@@ -25,12 +25,22 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 
 /*
- * 
  * regroupe le maximum de fonctions qui peuvent cohabiter
  * D'abord les fonctions d'abstractions de SPIP
- * 
  */
-// http://code.spip.net/@req_sqlite_dist
+
+/**
+ * Connecteur à une base SQLite
+ *
+ * @param string $addr
+ * @param int $port
+ * @param string $login
+ * @param string $pass
+ * @param string $db
+ * @param string $prefixe
+ * @param string $sqlite_version
+ * @return array|bool
+ */
 function req_sqlite_dist($addr, $port, $login, $pass, $db = '', $prefixe = '', $sqlite_version = '') {
 	static $last_connect = array();
 
@@ -1982,8 +1992,7 @@ function spip_sqlite_updateq($table, $champs, $where = '', $desc = array(), $ser
 
 
 /**
- * fonction pour la premiere connexion a un serveur SQLite
- * http://code.spip.net/@_sqlite_init
+ * Initialise la première connexion à un serveur SQLite
  *
  * @return void
  */
@@ -2003,8 +2012,7 @@ function _sqlite_init() {
 
 
 /**
- * teste la version sqlite du link en cours
- * http://code.spip.net/@_sqlite_is_version
+ * Teste la version sqlite du link en cours
  *
  * @param string $version
  * @param string $link
@@ -2445,7 +2453,6 @@ function _sqlite_modifier_table($table, $colonne, $opt = array(), $serveur = '')
 
 /**
  * Nom des fonctions
- * http://code.spip.net/@_sqlite_ref_fonctions
  *
  * @return array
  */
@@ -2509,7 +2516,6 @@ function _sqlite_ref_fonctions() {
 
 /**
  * $query est une requete ou une liste de champs
- * http://code.spip.net/@_sqlite_remplacements_definitions_table
  *
  * @param  $query
  * @param bool $autoinc
@@ -2592,8 +2598,6 @@ function _sqlite_collate_ci($champ) {
 /**
  * Creer la requete pour la creation d'une table
  * retourne la requete pour utilisation par sql_create() et sql_alter()
- *
- * http://code.spip.net/@_sqlite_requete_create
  *
  * @param  $nom
  * @param  $champs
@@ -2689,8 +2693,6 @@ function _sqlite_requete_create(
  *
  * stocke le resultat pour ne pas faire
  * de requetes showtable intempestives
- *
- * http://code.spip.net/@_sqlite_ajouter_champs_timestamp
  *
  * @param  $table
  * @param  $couples
