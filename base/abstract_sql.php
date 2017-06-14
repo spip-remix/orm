@@ -1725,6 +1725,7 @@ function sql_allfetsel(
  *
  * @return mixed
  *     Contenu de l'unique valeur demandee du premier enregistrement retourne
+ *     ou NULL si la requete ne retourne aucun enregistrement 
  *
  **/
 function sql_getfetsel(

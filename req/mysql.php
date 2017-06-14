@@ -1216,7 +1216,7 @@ function spip_mysql_insertq($table, $couples = array(), $desc = array(), $serveu
  *     Nom du connecteur
  * @param bool $requeter
  *     Exécuter la requête, sinon la retourner
- * @return bool|string
+ * @return int|bool|string
  *     - int|true identifiant du dernier élément inséré (si possible), ou true, si réussite
  *     - Texte de la requête si demandé,
  *     - False en cas d'erreur.
