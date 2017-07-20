@@ -667,7 +667,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 				}
 				$status['tables_copiees'][$table] = ($status['tables_copiees'][$table] ? -$status['tables_copiees'][$table] : "zero");
 				ecrire_fichier($status_file, serialize($status));
-				spip_log("tables_recopiees " . implode(',', $status['tables_copiees']), 'dump.' . _LOG_INFO);
+				spip_log("tables_recopiees " . implode(',', array_keys($status['tables_copiees'])), 'dump.' . _LOG_INFO);
 				if ($callback_progression) {
 					$callback_progression($status['tables_copiees'][$table], $status['tables_copiees'][$table], $table);
 				}
