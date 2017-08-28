@@ -141,6 +141,7 @@ function spip_pg_trace_query($query, $serveur = '') {
 	if (isset($_GET['var_profile'])) {
 		include_spip('public/tracer');
 		$t = trace_query_start();
+		$e = '';
 	} else {
 		$t = 0;
 	}
@@ -148,8 +149,8 @@ function spip_pg_trace_query($query, $serveur = '') {
 	$connexion['last'] = $query;
 	$r = spip_pg_query_simple($link, $query);
 
-	if ($e = spip_pg_errno($serveur))  // Log de l'erreur eventuelle
-	{
+	// Log de l'erreur eventuelle
+	if ($e = spip_pg_errno($serveur)) {
 		$e .= spip_pg_error($query, $serveur);
 	} // et du fautif
 	return $t ? trace_query_end($query, $t, $r, $e, $serveur) : $r;

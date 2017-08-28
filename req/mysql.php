@@ -258,8 +258,8 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 		}
 	}
 
-	if ($e = spip_mysql_errno($serveur))  // Log de l'erreur eventuelle
-	{
+	// Log de l'erreur eventuelle
+	if ($e = spip_mysql_errno($serveur)) {
 		$e .= spip_mysql_error($query, $serveur);
 	} // et du fautif
 	return $t ? trace_query_end($query, $t, $r, $e, $serveur) : $r;
@@ -1142,6 +1142,7 @@ function spip_mysql_insert($table, $champs, $valeurs, $desc = array(), $serveur 
 	if (isset($_GET['var_profile'])) {
 		include_spip('public/tracer');
 		$t = trace_query_start();
+		$e = '';
 	} else {
 		$t = 0;
 	}
@@ -1152,8 +1153,8 @@ function spip_mysql_insert($table, $champs, $valeurs, $desc = array(), $serveur 
 	if (mysqli_query($link, $query)) {
 		$r = mysqli_insert_id($link);
 	} else {
-		if ($e = spip_mysql_errno($serveur))  // Log de l'erreur eventuelle
-		{
+		// Log de l'erreur eventuelle
+		if ($e = spip_mysql_errno($serveur)) {
 			$e .= spip_mysql_error($query, $serveur);
 		} // et du fautif
 	}
