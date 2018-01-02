@@ -2242,14 +2242,14 @@ function _sqlite_charger_version($version = '') {
 
 	// version 2
 	if (!$version || $version == 2) {
-		if (charger_php_extension('sqlite')) {
+		if (extension_loaded('sqlite')) {
 			$versions[] = 2;
 		}
 	}
 
 	// version 3
 	if (!$version || $version == 3) {
-		if (charger_php_extension('pdo') && charger_php_extension('pdo_sqlite')) {
+		if (extension_loaded('pdo') && extension_loaded('pdo_sqlite')) {
 			$versions[] = 3;
 		}
 	}

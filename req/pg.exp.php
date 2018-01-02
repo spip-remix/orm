@@ -33,7 +33,7 @@ define('_DEFAULT_DB', 'spip');
 // http://code.spip.net/@req_pg_dist
 function req_pg_dist($addr, $port, $login, $pass, $db = '', $prefixe = '') {
 	static $last_connect = array();
-	if (!charger_php_extension('pgsql')) {
+	if (!extension_loaded('pgsql')) {
 		return false;
 	}
 
@@ -1535,7 +1535,5 @@ function mysql2pg_type($v) {
 // Renvoie false si on n'a pas les fonctions pg (pour l'install)
 // http://code.spip.net/@spip_versions_pg
 function spip_versions_pg() {
-	charger_php_extension('pgsql');
-
 	return function_exists('pg_connect');
 }

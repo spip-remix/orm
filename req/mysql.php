@@ -41,7 +41,7 @@ if (!defined('_MYSQL_NOPLANES')) {
  *     - tableau décrivant la connexion sinon
  */
 function req_mysql_dist($host, $port, $login, $pass, $db = '', $prefixe = '') {
-	if (!charger_php_extension('mysqli')) {
+	if (!extension_loaded('mysqli')) {
 		return false;
 	}
 	if ($port) {
@@ -1711,8 +1711,6 @@ function spip_release_lock($nom) {
  *     True si on a les fonctions, false sinon
  */
 function spip_versions_mysql() {
-	charger_php_extension('mysqli');
-
 	return function_exists('mysqli_query');
 }
 
