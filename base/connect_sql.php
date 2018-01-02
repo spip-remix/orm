@@ -182,18 +182,18 @@ function spip_sql_erreur($serveur = '') {
  * @param string $version Numéro de version de l'API SQL
  * @param string $ins Instruction de l'API souhaitée, tel que 'allfetsel'
  * @param string $serveur Nom du connecteur
- * @param bool $cont true pour continuer même si le serveur SQL ou l'instruction est indisponible
+ * @param bool $continue true pour continuer même si le serveur SQL ou l'instruction est indisponible
  * @return array|bool|string
  *     - string : nom de la fonction à utiliser,
  *     - false : si la connexion a échouée
  *     - array : description de la connexion, si l'instruction sql est indisponible pour cette connexion
  **/
-function spip_connect_sql($version, $ins = '', $serveur = '', $cont = false) {
+function spip_connect_sql($version, $ins = '', $serveur = '', $continue = false) {
 	$desc = spip_connect($serveur, $version);
 	if (function_exists($f = @$desc[$version][$ins])) {
 		return $f;
 	}
-	if ($cont) {
+	if ($continue) {
 		return $desc;
 	}
 	if ($ins) {
@@ -515,6 +515,7 @@ function query_reinjecte_textes($query, $textes) {
 /**
  * Exécute une requête sur le serveur SQL
  *
+ * @note Ne génère pas d’erreur fatale si la connexion à la BDD n’existe pas
  * @see sql_query()
  * @deprecated  Pour compatibilité. Utiliser `sql_query()` ou l'API `sql_*`.
  *
