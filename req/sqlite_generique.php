@@ -1832,14 +1832,14 @@ function spip_sqlite_showtable($nom_table, $serveur = '', $requeter = true) {
 					continue;
 				}
 
-				$fields[$k] = $def;
-				$k_precedent = $k;
-
 				// la primary key peut etre dans une des descriptions de champs
 				// et non en fin de table, cas encore decouvert avec Sqlite Manager
 				if (stripos($r[2], 'PRIMARY KEY') !== false) {
 					$keys['PRIMARY KEY'] = $k;
 				}
+
+				$fields[$k] = $def;
+				$k_precedent = $k;
 			}
 			// key inclues dans la requete
 			foreach (preg_split('/\)\s*(,|$)/', $namedkeys) as $v) {
@@ -2631,28 +2631,31 @@ function _sqlite_requete_create(
 	// il faut passer par des create index
 	// Il gere par contre primary key !
 	// Soit la PK est definie dans les cles, soit dans un champs
-	$c = ""; // le champ de cle primaire
-	if (!isset($cles[$pk = "PRIMARY KEY"]) or !$c = $cles[$pk]) {
-		foreach ($champs as $k => $v) {
-			if (false !== stripos($v, $pk)) {
-				$c = $k;
-				// on n'en a plus besoin dans field, vu que defini dans key
-				$champs[$k] = preg_replace("/$pk/is", '', $champs[$k]);
-				break;
-			}
+	// soit faussement dans les 2 (et dans ce cas, il faut l’enlever à un des 2 endroits !)
+	$pk = "PRIMARY KEY";
+	// le champ de cle primaire
+	$champ_pk = !empty($cles[$pk]) ? $cles[$pk] : '';
+
+	foreach ($champs as $k => $v) {
+		if (false !== stripos($v, $pk)) {
+			$champ_pk = $k;
+			// on n'en a plus besoin dans field, vu que defini dans key
+			$champs[$k] = preg_replace("/$pk/is", '', $champs[$k]);
+			break;
 		}
 	}
-	if ($c) {
-		$keys = "\n\t\t$pk ($c)";
+
+	if ($champ_pk) {
+		$keys = "\n\t\t$pk ($champ_pk)";
 	}
 	// Pas de DEFAULT 0 sur les cles primaires en auto-increment
-	if (isset($champs[$c])
-		and stripos($champs[$c], "default 0") !== false
+	if (isset($champs[$champ_pk])
+		and stripos($champs[$champ_pk], "default 0") !== false
 	) {
-		$champs[$c] = trim(str_ireplace("default 0", "", $champs[$c]));
+		$champs[$champ_pk] = trim(str_ireplace("default 0", "", $champs[$champ_pk]));
 	}
 
-	$champs = _sqlite_remplacements_definitions_table($champs, $autoinc ? $c : false);
+	$champs = _sqlite_remplacements_definitions_table($champs, $autoinc ? $champ_pk : false);
 	foreach ($champs as $k => $v) {
 		$query .= "$s\n\t\t$k $v";
 		$s = ",";
@@ -2671,7 +2674,7 @@ function _sqlite_requete_create(
 			$ifnotexists = ' IF NOT EXISTS';
 		} else {
 			/* simuler le IF EXISTS - version 2 et sqlite < 3.3a */
-			$a = spip_sqlite_showtable($table, $serveur);
+			$a = spip_sqlite_showtable($nom, $serveur);
 			if (isset($a['key']['KEY ' . $nom])) {
 				return true;
 			}
