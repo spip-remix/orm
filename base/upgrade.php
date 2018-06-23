@@ -20,6 +20,16 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
+if (!defined('_UPGRADE_TIME_OUT')) {
+	/**
+	 * Durée en secondes pour relancer les scripts de mises à jour, x secondes
+	 * avant que la durée d'exécution du script provoque un timeout
+	 *
+	 * @var int
+	 **/
+	define('_UPGRADE_TIME_OUT', 20);
+}
+
 /**
  * Programme de mise à jour des tables SQL lors d'un changement de version.
  *
@@ -311,13 +321,6 @@ function maj_debut_page($installee, $meta, $table) {
 	$done = true;
 }
 
-/**
- * Durée en secondes pour relancer les scripts de mises à jour, x secondes
- * avant que la durée d'exécution du script provoque un timeout
- *
- * @var int
- **/
-define('_UPGRADE_TIME_OUT', 20);
 
 /**
  * Gestion des mises à jour de SPIP et des plugins
