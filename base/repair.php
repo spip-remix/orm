@@ -113,63 +113,51 @@ function admin_repair_tables() {
 	// recreer les tables manquantes eventuelles
 	include_spip('base/create');
 	creer_base();
-
-	$connexion = $GLOBALS['connexions'][0];
-	$prefixe = $connexion['prefixe'];
-	$rows = array();
-	if ($res1 = sql_showbase()) {
-		while ($r = sql_fetch($res1)) {
-			$rows[] = $r;
-		}
-		sql_free($res1);
-	}
+	$tables = sql_alltable();
 
 	$res = "";
-	if (count($rows)) {
-		while ($r = array_shift($rows)) {
-			$tab = array_shift($r);
+	foreach ($tables as $tab) {
 
-			$class = "";
-			$m = "<strong>$tab</strong> ";
-			spip_log("Repare $tab", _LOG_INFO_IMPORTANTE);
-			// supprimer la meta avant de lancer la reparation
-			// car le repair peut etre long ; on ne veut pas boucler
-			effacer_meta('admin_repair');
-			if ($repair) {
-				$result_repair = sql_repair($tab);
-				if (!$result_repair) {
-					return false;
-				}
+		$class = "";
+		$m = "<strong>$tab</strong> ";
+		spip_log("Repare $tab", _LOG_INFO_IMPORTANTE);
+		// supprimer la meta avant de lancer la reparation
+		// car le repair peut etre long ; on ne veut pas boucler
+		effacer_meta('admin_repair');
+		if ($repair) {
+			$result_repair = sql_repair($tab);
+			if (!$result_repair) {
+				return false;
 			}
-
-			// essayer de maj la table (creation de champs manquants)
-			maj_tables($tab);
-
-			$count = sql_countsel($tab);
-
-			if ($count > 1) {
-				$m .= "(" . _T('texte_compte_elements', array('count' => $count)) . ")\n";
-			} else {
-				if ($count == 1) {
-					$m .= "(" . _T('texte_compte_element', array('count' => $count)) . ")\n";
-				} else {
-					$m .= "(" . _T('texte_vide') . ")\n";
-				}
-			}
-
-			if ($result_repair
-				and $msg = join(" ",
-						(is_resource($result_repair) or is_object($result_repair)) ? sql_fetch($result_repair) : $result_repair) . ' '
-				and strpos($msg, ' OK ') === false
-			) {
-				$class = " class='notice'";
-				$m .= "<br /><tt>" . spip_htmlentities($msg) . "</tt>\n";
-			} else {
-				$m .= " " . _T('texte_table_ok');
-			}
-
-			$res .= "<div$class>$m</div>";
 		}
+
+		// essayer de maj la table (creation de champs manquants)
+		maj_tables($tab);
+
+		$count = sql_countsel($tab);
+
+		if ($count > 1) {
+			$m .= "(" . _T('texte_compte_elements', array('count' => $count)) . ")\n";
+		} else {
+			if ($count == 1) {
+				$m .= "(" . _T('texte_compte_element', array('count' => $count)) . ")\n";
+			} else {
+				$m .= "(" . _T('texte_vide') . ")\n";
+			}
+		}
+
+		if ($result_repair
+			and $msg = join(" ",
+					(is_resource($result_repair) or is_object($result_repair)) ? sql_fetch($result_repair) : $result_repair) . ' '
+			and strpos($msg, ' OK ') === false
+		) {
+			$class = " class='notice'";
+			$m .= "<br /><tt>" . spip_htmlentities($msg) . "</tt>\n";
+		} else {
+			$m .= " " . _T('texte_table_ok');
+		}
+
+		$res .= "<div$class>$m</div>";
 	}
 
 	return $res;
