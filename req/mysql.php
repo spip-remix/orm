@@ -44,9 +44,15 @@ function req_mysql_dist($host, $port, $login, $pass, $db = '', $prefixe = '') {
 	if (!extension_loaded('mysqli')) {
 		return false;
 	}
-	if ($port) {
+
+	// si port est fourni mais pas host, c'est un socket -> compat avec vieille syntaxe de mysql_connect() et anciens fichiers connect.php
+	if (!$host and $socket = $port) {
+		$link = @mysqli_connect('', $login, $pass, '', '', $socket);
+	}
+	elseif ($port) {
 		$link = @mysqli_connect($host, $login, $pass, '', $port);
-	} else {
+	}
+	else {
 		$link = @mysqli_connect($host, $login, $pass);
 	}
 
