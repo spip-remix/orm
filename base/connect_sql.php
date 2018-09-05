@@ -526,6 +526,7 @@ function query_reinjecte_textes($query, $textes) {
  *     - indéfini sinon.
  **/
 function spip_query($query, $serveur = '') {
+
 	$f = spip_connect_sql($GLOBALS['spip_sql_version'], 'query', $serveur, true);
 
 	return function_exists($f) ? $f($query, $serveur) : false;
