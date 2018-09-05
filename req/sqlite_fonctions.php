@@ -34,6 +34,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  * @link http://sqlite.org/changes.html Liste des évolutions
  * 
  * @param PDO|resource $sqlite Représente la connexion Sqlite
+ * @return false|void
  */
 function _sqlite_init_functions(&$sqlite) {
 
@@ -145,15 +146,9 @@ function _sqlite_init_functions(&$sqlite) {
  * 
 **/
 function _sqlite_add_function(&$sqlite, &$f, &$r) {
-	if (_sqlite_is_version(3, $sqlite)) {
-		isset($r[1])
-			? $sqlite->sqliteCreateFunction($f, $r[0], $r[1])
-			: $sqlite->sqliteCreateFunction($f, $r[0]);
-	} else {
-		isset($r[1])
-			? sqlite_create_function($sqlite, $f, $r[0], $r[1])
-			: sqlite_create_function($sqlite, $f, $r[0]);
-	}
+	isset($r[1])
+		? $sqlite->sqliteCreateFunction($f, $r[0], $r[1])
+		: $sqlite->sqliteCreateFunction($f, $r[0]);
 }
 
 //
