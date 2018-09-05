@@ -1680,7 +1680,8 @@ function spip_get_lock($nom, $timeout = 0) {
 	$nom = "$bd:$prefixe:$nom" . _LOCK_TIME;
 
 	$connexion['last'] = $q = "SELECT GET_LOCK(" . _q($nom) . ", $timeout) AS n";
-	$q = @sql_fetch(mysql_query($q));
+
+	$q = @sql_fetch(mysqli_query(_mysql_link(), $q));
 	if (!$q) {
 		spip_log("pas de lock sql pour $nom", _LOG_ERREUR);
 	}
