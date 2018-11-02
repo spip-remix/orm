@@ -94,10 +94,10 @@ function req_sqlite_dist($addr, $port, $login, $pass, $db = '', $prefixe = '', $
 		// pour tester la connexion
 		$db = "_sqlite" . $sqlite_version . "_install";
 		$tmp = _DIR_DB . $db . ".sqlite";
-		$ok = $link = new PDO("sqlite:$tmp");
+		$ok = $link = new \PDO("sqlite:$tmp");
 	} else {
 		// Ouvrir (eventuellement creer la base)
-		$ok = $link = new PDO("sqlite:$f");
+		$ok = $link = new \PDO("sqlite:$f");
 	}
 
 	if (!$ok) {
@@ -486,7 +486,7 @@ function spip_sqlite_create_base($nom, $serveur = '', $option = true) {
 		$f = _DIR_DB . $f;
 	}
 
-	$ok = new PDO("sqlite:$f");
+	$ok = new \PDO("sqlite:$f");
 
 	if ($ok) {
 		unset($ok);
@@ -2017,9 +2017,14 @@ function _sqlite_calculer_cite($v, $type) {
 		}
 	}
 
-	// trouver un link sqlite3 pour faire l'echappement
+	// trouver un link sqlite pour faire l'echappement
 	foreach ($GLOBALS['connexions'] as $s) {
-		if ($l = $s['link']) {
+		if (
+			$l = $s['link']
+			and is_object($l)
+			and $l instanceof \PDO
+			and $l->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite'
+		) {
 			return $l->quote($v);
 		}
 	}
