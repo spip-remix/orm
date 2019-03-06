@@ -2216,14 +2216,16 @@ function _sqlite_charger_version($version = '') {
 function _sqlite_modifier_table($table, $colonne, $opt = array(), $serveur = '') {
 
 	if (is_array($table)) {
-		list($table_origine, $table_destination) = reset($table);
+		$table_destination = reset($table);
+		$table_origine = key($table);
 	} else {
 		$table_origine = $table_destination = $table;
 	}
 	// ne prend actuellement qu'un changement
 	// mais pourra etre adapte pour changer plus qu'une colonne a la fois
 	if (is_array($colonne)) {
-		list($colonne_origine, $colonne_destination) = reset($colonne);
+		$colonne_destination = reset($colonne);
+		$colonne_origine = key($colonne);
 	} else {
 		$colonne_origine = $colonne_destination = $colonne;
 	}
