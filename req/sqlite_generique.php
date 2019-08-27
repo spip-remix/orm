@@ -2422,9 +2422,9 @@ function _sqlite_ref_fonctions() {
 
 
 /**
- * $query est une requete ou une liste de champs
+ * Adapte les déclarations des champs pour SQLite
  *
- * @param  $query
+ * @param string|array $query Déclaration d’un champ ou  liste de déclarations de champs
  * @param bool $autoinc
  * @return mixed
  */

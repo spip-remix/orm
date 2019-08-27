@@ -710,9 +710,9 @@ function spip_mysql_create(
 /**
  * Adapte pour Mysql la déclaration SQL d'une colonne d'une table
  *
- * @param string $query
- *     Définition SQL d'un champ de table
- * @return string
+ * @param string|array $query
+ *     Définition SQL d'un champ de table ou liste de déclarations
+ * @return string|array
  *     Définition SQL adaptée pour MySQL d'un champ de table
  */
 function _mysql_remplacements_definitions_table($query) {
@@ -722,9 +722,17 @@ function _mysql_remplacements_definitions_table($query) {
 
 	$remplace = array(
 		'/VARCHAR(\s*[^\s\(])/is' => 'VARCHAR(255)\\1',
+		'/^TIMESTAMP($| NULL DEFAULT NULL)/is' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
 	);
 
-	$query = preg_replace(array_keys($remplace), $remplace, $query);
+	if (is_string($query)) {
+		$query = preg_replace(array_keys($remplace), $remplace, $query);
+	} elseif (is_array($query)) {
+		$keys = array_keys($remplace);
+		foreach ($query as $k => $q) {
+			$query[$k] = preg_replace($keys, $remplace, $q);
+		}
+	}
 
 	return $query;
 }
