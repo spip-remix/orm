@@ -1998,8 +1998,9 @@ function sql_date_proche($champ, $interval, $unite, $serveur = '', $option = tru
  * @api
  * @param string $val
  *     Colonne SQL sur laquelle appliquer le test
- * @param string|array $valeurs
+ * @param array|string $valeurs
  *     Liste des valeurs possibles (séparés par des virgules si string)
+ *     le format string est historique et n'est accepte que pour des ids numeriques car autrement la securite ne peut etre garantie
  * @param string $not
  *     - '' sélectionne les éléments correspondant aux valeurs
  *     - 'NOT' inverse en sélectionnant les éléments ne correspondant pas aux valeurs
@@ -2014,15 +2015,19 @@ function sql_date_proche($champ, $interval, $unite, $serveur = '', $option = tru
  *     Expression de requête SQL
  **/
 function sql_in($val, $valeurs, $not = '', $serveur = '', $option = true) {
-	if (is_array($valeurs)) {
-		$f = sql_serveur('quote', $serveur, true);
-		if (!is_string($f) or !$f) {
-			return false;
+	if (is_string($valeurs)) {
+		if(isset($valeurs[0]) and $valeurs[0] === ',') {
+			$valeurs = substr($valeurs, 1);
 		}
-		$valeurs = join(',', array_map($f, array_unique($valeurs)));
-	} elseif (isset($valeurs[0]) and $valeurs[0] === ',') {
-		$valeurs = substr($valeurs, 1);
+		// on explode en tableau pour pouvoir securiser le contenu
+		$valeurs = explode(',', $valeurs);
 	}
+	$f = sql_serveur('quote', $serveur, true);
+	if (!is_string($f) or !$f) {
+		return false;
+	}
+	$valeurs = implode(',', array_map($f, array_unique($valeurs)));
+
 	if (!strlen(trim($valeurs))) {
 		return ($not ? "0=0" : '0=1');
 	}
