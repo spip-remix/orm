@@ -995,12 +995,10 @@ function spip_sqlite_hex($v) {
 /**
  * Retourne une expression IN pour le gestionnaire de base de données
  *
- * IN (...) est limité à 255 éléments, d'où cette fonction assistante
- *
  * @param string $val
  *     Colonne SQL sur laquelle appliquer le test
- * @param string|array $valeurs
- *     Liste des valeurs possibles (séparés par des virgules si string)
+ * @param string $valeurs
+ *     Liste des valeurs possibles (séparés par des virgules)
  * @param string $not
  *     - '' sélectionne les éléments correspondant aux valeurs
  *     - 'NOT' inverse en sélectionnant les éléments ne correspondant pas aux valeurs
@@ -1012,21 +1010,7 @@ function spip_sqlite_hex($v) {
  *     Expression de requête SQL
  **/
 function spip_sqlite_in($val, $valeurs, $not = '', $serveur = '', $requeter = true) {
-	$n = $i = 0;
-	$in_sql = "";
-	while ($n = strpos($valeurs, ',', $n + 1)) {
-		if ((++$i) >= 255) {
-			$in_sql .= "($val $not IN (" .
-				substr($valeurs, 0, $n) .
-				"))\n" .
-				($not ? "AND\t" : "OR\t");
-			$valeurs = substr($valeurs, $n + 1);
-			$i = $n = 0;
-		}
-	}
-	$in_sql .= "($val $not IN ($valeurs))";
-
-	return "($in_sql)";
+	return "($val $not IN ($valeurs))";
 }
 
 
