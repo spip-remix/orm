@@ -1565,8 +1565,8 @@ function spip_mysql_date_proche($champ, $interval, $unite) {
  *
  * @param string $val
  *     Colonne SQL sur laquelle appliquer le test
- * @param string|array $valeurs
- *     Liste des valeurs possibles (séparés par des virgules si string)
+ * @param string $valeurs
+ *     Liste des valeurs possibles (séparés par des virgules)
  * @param string $not
  *     - '' sélectionne les éléments correspondant aux valeurs
  *     - 'NOT' inverse en sélectionnant les éléments ne correspondant pas aux valeurs
@@ -1578,47 +1578,7 @@ function spip_mysql_date_proche($champ, $interval, $unite) {
  *     Expression de requête SQL
  **/
 function spip_mysql_in($val, $valeurs, $not = '', $serveur = '', $requeter = true) {
-	$n = $i = 0;
-	$in_sql = "";
-	while ($n = strpos($valeurs, ',', $n + 1)) {
-		if ((++$i) >= 255) {
-			$in_sql .= "($val $not IN (" .
-				substr($valeurs, 0, $n) .
-				"))\n" .
-				($not ? "AND\t" : "OR\t");
-			$valeurs = substr($valeurs, $n + 1);
-			$i = $n = 0;
-		}
-	}
-	$in_sql .= "($val $not IN ($valeurs))";
-
-	return "($in_sql)";
-}
-
-
-/**
- * Retourne une expression IN pour le gestionnaire de base de données
- *
- * Pour compatibilité. Ne plus utiliser.
- *
- * @deprecated Utiliser sql_in()
- *
- * @param string $val Nom de la colonne
- * @param string|array $valeurs Valeurs
- * @param string $not NOT pour inverser
- * @return string               Expression de requête SQL
- */
-function calcul_mysql_in($val, $valeurs, $not = '') {
-	if (is_array($valeurs)) {
-		$valeurs = join(',', array_map('_q', $valeurs));
-	} elseif ($valeurs[0] === ',') {
-		$valeurs = substr($valeurs, 1);
-	}
-	if (!strlen(trim($valeurs))) {
-		return ($not ? "0=0" : '0=1');
-	}
-
-	return spip_mysql_in($val, $valeurs, $not);
+	return "($val $not IN ($valeurs))";
 }
 
 
