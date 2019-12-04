@@ -1520,22 +1520,15 @@ function spip_mysql_hex($v) {
  *    Donnée prête à être utilisée par le gestionnaire SQL
  */
 function spip_mysql_quote($v, $type = '') {
-	if ($type) {
-		if (!is_array($v)) {
-			return spip_mysql_cite($v, $type);
-		}
-		// si c'est un tableau, le parcourir en propageant le type
-		foreach ($v as $k => $r) {
-			$v[$k] = spip_mysql_quote($r, $type);
-		}
+	if (!is_array($v)) {
+		return spip_mysql_cite($v, $type);
+	}
 
-		return $v;
+	// si c'est un tableau, le parcourir en propageant le type
+	foreach ($v as $k => $r) {
+		$v[$k] = spip_mysql_quote($r, $type);
 	}
-	// si on ne connait pas le type, s'en remettre a _q :
-	// on ne fera pas mieux
-	else {
-		return _q($v);
-	}
+	return implode(',', $v);
 }
 
 /**
@@ -1637,6 +1630,13 @@ function calcul_mysql_in($val, $valeurs, $not = '') {
  * @return string|number     Texte ou nombre échappé
  */
 function spip_mysql_cite($v, $type) {
+	if (!$type) {
+		if (is_numeric($v)) {
+			return strval($v);
+		}
+		return "'" . addslashes($v) . "'";
+	}
+
 	if (is_null($v)
 		and stripos($type, "NOT NULL") === false
 	) {
