@@ -2026,7 +2026,8 @@ function sql_in($val, $valeurs, $not = '', $serveur = '', $option = true) {
 	if (!is_string($f) or !$f) {
 		return false;
 	}
-	$valeurs = implode(',', array_map($f, array_unique($valeurs)));
+	// sql_quote produit une chaine dans tous les cas
+	$valeurs = $f(array_unique($valeurs));
 
 	if (!strlen(trim($valeurs))) {
 		return ($not ? "0=0" : '0=1');
