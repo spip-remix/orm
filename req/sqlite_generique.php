@@ -2614,9 +2614,10 @@ function _sqlite_ajouter_champs_timestamp($table, $couples, $desc = '', $serveur
 		// mais ceux-ci ne sont pas utilises dans le core
 		$tables[$table] = array();
 
+		$now = _sqlite_func_now();
 		foreach ($desc['field'] as $k => $v) {
 			if (strpos(strtolower(ltrim($v)), 'timestamp') === 0) {
-				$tables[$table][$k] = "datetime('now')";
+				$tables[$table][$k] = _sqlite_calculer_cite($now, $v);
 			}
 		}
 	}

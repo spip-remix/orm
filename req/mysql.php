@@ -1544,12 +1544,13 @@ function spip_mysql_quote($v, $type = '') {
  *     Expression SQL
  **/
 function spip_mysql_date_proche($champ, $interval, $unite) {
+	$use_now = ( ($champ === 'maj' or strpos($champ, '.maj')) ? true : false );
 	return '('
 	. $champ
 	. (($interval <= 0) ? '>' : '<')
 	. (($interval <= 0) ? 'DATE_SUB' : 'DATE_ADD')
 	. '('
-	. sql_quote(date('Y-m-d H:i:s'))
+	. ($use_now ? 'NOW()' : sql_quote(date('Y-m-d H:i:s')))
 	. ', INTERVAL '
 	. (($interval > 0) ? $interval : (0 - $interval))
 	. ' '
