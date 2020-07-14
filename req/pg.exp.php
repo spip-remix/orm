@@ -1233,7 +1233,7 @@ function spip_pg_date_proche($champ, $interval, $unite) {
 }
 
 // http://code.spip.net/@spip_pg_in
-function spip_pg_in($val, $valeurs, $not = '', $serveur) {
+function spip_pg_in($val, $valeurs, $not = '', $serveur = '') {
 //
 // IN (...) souvent limite a 255  elements, d'ou cette fonction assistante
 //
@@ -1262,7 +1262,7 @@ function spip_pg_in($val, $valeurs, $not = '', $serveur) {
 }
 
 // http://code.spip.net/@spip_pg_error
-function spip_pg_error($query = '', $serveur, $requeter = true) {
+function spip_pg_error($query = '', $serveur = '', $requeter = true) {
 	$link = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0]['link'];
 	$s = $link ? pg_last_error($link) : pg_last_error();
 	if ($s) {
