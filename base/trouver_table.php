@@ -178,6 +178,9 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true) {
 		// $desc est prioritaire pour la description de la table
 		$desc = array_merge(lister_tables_objets_sql($nom_sql, $desc), $desc);
 		// s'assurer qu'on a toujours un 'key'
+		if (!isset($desc['key']) && !empty($fdesc['key'])){
+			$desc['key'] = $fdesc['key'];
+		}
 		if (! isset($desc['key'])) {
 			$desc['key'] = array();
 		}
