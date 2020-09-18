@@ -359,8 +359,8 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 					if ($colonne_origine[0] == "(") {
 						$colonnes = substr($colonne_origine, 1, -1);
 						if (false !== strpos(",", $colonnes)) {
-							spip_log(_LOG_GRAVITE_ERREUR, "SQLite : Erreur, impossible de creer un index sur plusieurs colonnes"
-								. " sans qu'il ait de nom ($table, ($colonnes))", 'sqlite');
+							spip_log("SQLite : Erreur, impossible de creer un index sur plusieurs colonnes"
+								. " sans qu'il ait de nom ($table, ($colonnes))", 'sqlite.' . _LOG_ERREUR);
 							break;
 						} else {
 							$nom_index = $colonnes;
@@ -2328,8 +2328,8 @@ function _sqlite_modifier_table($table, $colonne, $opt = array(), $serveur = '')
 		// il faut les faire une par une car $query = join('; ', $queries).";"; ne fonctionne pas
 		foreach ($queries as $q) {
 			if (!spip_sqlite::executer_requete($q, $serveur)) {
-				spip_log(_LOG_GRAVITE_ERREUR, "SQLite : ALTER TABLE table :"
-					. " Erreur a l'execution de la requete : $q", 'sqlite');
+				spip_log("SQLite : ALTER TABLE table :"
+					. " Erreur a l'execution de la requete : $q", 'sqlite.' . _LOG_ERREUR);
 				spip_sqlite::annuler_transaction($serveur);
 
 				return false;

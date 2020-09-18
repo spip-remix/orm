@@ -352,8 +352,8 @@ function spip_pg_alter_add($table, $arg, $serveur = '', $requeter = true) {
 			if ($m[1][0] == "(") {
 				$colonnes = substr($m[1], 1, -1);
 				if (false !== strpos(",", $colonnes)) {
-					spip_log(_LOG_GRAVITE_ERREUR, "PG : Erreur, impossible de creer un index sur plusieurs colonnes"
-						. " sans qu'il ait de nom ($table, ($colonnes))", 'pg');
+					spip_log("PG : Erreur, impossible de creer un index sur plusieurs colonnes"
+						. " sans qu'il ait de nom ($table, ($colonnes))", 'pg.' . _LOG_ERREUR);
 				} else {
 					$nom_index = $colonnes;
 				}
