@@ -346,7 +346,7 @@ function spip_connect_main($connexion, $charset_sql_connexion = '') {
 	}
 	$r = $f($r);
 
-	return ($r['valeur'] ? $r['valeur'] : -1);
+	return (isset($r['valeur']) && $r['valeur']) ? $r['valeur'] : -1;
 }
 
 /**
