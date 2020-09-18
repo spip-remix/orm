@@ -460,7 +460,7 @@ function spip_sqlite_create(
 	$ok = $res ? true : false;
 	if ($ok) {
 		foreach ($cles as $k => $v) {
-			if (preg_match(',^(KEY|UNIQUE)\s,i', $k, $m)) {
+			if (preg_match(',^(UNIQUE KEY|KEY|UNIQUE)\s,i', $k, $m)) {
 				$index = trim(substr($k, strlen($m[1])));
 				$unique = (strlen($m[1]) > 3);
 				$ok &= spip_sqlite_create_index($index, $nom, $v, $unique, $serveur);
