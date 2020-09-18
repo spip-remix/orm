@@ -2830,7 +2830,12 @@ class sqlite_requeteur {
 			$GLOBALS['connexions'][$this->serveur ? $this->serveur : 0]['last'] = $query;
 			$GLOBALS['connexions'][$this->serveur ? $this->serveur : 0]['total_requetes']++;
 
-			$r = $this->link->query($query);
+			try {
+				$r = $this->link->query($query);
+			} catch (\PDOException $e) {
+				spip_log("PDOException: " . $e->getMessage(), 'sqlite.' . _LOG_ERREUR);
+				$r = false;
+			}
 			// sauvegarde de la requete (elle y est deja dans $r->queryString)
 			# $r->spipQueryString = $query;
 
