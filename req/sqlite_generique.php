@@ -2825,7 +2825,8 @@ class sqlite_requeteur {
 		# spip_log("requete: $this->serveur >> $query",'sqlite.'._LOG_DEBUG); // boum ? pourquoi ?
 		if ($this->link) {
 			// memoriser la derniere erreur PHP vue
-			$e = (function_exists('error_get_last') ? error_get_last() : "");
+			$last_error = (function_exists('error_get_last') ? error_get_last() : "");
+			$e = null;
 			// sauver la derniere requete
 			$GLOBALS['connexions'][$this->serveur ? $this->serveur : 0]['last'] = $query;
 			$GLOBALS['connexions'][$this->serveur ? $this->serveur : 0]['total_requetes']++;
@@ -2833,7 +2834,7 @@ class sqlite_requeteur {
 			try {
 				$r = $this->link->query($query);
 			} catch (\PDOException $e) {
-				spip_log("PDOException: " . $e->getMessage(), 'sqlite.' . _LOG_ERREUR);
+				spip_log("PDOException: " . $e->getMessage(), 'sqlite.' . _LOG_DEBUG);
 				$r = false;
 			}
 			// sauvegarde de la requete (elle y est deja dans $r->queryString)
@@ -2853,7 +2854,10 @@ class sqlite_requeteur {
 			}
 
 			// loger les warnings/erreurs eventuels de sqlite remontant dans PHP
-			if ($err = (function_exists('error_get_last') ? error_get_last() : "") and $err != $e) {
+			if ($e and $e instanceof \PDOException) {
+				$err = strip_tags($e->getMessage()) . " in " . $e->getFile() . " line " . $e->getLine();
+				spip_log("$err - " . $query, 'sqlite.' . _LOG_ERREUR);
+			} elseif ($err = (function_exists('error_get_last') ? error_get_last() : "") and $err != $last_error) {
 				$err = strip_tags($err['message']) . " in " . $err['file'] . " line " . $err['line'];
 				spip_log("$err - " . $query, 'sqlite.' . _LOG_ERREUR);
 			} else {

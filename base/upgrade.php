@@ -442,7 +442,10 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
  */
 function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirect = '') {
 	$meta2 = $meta . '_maj_' . $serie;
-	$etape = intval(@$GLOBALS[$table][$meta2]);
+	$etape = 0;
+	if (isset($GLOBALS[$table][$meta2])) {
+		$etape = intval($GLOBALS[$table][$meta2]);
+	}
 	foreach ($q as $i => $r) {
 		if ($i >= $etape) {
 			$msg = "maj $table $meta2 etape $i";
