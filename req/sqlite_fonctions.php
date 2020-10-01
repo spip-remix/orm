@@ -160,7 +160,7 @@ function _sqlite_func_ceil($a) {
 	return ceil($a);
 }
 
-// http://code.spip.net/@_sqlite_func_concat
+// https://code.spip.net/@_sqlite_func_concat
 function _sqlite_func_concat() {
 	$args = func_get_args();
 
@@ -168,13 +168,13 @@ function _sqlite_func_concat() {
 }
 
 
-// http://code.spip.net/@_sqlite_func_dayofmonth
+// https://code.spip.net/@_sqlite_func_dayofmonth
 function _sqlite_func_dayofmonth($d) {
 	return _sqlite_func_date("d", $d);
 }
 
 
-// http://code.spip.net/@_sqlite_func_find_in_set
+// https://code.spip.net/@_sqlite_func_find_in_set
 function _sqlite_func_find_in_set($num, $set) {
 	$rank = 0;
 	foreach (explode(",", $set) as $v) {
@@ -191,7 +191,7 @@ function _sqlite_func_floor($a) {
 	return floor($a);
 }
 
-// http://code.spip.net/@_sqlite_func_if
+// https://code.spip.net/@_sqlite_func_if
 function _sqlite_func_if($bool, $oui, $non) {
 	return ($bool) ? $oui : $non;
 }
@@ -202,7 +202,7 @@ function _sqlite_func_if($bool, $oui, $non) {
  * Retourne une chaine de caracteres a partir d'une chaine dans laquelle "sschaine"
  *  a ete inseree a la position "index" en remplacant "longueur" caracteres.
  */
-// http://code.spip.net/@_sqlite_func_insert
+// https://code.spip.net/@_sqlite_func_insert
 function _sqlite_func_insert($s, $index, $longueur, $chaine) {
 	return
 		substr($s, 0, $index)
@@ -211,13 +211,13 @@ function _sqlite_func_insert($s, $index, $longueur, $chaine) {
 }
 
 
-// http://code.spip.net/@_sqlite_func_instr
+// https://code.spip.net/@_sqlite_func_instr
 function _sqlite_func_instr($s, $search) {
 	return strpos($s, $search);
 }
 
 
-// http://code.spip.net/@_sqlite_func_least
+// https://code.spip.net/@_sqlite_func_least
 function _sqlite_func_least() {
 	$arg_list = func_get_args();
 	$least = min($arg_list);
@@ -227,13 +227,13 @@ function _sqlite_func_least() {
 }
 
 
-// http://code.spip.net/@_sqlite_func_left
+// https://code.spip.net/@_sqlite_func_left
 function _sqlite_func_left($s, $lenght) {
 	return substr($s, $lenght);
 }
 
 
-// http://code.spip.net/@_sqlite_func_now
+// https://code.spip.net/@_sqlite_func_now
 function _sqlite_func_now() {
 	static $now = null;
 	if (is_null($now)) {
@@ -245,13 +245,13 @@ function _sqlite_func_now() {
 }
 
 
-// http://code.spip.net/@_sqlite_func_month
+// https://code.spip.net/@_sqlite_func_month
 function _sqlite_func_month($d) {
 	return _sqlite_func_date("m", $d);
 }
 
 
-// http://code.spip.net/@_sqlite_func_preg_replace
+// https://code.spip.net/@_sqlite_func_preg_replace
 function _sqlite_func_preg_replace($quoi, $cherche, $remplace) {
 	$return = preg_replace('%' . $cherche . '%', $remplace, $quoi);
 
@@ -290,19 +290,19 @@ function _sqlite_func_extraire_multi($quoi, $lang) {
 }
 
 
-// http://code.spip.net/@_sqlite_func_rand
+// https://code.spip.net/@_sqlite_func_rand
 function _sqlite_func_rand() {
 	return rand();
 }
 
 
-// http://code.spip.net/@_sqlite_func_right
+// https://code.spip.net/@_sqlite_func_right
 function _sqlite_func_right($s, $length) {
 	return substr($s, 0 - $length);
 }
 
 
-// http://code.spip.net/@_sqlite_func_regexp_match
+// https://code.spip.net/@_sqlite_func_regexp_match
 function _sqlite_func_regexp_match($cherche, $quoi) {
 	// optimiser un cas tres courant avec les requetes en base
 	if (!$quoi and !strlen($quoi)) {
@@ -315,7 +315,7 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 	return $return;
 }
 
-// http://code.spip.net/@_sqlite_func_strftime
+// https://code.spip.net/@_sqlite_func_strftime
 function _sqlite_func_strftime($date, $conv) {
 	return strftime($conv, is_int($date) ? $date : strtotime($date));
 }
@@ -386,7 +386,7 @@ function _sqlite_timestampdiff($unit, $date1, $date2) {
 	return 0;
 }
 
-// http://code.spip.net/@_sqlite_func_unix_timestamp
+// https://code.spip.net/@_sqlite_func_unix_timestamp
 function _sqlite_func_unix_timestamp($d) {
 	static $mem = array();
 	static $n = 0;
@@ -409,7 +409,7 @@ function _sqlite_func_unix_timestamp($d) {
 }
 
 
-// http://code.spip.net/@_sqlite_func_year
+// https://code.spip.net/@_sqlite_func_year
 function _sqlite_func_year($d) {
 	return _sqlite_func_date("Y", $d);
 }
@@ -441,7 +441,7 @@ function _sqlite_func_date($quoi, $d) {
 	return $mem[$d][$quoi];
 }
 
-// http://code.spip.net/@_sqlite_func_vide
+// https://code.spip.net/@_sqlite_func_vide
 function _sqlite_func_vide() {
 	return;
 }
