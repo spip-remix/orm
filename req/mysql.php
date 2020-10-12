@@ -245,7 +245,12 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 			list(, $id, , $infos) = $GLOBALS['debug']['aucasou'];
 			$debug .= "BOUCLE$id @ " . (isset($infos[0]) ? $infos[0] : '') . " | ";
 		}
-		$debug .= $_SERVER['REQUEST_URI'] . ' + ' . $GLOBALS['ip'];
+		if (isset($_SERVER['REQUEST_URI'])) {
+			$debug .= $_SERVER['REQUEST_URI'];
+		}
+		if (!empty($GLOBALS['ip'])) {
+			$debug .= ' + ' . $GLOBALS['ip'];
+		}
 		$debug = ' /* ' . mysqli_real_escape_string($link, str_replace('*/', '@/', $debug)) . ' */';
 	}
 
