@@ -70,7 +70,9 @@ function creer_ou_upgrader_table($table, $desc, $autoinc, $upgrade = false, $ser
 			$autoinc = base_determine_autoinc($table, $desc);
 		}
 		#spip_log("sql_create $table autoinc=$autoinc","dbinstall"._LOG_INFO_IMPORTANTE);
-		sql_create($table, $desc['field'], $desc['key'], $autoinc, false, $serveur);
+		if (isset($desc['field']) and isset($desc['key'])) {
+			sql_create($table, $desc['field'], $desc['key'], $autoinc, false, $serveur);
+		}
 		// verifier la bonne installation de la table (php-fpm es-tu la ?)
 		$sql_desc = sql_showtable($table, true, $serveur);
 		#if (!$sql_desc) $sql_desc = false;
@@ -92,19 +94,23 @@ function creer_ou_upgrader_table($table, $desc, $autoinc, $upgrade = false, $ser
 		// on ne supprime jamais les champs, car c'est dangereux
 		// c'est toujours a faire manuellement
 		$last = '';
-		foreach ($desc['field'] as $field => $type) {
-			if (!isset($sql_desc['field'][$field])) {
-				sql_alter("TABLE $table ADD $field $type" . ($last ? " AFTER $last" : ""), $serveur);
+		if (isset($desc['field'])) {
+			foreach ($desc['field'] as $field => $type) {
+				if (!isset($sql_desc['field'][$field])) {
+					sql_alter("TABLE $table ADD $field $type" . ($last ? " AFTER $last" : ""), $serveur);
+				}
+				$last = $field;
 			}
-			$last = $field;
 		}
-		foreach ($desc['key'] as $key => $type) {
-			// Ne pas oublier les cas des cles non nommees dans la declaration et qui sont retournees
-			// par le showtable sous la forme d'un index de tableau "KEY $type" et non "KEY"
-			if (!isset($sql_desc['key'][$key]) and !isset($sql_desc['key']["$key $type"])) {
-				sql_alter("TABLE $table ADD $key ($type)", $serveur);
+		if (isset($desc['key'])) {
+			foreach ($desc['key'] as $key => $type) {
+				// Ne pas oublier les cas des cles non nommees dans la declaration et qui sont retournees
+				// par le showtable sous la forme d'un index de tableau "KEY $type" et non "KEY"
+				if (!isset($sql_desc['key'][$key]) and !isset($sql_desc['key']["$key $type"])) {
+					sql_alter("TABLE $table ADD $key ($type)", $serveur);
+				}
+				$last = $field;
 			}
-			$last = $field;
 		}
 
 	}
