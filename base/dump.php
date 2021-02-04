@@ -26,17 +26,7 @@ include_spip('base/serial');
 include_spip('base/auxiliaires');
 include_spip('public/interfaces'); // pour table_jointures
 
-// NB: Ce fichier peut ajouter des tables (old-style)
-// donc il faut l'inclure "en globals"
-if ($f = find_in_path('mes_fonctions.php')) {
-	global $dossier_squelettes;
-	@include_once(_ROOT_CWD . $f);
-}
-
-if (@is_readable(_CACHE_PLUGINS_FCT)) {
-	// chargement optimise precompile
-	include_once(_CACHE_PLUGINS_FCT);
-}
+include_fichiers_fonctions();
 
 /**
  * Retourne un nom de meta pour une rubrique et l'auteur connecté.
