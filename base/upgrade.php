@@ -138,7 +138,7 @@ function maj_base($version_cible = 0, $redirect = '') {
 		$n = floor($version_installee * 10);
 		while ($n < 19) {
 			$nom = sprintf('v%03d', $n);
-			$f = charger_fonction($nom, 'maj', true);
+			$f = charger_fonction($nom, 'maj/legacy', true);
 			if ($f) {
 				spip_log("$f repercute les modifications de la version " . ($n / 10), 'maj.' . _LOG_INFO_IMPORTANTE);
 				$f($version_installee, $GLOBALS['spip_version_base']);
@@ -147,20 +147,25 @@ function maj_base($version_cible = 0, $redirect = '') {
 			}
 			$n++;
 		}
-		include_spip('maj/v019_pre193');
-		v019_pre193($version_installee, $version_cible);
+		include_spip('maj/legacy/v019_pre193');
+		maj_legacy_v019_pre193($version_installee, $version_cible);
 	}
 	if ($version_installee < 2000) {
 		if ($version_installee < 2) {
 			$version_installee = $version_installee * 1000;
 		}
-		include_spip('maj/v019');
+		include_spip('maj/legacy/v019');
 	}
 	if ($cible < 2) {
 		$cible = $cible * 1000;
 	}
 
-	include_spip('maj/svn10000');
+	if ($version_installee < 2021010100) {
+		include_spip('maj/legacy/svn10000');
+	}
+
+	include_spip('maj/2021');
+
 	ksort($GLOBALS['maj']);
 	$res = maj_while($version_installee, $cible, $GLOBALS['maj'], 'version_installee', 'meta', $redirect, true);
 	if ($res) {
