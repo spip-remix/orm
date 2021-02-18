@@ -2424,6 +2424,7 @@ function _sqlite_remplacements_definitions_table($query, $autoinc = false) {
 		'/COLLATE \w+_bin/is' => 'COLLATE BINARY',
 		'/COLLATE \w+_ci/is' => 'COLLATE NOCASE',
 		'/auto_increment/is' => '',
+		'/current_timestamp\(\)/is' => 'CURRENT_TIMESTAMP', // Fix export depuis mariaDB #4374
 		'/(timestamp .* )ON .*$/is' => '\\1',
 		'/character set \w+/is' => '',
 		'/((big|small|medium|tiny)?int(eger)?)' . $num . '\s*unsigned/is' => '\\1 UNSIGNED',
