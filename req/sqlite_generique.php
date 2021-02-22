@@ -2820,7 +2820,7 @@ class sqlite_requeteur {
 		}
 		$err = "";
 		$t = 0;
-		if ($tracer) {
+		if ($tracer or (defined('_DEBUG_TRACE_QUERIES') and _DEBUG_TRACE_QUERIES)) {
 			include_spip('public/tracer');
 			$t = trace_query_start();
 		}
