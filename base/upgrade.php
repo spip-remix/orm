@@ -102,7 +102,7 @@ function base_upgrade_dist($titre = '', $reprise = '') {
  * @param string $redirect
  * @return array|bool
  */
-function maj_base($version_cible = 0, $redirect = '') {
+function maj_base($version_cible = 0, $redirect = '', $debut_page = true) {
 
 	$version_installee = @$GLOBALS['meta']['version_installee'];
 	//
@@ -167,7 +167,7 @@ function maj_base($version_cible = 0, $redirect = '') {
 	include_spip('maj/2021');
 
 	ksort($GLOBALS['maj']);
-	$res = maj_while($version_installee, $cible, $GLOBALS['maj'], 'version_installee', 'meta', $redirect, true);
+	$res = maj_while($version_installee, $cible, $GLOBALS['maj'], 'version_installee', 'meta', $redirect, $debut_page);
 	if ($res) {
 		if (!is_array($res)) {
 			spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_INFO_ERREUR);
