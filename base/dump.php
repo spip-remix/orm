@@ -353,7 +353,7 @@ function base_vider_tables_destination_copie($tables, $exclure_tables = array(),
 				$desc = $trouver_table($table, $serveur);
 				if (isset($desc['field']['impt'])) {
 					sql_delete($table, "impt='oui'", $serveur);
-				} else {
+				} elseif ($desc) {
 					sql_delete($table, "", $serveur);
 				}
 			}
