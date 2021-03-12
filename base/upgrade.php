@@ -313,7 +313,7 @@ function maj_debut_page($installee, $meta, $table) {
 	$timeout = _UPGRADE_TIME_OUT * 2;
 	$titre = _T('titre_page_upgrade');
 	$balise_img = charger_filtre('balise_img');
-	$titre .= $balise_img(chemin_image('searching.gif'));
+	$titre .= $balise_img(chemin_image('loader.svg'),'','loader');
 	echo(install_debut_html($titre));
 	// script de rechargement auto sur timeout
 	$redirect = generer_url_ecrire('upgrade', "reinstall=$installee&meta=$meta&table=$table", true);
