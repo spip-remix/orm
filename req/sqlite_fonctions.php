@@ -120,7 +120,6 @@ function _sqlite_init_functions(&$sqlite) {
 		'YEAR' => array('_sqlite_func_year', 1)
 	);
 
-
 	foreach ($fonctions as $f => $r) {
 		_sqlite_add_function($sqlite, $f, $r);
 	}
@@ -315,8 +314,29 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 	return $return;
 }
 
+
 // https://code.spip.net/@_sqlite_func_strftime
 function _sqlite_func_strftime($date, $conv) {
+	// ok : %a %b %d %e %H %I %l %j %k %m %p %r %S %T %w %y %Y
+	// on ne sait pas en gérer certains...
+	static $errors = [];
+	static $mysql_to_php_not_ok = ['%c', '%D', '%f', '%U', '%V', '%W', '%X'];
+	static $mysql_to_php = [
+		'%h' => '%I',
+		'%i' => '%M',
+		'%M' => '%B',
+		'%s' => '%S',
+		'%u' => '%U',
+		'%v' => '%V',
+		'%x' => '%G',
+	];
+	$count = 0;
+	str_replace($mysql_to_php_not_ok, '', $conv, $count);
+	if ($count > 0 && !isset($errors[$conv])) {
+		$errors[$conv] = true;
+		spip_log("DATE_FORMAT : At least one parameter can't be parsed by strftime with format '$conv'", 'sqlite.' . _LOG_INFO_IMPORTANTE);
+	}
+	$conv = str_replace(array_keys($mysql_to_php), $mysql_to_php, $conv);
 	return strftime($conv, is_int($date) ? $date : strtotime($date));
 }
 
