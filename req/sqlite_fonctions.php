@@ -315,13 +315,35 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 }
 
 
-// https://code.spip.net/@_sqlite_func_strftime
+/**
+ * Transforme une date via un appel à DATE_FORMAT()
+ *
+ * @param string $date
+ * @param string $conv
+ * @return string
+ */
 function _sqlite_func_strftime($date, $conv) {
+	$conv = _sqlite_func_strftime_format_converter($conv);
+	return strftime($conv, is_int($date) ? $date : strtotime($date));
+}
+
+/**
+ * Convertit un format demandé pour DATE_FORMAT() de mysql en un format
+ * adapté à strftime() de php.
+ * 
+ * Certains paramètres ne correspondent pas et doivent être remplacés,
+ * d'autres n'ont tout simplement pas d'équivalent dans strftime :
+ * dans ce cas là on loggue, car il y a de grandes chances que le résultat
+ * soit inadapté.
+ *
+ * @param string $conv
+ * @return void
+ */
+function _sqlite_func_strftime_format_converter(string $conv) : string {
 	// ok : %a %b %d %e %H %I %l %j %k %m %p %r %S %T %w %y %Y
 	// on ne sait pas en gérer certains...
-	static $errors = [];
-	static $mysql_to_php_not_ok = ['%c', '%D', '%f', '%U', '%V', '%W', '%X'];
-	static $mysql_to_php = [
+	static $mysql_to_strftime_not_ok = ['%c', '%D', '%f', '%U', '%V', '%W', '%X'];
+	static $mysql_to_strftime = [
 		'%h' => '%I',
 		'%i' => '%M',
 		'%M' => '%B',
@@ -330,14 +352,16 @@ function _sqlite_func_strftime($date, $conv) {
 		'%v' => '%V',
 		'%x' => '%G',
 	];
-	$count = 0;
-	str_replace($mysql_to_php_not_ok, '', $conv, $count);
-	if ($count > 0 && !isset($errors[$conv])) {
-		$errors[$conv] = true;
-		spip_log("DATE_FORMAT : At least one parameter can't be parsed by strftime with format '$conv'", 'sqlite.' . _LOG_INFO_IMPORTANTE);
+	static $to_strftime = [];
+	if (!isset($to_strftime[$conv])) {
+		$count = 0;
+		str_replace($mysql_to_strftime_not_ok, '', $conv, $count);
+		if ($count > 0) {
+			spip_log("DATE_FORMAT : At least one parameter can't be parsed by strftime with format '$conv'", 'sqlite.' . _LOG_ERREUR);
+		}
+		$to_strftime[$conv] = str_replace(array_keys($mysql_to_strftime), $mysql_to_strftime, $conv);
 	}
-	$conv = str_replace(array_keys($mysql_to_php), $mysql_to_php, $conv);
-	return strftime($conv, is_int($date) ? $date : strtotime($date));
+	return $to_strftime[$conv];
 }
 
 /**
