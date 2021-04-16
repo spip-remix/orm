@@ -161,7 +161,9 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 					'id_article' => 'id_article',
 					'id_rubrique' => 'id_rubrique'
 				),
-				'parent' => array('type' => 'rubrique', 'champ' => 'id_rubrique'),
+				'parent' => [
+					['type' => 'rubrique', 'champ' => 'id_rubrique']
+				],
 				'rechercher_champs' => array(
 					'surtitre' => 5,
 					'titre' => 8,
@@ -351,7 +353,9 @@ function lister_tables_objets_sql($table_sql = null, $desc = array()) {
 					'KEY lang' => 'lang',
 					'KEY id_parent' => 'id_parent',
 				),
-				'parent' => array('type' => 'rubrique', 'champ' => 'id_parent'),
+				'parent' => [
+					['type' => 'rubrique', 'champ' => 'id_parent']
+				],
 				'rechercher_champs' => array(
 					'titre' => 8,
 					'descriptif' => 5,
