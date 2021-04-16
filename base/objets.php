@@ -1264,7 +1264,6 @@ function objet_test_si_publie($objet, $id_objet, $serveur = '') {
 
 /**
  * Cherche les contenus parent d'un contenu précis.
- * Cette version permet de gérer un/des parents trouvés dans une table de lien
  *
  * comme :
  * ```
@@ -1416,8 +1415,48 @@ function objet_trouver_parents($objet, $id_objet, $parent_direct_seulement = fal
 }
 
 /**
+ * Fonction helper qui permet de récupérer une liste simplifiée des parents, regroupés par objet
+ * [ 'objet1' => [ids...], 'objet2' => [ids...] ]
+ *
+ * @param $objet
+ * @param $id_objet
+ * @return array
+ */
+function objet_trouver_parents_par_type($objet, $id_objet) {
+	$parents = objet_trouver_parents($objet, $id_objet);
+
+	$parents_par_type = [];
+	foreach ($parents as $parent) {
+		if (!isset($parents_par_type[$parent['objet']])) {
+			$parents_par_type[$parent['objet']] = [];
+		}
+		$parents_par_type[$parent['objet']][] = $parent['id_objet'];
+	}
+
+	return $parents_par_type;
+}
+
+
+/**
  * Cherche tous les contenus enfants d'un contenu précis
- * 
+ *
+ * comme :
+ * ```
+ * $tables['spip_auteurs']['parent']  = array(
+ *     'type' => 'organisation',
+ *     'champ' => 'id_organisation',
+ *     'table' => 'spip_organisations_liens',
+ *     'table_condition' => 'role="parent"',
+ *     'source_champ' => 'id_objet',
+ *     'champ_type' => 'objet'
+ * );
+ * ```
+ *
+ * La fonction retourne un tableau des enfants, chacun de la forme
+ * ['objet' => '...', 'id_objet' => X, 'table' => '...', 'champ' => '...']
+ * Si la table utilisée pour trouver l'eenfant est une table de liens (finissant par _liens),
+ * le tableau contient en plus en entrée 'lien' qui contient les informations complètes du lien (rang, role...)
+ *
  * @api
  * @param $objet
  *     Type de l'objet dont on cherche les enfants
@@ -1471,15 +1510,30 @@ function objet_trouver_enfants($objet, $id_objet) {
 			}
 
 			// On lance la requête
-			if ($ids = sql_allfetsel($cle_objet_enfant, $table_enfant, $where)) {
-				$ids = array_map('reset', $ids);
-				$enfants[$objet_enfant] = isset($enfants[$objet_enfant])
-					? array_merge($enfants[$objet_enfant], $ids)
-					: $ids;
+			$is_table_lien = (strpos($table_enfant, '_liens') !== false and substr($table_enfant, -6) === '_liens');
+			if ($rows = sql_allfetsel($is_table_lien ? '*' : $cle_objet_enfant, $table_enfant, $where)) {
+				$enfant = [
+					'objet' => $objet_enfant,
+					'id_objet' => 0,
+					'table' => $table_enfant
+				];
+				if (isset($_methode_parent['champ'])) {
+					$enfant['champ'] = $_methode_parent['champ'];
+				}
+				if (isset($_methode_parent['champ_type'])) {
+					$enfant['champ_type'] = $_methode_parent['champ_type'];
+				}
+				foreach ($rows as $row) {
+					$enfant['id_objet'] = intval($row[$cle_objet_enfant]);
+					if ($is_table_lien) {
+						$enfant['lien'] = $row;
+					}
+					$enfants[] = $enfant;
+				}
 			}
 		}
 	}
-	
+
 	// On passe par un pipeline avant de retourner
 	$enfants = pipeline(
 		'objet_trouver_enfants',
@@ -1491,8 +1545,30 @@ function objet_trouver_enfants($objet, $id_objet) {
 			'data' => $enfants,
 		)
 	);
-	
+
 	return $enfants;
+}
+
+/**
+ * Fonction helper qui permet de récupérer une liste simplifiée des enfants, regroupés par objet
+ * [ 'objet1' => [ids...], 'objet2' => [ids...] ]
+ *
+ * @param $objet
+ * @param $id_objet
+ * @return array
+ */
+function objet_trouver_enfants_par_type($objet, $id_objet) {
+	$enfants = objet_trouver_enfants($objet, $id_objet);
+
+	$enfants_par_type = [];
+	foreach ($enfants as $enfant) {
+		if (!isset($enfants_par_type[$enfant['objet']])) {
+			$enfants_par_type[$enfant['objet']] = [];
+		}
+		$enfants_par_type[$enfant['objet']][] = $enfant['id_objet'];
+	}
+
+	return $enfants_par_type;
 }
 
 /**
