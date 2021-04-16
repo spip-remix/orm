@@ -1263,10 +1263,10 @@ function objet_test_si_publie($objet, $id_objet, $serveur = '') {
 
 
 /**
- * Cherche le contenu parent d'un contenu précis
+ * Cherche les contenus parent d'un contenu précis.
+ * Cette version permet de gérer un/des parents trouvés dans une table de lien
  *
- * Permet également de gérer un parent trouvé dans une table de lien, comme :
- *
+ * comme :
  * ```
  * $tables['spip_auteurs']['parent']  = array(
  *     'type' => 'organisation',
@@ -1277,6 +1277,11 @@ function objet_test_si_publie($objet, $id_objet, $serveur = '') {
  *     'champ_type' => 'objet'
  * );
  * ```
+ *
+ * La fonction retourne un tableau de parents, chacun de la forme
+ * ['objet' => '...', 'id_objet' => X, 'table' => '...', 'champ' => '...']
+ * Si la table utilisée pour trouver le parent est une table de liens (finissant par _liens),
+ * le tableau contient en plus en entrée 'lien' qui contient les informations complètes du lien (rang, role...)
  *
  * @api
  * @param string $objet
@@ -1361,10 +1366,11 @@ function objet_trouver_parents($objet, $id_objet, $parent_direct_seulement = fal
 			}
 
 			// On lance la requête de récupération du parent
+			$is_table_lien = (strpos($table, '_liens') !== false and substr($table, -6) === '_liens');
 			if (
 				!$condition_objet_invalide
 				and $where
-				and ($lignes = sql_allfetsel($select, $table, $where))
+				and ($lignes = sql_allfetsel( $is_table_lien ? '*' : $select, $table, $where))
 			) {
 				foreach ($lignes as $ligne) {
 					// Si le type est fixe
@@ -1384,6 +1390,9 @@ function objet_trouver_parents($objet, $id_objet, $parent_direct_seulement = fal
 							'champ_type' => $parent_methode['champ_type'],
 							'table'    => $table,
 						);
+					}
+					if ($is_table_lien) {
+						$parent['lien'] = $ligne;
 					}
 					$parents[] = $parent;
 				}
