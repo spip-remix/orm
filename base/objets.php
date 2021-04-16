@@ -1292,11 +1292,11 @@ function objet_test_si_publie($objet, $id_objet, $serveur = '') {
  * @return array
  *     Retourne un tableau décrivant les parents trouvés
  */
-function objet_trouver_parents($objet, $id_objet, $parent_direct_seulement = false) {
+function objet_lister_parents($objet, $id_objet, $parent_direct_seulement = false) {
 	$parents = [];
 
 	// Si on trouve une ou des méthodes de parent
-	if ($parent_methodes = type_objet_info_parent($objet)) {
+	if ($parent_methodes = objet_type_decrire_infos_parents($objet)) {
 
 		// On identifie les informations sur l'objet source dont on cherche le parent.
 		include_spip('base/abstract_sql');
@@ -1401,7 +1401,7 @@ function objet_trouver_parents($objet, $id_objet, $parent_direct_seulement = fal
 
 	// On passe par un pipeline avant de retourner
 	$parents = pipeline(
-		'objet_trouver_parents',
+		'objet_lister_parents',
 		array(
 			'args' => array(
 				'objet' => $objet,
@@ -1422,8 +1422,8 @@ function objet_trouver_parents($objet, $id_objet, $parent_direct_seulement = fal
  * @param $id_objet
  * @return array
  */
-function objet_trouver_parents_par_type($objet, $id_objet) {
-	$parents = objet_trouver_parents($objet, $id_objet);
+function objet_lister_parents_par_type($objet, $id_objet) {
+	$parents = objet_lister_parents($objet, $id_objet);
 
 	$parents_par_type = [];
 	foreach ($parents as $parent) {
@@ -1465,11 +1465,11 @@ function objet_trouver_parents_par_type($objet, $id_objet) {
  * @return array
  *     Retourne un tableau de tableaux, avec comme clés les types des objets, et dans chacun un tableau des identifiants trouvés
  */
-function objet_trouver_enfants($objet, $id_objet) {
+function objet_lister_enfants($objet, $id_objet) {
 	$enfants = array();
 	
 	// Si on trouve des types d'enfants et leurs méthodes
-	if ($enfants_methodes = type_objet_info_enfants($objet)) {
+	if ($enfants_methodes = objet_type_decrire_infos_enfants($objet)) {
 		include_spip('base/abstract_sql');
 		$id_objet = intval($id_objet);
 		
@@ -1536,7 +1536,7 @@ function objet_trouver_enfants($objet, $id_objet) {
 
 	// On passe par un pipeline avant de retourner
 	$enfants = pipeline(
-		'objet_trouver_enfants',
+		'objet_lister_enfants',
 		array(
 			'args' => array(
 				'objet' => $objet,
@@ -1557,8 +1557,8 @@ function objet_trouver_enfants($objet, $id_objet) {
  * @param $id_objet
  * @return array
  */
-function objet_trouver_enfants_par_type($objet, $id_objet) {
-	$enfants = objet_trouver_enfants($objet, $id_objet);
+function objet_lister_enfants_par_type($objet, $id_objet) {
+	$enfants = objet_lister_enfants($objet, $id_objet);
 
 	$enfants_par_type = [];
 	foreach ($enfants as $enfant) {
@@ -1579,7 +1579,7 @@ function objet_trouver_enfants_par_type($objet, $id_objet) {
  * @return array|false
  *     Retourne un tableau de tableau contenant les informations de type et de champ pour trouver le parent ou false sinon
  */
-function type_objet_info_parent($objet) {
+function objet_type_decrire_infos_parents($objet) {
 	static $parents = array();
 	
 	// Si on ne l'a pas encore cherché pour cet objet
@@ -1619,7 +1619,7 @@ function type_objet_info_parent($objet) {
  * @return array
  *     Retourne un tableau de tableaux contenant chacun les informations d'un type d'enfant
  */
-function type_objet_info_enfants($objet) {
+function objet_type_decrire_infos_enfants($objet) {
 	static $enfants = array();
 	
 	// Si on a déjà fait la recherche pour ce type d'objet
@@ -1632,7 +1632,7 @@ function type_objet_info_enfants($objet) {
 			$objet_enfant = objet_type($table);
 			
 			// On ne va pas refaire les tests des différents cas, on réutilise
-			if ($parent_methodes = type_objet_info_parent($objet_enfant)) {
+			if ($parent_methodes = objet_type_decrire_infos_parents($objet_enfant)) {
 				// On parcourt les différents cas possible, si certains peuvent concerner l'objet demandé
 				foreach ($parent_methodes as $parent_methode) {
 					// Si la méthode qu'on teste n'exclut pas le parent demandé
