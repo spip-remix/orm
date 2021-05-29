@@ -475,32 +475,6 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 	return 0;
 }
 
-
-/**
- * Mise à jour des types MIME de documents
- *
- * Fonction utilisé par les vieilles mises à jour de SPIP, à appeler dans
- * le tableau `$maj` quand on rajoute des types MIME. Remplacé actuellement
- * par le plugin Medias.
- *
- * @deprecated 3.1
- * @see Utiliser directement `creer_base_types_doc()` du plugin Medias
- * @example
- *     ```
- *     $GLOBALS['maj'][1953] = array(array('upgrade_types_documents'));
- *
- *     ```
- * @uses creer_base_types_doc()
- *
- **/
-function upgrade_types_documents() {
-	if (include_spip('base/medias')
-		and function_exists('creer_base_types_doc')
-	) {
-		creer_base_types_doc();
-	}
-}
-
 /**
  * Vérifie qu'il est possible d'ajouter une colonne à une table SQL
  *
