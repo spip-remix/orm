@@ -305,6 +305,8 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 	if (!$quoi and !strlen($quoi)) {
 		return false;
 	}
+	// il faut enlever un niveau d'echappement pour être homogène à mysql
+	$cherche = str_replace('\\\\', '\\', $cherche);
 	$u = isset($GLOBALS['meta']['pcre_u']) ? $GLOBALS['meta']['pcre_u'] : 'u';
 	$return = preg_match('%' . $cherche . '%imsS' . $u, $quoi);
 
