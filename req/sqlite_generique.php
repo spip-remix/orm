@@ -3019,7 +3019,8 @@ class sqlite_traducteur {
 		// il dit que x ne doit pas être un integer dans le order by !
 		// on remplace du coup x par vide() dans ce cas uniquement
 		//
-		// rien que pour public/vertebrer.php ?
+		// apparait dans public/vertebrer.php et dans le plugin menu aussi qui genere aussi ce genre de requete via un {par num #GET{tri_num}}
+		// mais est-ce encore un soucis pour sqlite en 2021 ? (ie commenter le preg_replace marche très bien en sqlite 3.28)
 		if ((strpos($this->query, "0 AS") !== false)) {
 			// on ne remplace que dans ORDER BY ou GROUP BY
 			if (preg_match('/\s(ORDER|GROUP) BY\s/i', $this->query, $regs)) {
@@ -3030,7 +3031,9 @@ class sqlite_traducteur {
 				// on remplace dans $suite le nom par vide()
 				preg_match_all('/\b0 AS\s*([^\s,]+)/', $this->query, $matches, PREG_PATTERN_ORDER);
 				foreach ($matches[1] as $m) {
-					$suite = str_replace($m, 'VIDE()', $suite);
+					if (strpos($suite, $m) !== false) {
+						$suite = preg_replace(",\b$m\b,", 'VIDE()', $suite);
+					}
 				}
 				$this->query .= $suite;
 			}
