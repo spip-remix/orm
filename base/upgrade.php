@@ -390,7 +390,7 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 			if ($meta) {
 				ecrire_meta($meta, $installee = $v, 'oui', $table);
 			}
-			echo '<br />';
+			echo (_IS_CLI ? "\n" : '<br />');
 		}
 		if (time() >= _TIME_OUT) {
 			relance_maj($meta, $table, $redirect);
@@ -449,7 +449,7 @@ function serie_alter($serie, $q = array(), $meta = '', $table = 'meta', $redirec
 				if (strncmp($f, 'sql_', 4) == 0) {
 					ecrire_meta($meta2, $i + 1, 'non', $table);
 				}
-				echo " <span title='$i'>.</span>";
+				echo (_IS_CLI ? "." : " <span title='$i'>.</span>");
 				call_user_func_array($f, $r);
 				// si temps imparti depasse, on relance sans ecrire en meta
 				// car on est peut etre sorti sur timeout si c'est une fonction longue
