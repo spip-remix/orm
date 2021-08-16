@@ -212,7 +212,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 		return $query;
 	}
 
-	if (isset($_GET['var_profile'])) {
+	if (isset($_GET['var_profile']) or (defined('_DEBUG_TRACE_QUERIES') and _DEBUG_TRACE_QUERIES)) {
 		include_spip('public/tracer');
 		$t = trace_query_start();
 	} else {
