@@ -1232,6 +1232,7 @@ function objet_test_si_publie($objet, $id_objet, $serveur = '') {
 		$boucle->nom = 'objet_test_si_publie';
 		$boucle->id_boucle = $id_table;
 		$boucle->id_table = $id_table;
+		$boucle->primary = $desc['key']["PRIMARY KEY"] ?? '';
 		$boucle->sql_serveur = $serveur;
 		$boucle->select[] = $id_table_objet;
 		$boucle->from[$table_objet] = table_objet_sql($objet, $serveur);
