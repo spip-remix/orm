@@ -76,9 +76,6 @@ function _sqlite_init_functions(&$sqlite) {
 		// L
 		'LEAST'  => ['_sqlite_func_least', 3],
 		'_LEFT'  => ['_sqlite_func_left', 2],
-#		'LENGTH' => array('strlen', 1), // present v1.0.4
-#		'LOWER'  => array('strtolower', 1), // present v2.4
-#		'LTRIM'  => array('ltrim', 1), // present
 
 		// N
 		'NOW' => ['_sqlite_func_now', 0],
@@ -95,7 +92,6 @@ function _sqlite_init_functions(&$sqlite) {
 		'RAND'    => ['_sqlite_func_rand', 0], // sinon random() v2.4
 		'REGEXP'  => ['_sqlite_func_regexp_match', 2], // critere REGEXP supporte a partir de v3.3.2
 		'RIGHT'   => ['_sqlite_func_right', 2],
-#		'RTRIM'   => array('rtrim', 1), // present
 
 		// S
 		'SETTYPE'   => ['settype', 2], // CAST present en v3.2.3
@@ -107,11 +103,9 @@ function _sqlite_init_functions(&$sqlite) {
 		'TAN'           => ['tan', 1],
 		'TIMESTAMPDIFF' => ['_sqlite_timestampdiff'    /*, 3*/],
 		'TO_DAYS'       => ['_sqlite_func_to_days', 1],
-#		'TRIM'          => array('trim', 1), // present
 
 		// U
 		'UNIX_TIMESTAMP' => ['_sqlite_func_unix_timestamp', 1],
-#		'UPPER'          => array('strtoupper', 1), // present v2.4
 
 		// V
 		'VIDE' => ['_sqlite_func_vide', 0], // du vide pour SELECT 0 as x ... ORDER BY x -> ORDER BY vide()
