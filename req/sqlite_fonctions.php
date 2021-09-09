@@ -13,6 +13,11 @@
 /**
  * Ce fichier déclare des fonctions étendant les fonctions natives de SQLite
  *
+ * On mappe des fonctions absentes de sqlite (notamment donc des fonctions présentes dans mysql) 
+ * à des fonctions équivalentes php, que sqlite exécutera si besoin.
+ * 
+ * entre autre auteurs : mlebas
+ *
  * @package SPIP\Core\SQL\SQLite\Fonctions
  */
 
@@ -56,7 +61,7 @@ function _sqlite_init_functions(&$sqlite) {
 		'COS'    => ['cos', 1],
 
 		// D
-		'DATE_FORMAT' => ['_sqlite_func_strftime', 2],
+		'DATE_FORMAT' => ['_sqlite_func_date_format', 2], // équivalent a strftime avec args inversés
 		'DAYOFMONTH'  => ['_sqlite_func_dayofmonth', 1],
 		'DEGREES'     => ['rad2deg', 1],
 
@@ -144,28 +149,47 @@ function _sqlite_add_function(&$sqlite, &$f, &$r) {
 		: $sqlite->sqliteCreateFunction($f, $r[0]);
 }
 
-//
-// SQLite : fonctions sqlite -> php
-// entre autre auteurs : mlebas
-//
-
+/**
+ * Mapping de `CEIL` pour SQLite
+ *
+ * @param float $a
+ * @return int
+ */
 function _sqlite_func_ceil($a) {
 	return ceil($a);
 }
 
-// https://code.spip.net/@_sqlite_func_concat
+/**
+ * Mapping de `CONCAT` pour SQLite
+ *
+ * @param string[] ...$args
+ * @return string
+ */
 function _sqlite_func_concat(...$args) {
 	return join('', $args);
 }
 
 
-// https://code.spip.net/@_sqlite_func_dayofmonth
+/**
+ * Mapping de `DAYOFMONTH` pour SQLite
+ *
+ * @uses _sqlite_func_date()
+ * 
+ * @param string $d
+ * @return int
+ */
 function _sqlite_func_dayofmonth($d) {
 	return _sqlite_func_date('d', $d);
 }
 
 
-// https://code.spip.net/@_sqlite_func_find_in_set
+/**
+ * Mapping de `FIND_IN_SET` pour SQLite
+ *
+ * @param string $num
+ * @param string $set
+ * @return int
+ */
 function _sqlite_func_find_in_set($num, $set) {
 	$rank = 0;
 	foreach (explode(',', $set) as $v) {
@@ -178,22 +202,42 @@ function _sqlite_func_find_in_set($num, $set) {
 	return 0;
 }
 
+/**
+ * Mapping de `FLOOR` pour SQLite
+ *
+ * @param float $a
+ * @return int
+ */
 function _sqlite_func_floor($a) {
 	return floor($a);
 }
 
-// https://code.spip.net/@_sqlite_func_if
+
+/**
+ * Mapping de `IF` pour SQLite
+ *
+ * @param bool $bool
+ * @param mixed $oui
+ * @param mixed $non
+ * @return mixed
+ */
 function _sqlite_func_if($bool, $oui, $non) {
 	return ($bool) ? $oui : $non;
 }
 
 
-/*
- * INSERT(chaine, index, longueur, chaine) 	MySQL
- * Retourne une chaine de caracteres a partir d'une chaine dans laquelle "sschaine"
- *  a ete inseree a la position "index" en remplacant "longueur" caracteres.
+/**
+ * Mapping de `INSERT` pour SQLite
+ *
+ * Retourne une chaine de caractères à partir d'une chaine dans laquelle "chaine"
+ * à été inserée à la position "index" en remplacant "longueur" caractères.
+ * 
+ * @param string $s
+ * @param int $index
+ * @param int $longueur
+ * @param string $chaine
+ * @return string
  */
-// https://code.spip.net/@_sqlite_func_insert
 function _sqlite_func_insert($s, $index, $longueur, $chaine) {
 	return
 		substr($s, 0, $index)
@@ -202,29 +246,48 @@ function _sqlite_func_insert($s, $index, $longueur, $chaine) {
 }
 
 
-// https://code.spip.net/@_sqlite_func_instr
+/**
+ * Mapping de `INSTR` pour SQLite
+ *
+ * @param string $s
+ * @param string $search
+ * @return int
+ */
 function _sqlite_func_instr($s, $search) {
 	return strpos($s, $search);
 }
 
 
-// https://code.spip.net/@_sqlite_func_least
-function _sqlite_func_least() {
-	$arg_list = func_get_args();
-	$least = min($arg_list);
+/**
+ * Mapping de `LEAST` pour SQLite
+ *
+ * @param int[] ...$args
+ * @return int
+ */
+function _sqlite_func_least(...$args) {
+	$least = min($args);
 
 	#spip_log("Passage avec LEAST : $least",'sqlite.'._LOG_DEBUG);
 	return $least;
 }
 
-
-// https://code.spip.net/@_sqlite_func_left
+/**
+ * Mapping de `LEFT` pour SQLite
+ *
+ * @param string $s
+ * @param int $lenght
+ * @return string
+ */
 function _sqlite_func_left($s, $lenght) {
 	return substr($s, $lenght);
 }
 
-
-// https://code.spip.net/@_sqlite_func_now
+/**
+ * Mappnig de `NOW` pour SQLite
+ *
+ * @param boolean $force_refresh
+ * @return string
+ */
 function _sqlite_func_now($force_refresh = false) {
 	static $now = null;
 	if (is_null($now) or $force_refresh) {
@@ -236,13 +299,27 @@ function _sqlite_func_now($force_refresh = false) {
 }
 
 
-// https://code.spip.net/@_sqlite_func_month
+/**
+ * Mapping de `MONTH` pour SQLite
+ *
+ * @uses _sqlite_func_date()
+ * 
+ * @param string $d
+ * @return int
+ */
 function _sqlite_func_month($d) {
 	return _sqlite_func_date('m', $d);
 }
 
 
-// https://code.spip.net/@_sqlite_func_preg_replace
+/**
+ * Mapping de `PREG_REPLACE` pour SQLite
+ *
+ * @param string $quoi
+ * @param string $cherche
+ * @param string $remplace
+ * @return string
+ */
 function _sqlite_func_preg_replace($quoi, $cherche, $remplace) {
 	$return = preg_replace('%' . $cherche . '%', $remplace, $quoi);
 
@@ -251,6 +328,8 @@ function _sqlite_func_preg_replace($quoi, $cherche, $remplace) {
 }
 
 /**
+ * Mapping pour `EXTRAIRE_MULTI` de SPIP pour SQLite
+ * 
  * Extrait une langue d'un texte <multi>[fr] xxx [en] yyy</multi>
  *
  * @param string $quoi le texte contenant ou non un multi
@@ -281,19 +360,35 @@ function _sqlite_func_extraire_multi($quoi, $lang) {
 }
 
 
-// https://code.spip.net/@_sqlite_func_rand
+/**
+ * Mapping de `RAND` pour SQLite
+ *
+ * @return float
+ */
 function _sqlite_func_rand() {
 	return rand();
 }
 
 
-// https://code.spip.net/@_sqlite_func_right
+/**
+ * Mapping de `RIGHT` pour SQLite
+ *
+ * @param string $s
+ * @param int $length
+ * @return string
+ */
 function _sqlite_func_right($s, $length) {
 	return substr($s, 0 - $length);
 }
 
 
-// https://code.spip.net/@_sqlite_func_regexp_match
+/**
+ * Mapping de `REGEXP` pour SQLite
+ *
+ * @param string $cherche
+ * @param string $quoi
+ * @return bool
+ */
 function _sqlite_func_regexp_match($cherche, $quoi) {
 	// optimiser un cas tres courant avec les requetes en base
 	if (!$quoi and !strlen($quoi)) {
@@ -310,13 +405,16 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 
 
 /**
- * Transforme une date via un appel à DATE_FORMAT()
+ * Mapping de `DATE_FORMAT` pour SQLite
+ * 
+ * Transforme un un appel à DATE_FORMAT() via strftime de PHP, mais les motifs de remplacements
+ * ne sont pas toujours identiques. On essaie de les contertir.
  *
  * @param string $date
  * @param string $conv
  * @return string
  */
-function _sqlite_func_strftime($date, $conv) {
+function _sqlite_func_date_format($date, $conv) {
 	$conv = _sqlite_func_strftime_format_converter($conv);
 	return strftime($conv, is_int($date) ? $date : strtotime($date));
 }
@@ -359,6 +457,8 @@ function _sqlite_func_strftime_format_converter(string $conv): string {
 }
 
 /**
+ * Mapping de `DAYS` pour SQLite
+ * 
  * Nombre de jour entre 0000-00-00 et $d
  *
  * @link http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_to-days
@@ -374,6 +474,14 @@ function _sqlite_func_to_days($d) {
 	return $result;
 }
 
+/**
+ * Mapping de `SUBSTRING` pour SQLite
+ *
+ * @param string $string
+ * @param int $start
+ * @param int $len
+ * @return string
+ */
 function _sqlite_func_substring($string, $start, $len = null) {
 	// SQL compte a partir de 1, php a partir de 0
 	$start = ($start > 0) ? $start - 1 : $start;
@@ -385,6 +493,8 @@ function _sqlite_func_substring($string, $start, $len = null) {
 }
 
 /**
+ * Mapping de `TIMESTAMPDIFF` pour SQLite
+ * 
  * Calcul de la difference entre 2 timestamp, exprimes dans l'unite fournie en premier argument
  *
  * @link https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_timestampdiff
@@ -424,7 +534,12 @@ function _sqlite_timestampdiff($unit, $date1, $date2) {
 	return 0;
 }
 
-// https://code.spip.net/@_sqlite_func_unix_timestamp
+/**
+ * Mapping de `UNIX_TIMESTAMP` pour SQLite
+ *
+ * @param string $d
+ * @return int
+ */
 function _sqlite_func_unix_timestamp($d) {
 	static $mem = [];
 	static $n = 0;
@@ -447,14 +562,20 @@ function _sqlite_func_unix_timestamp($d) {
 }
 
 
-// https://code.spip.net/@_sqlite_func_year
+/**
+ * Mapping de `YEAR` pour SQLite
+ *
+ * @uses _sqlite_func_date()
+ * 
+ * @param string $d
+ * @return int
+ */
 function _sqlite_func_year($d) {
 	return _sqlite_func_date('Y', $d);
 }
 
 /**
- * version optimisee et memoizee de date() utilisee par
- * _sqlite_func_year, _sqlite_func_month, _sqlite_func_dayofmonth
+ * Version optimisée et memoizée de date() utilisé pour certains mapping SQLite
  *
  * @param string $quoi
  *   format : Y, m, ou d
@@ -479,7 +600,11 @@ function _sqlite_func_date($quoi, $d) {
 	return $mem[$d][$quoi];
 }
 
-// https://code.spip.net/@_sqlite_func_vide
+/**
+ * Mapping de `VIDE()` de SPIP pour SQLite
+ *
+ * @return void
+ */
 function _sqlite_func_vide() {
 	return;
 }
