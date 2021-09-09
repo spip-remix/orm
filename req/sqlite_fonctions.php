@@ -73,13 +73,16 @@ function _sqlite_init_functions(&$sqlite) {
 		'FIND_IN_SET' => ['_sqlite_func_find_in_set', 2],
 		'FLOOR'       => ['_sqlite_func_floor', 1],
 
+		// G
+		'GREATEST' => ['_sqlite_func_greatest', -1],
+
 		// I
 		'IF'     => ['_sqlite_func_if', 3],
 		'INSERT' => ['_sqlite_func_insert', 4],
 		'INSTR'  => ['_sqlite_func_instr', 2],
 
 		// L
-		'LEAST'  => ['_sqlite_func_least', 3],
+		'LEAST'  => ['_sqlite_func_least', -1],
 		'_LEFT'  => ['_sqlite_func_left', 2],
 
 		// N
@@ -265,11 +268,20 @@ function _sqlite_func_instr($s, $search) {
  * @return int
  */
 function _sqlite_func_least(...$args) {
-	$least = min($args);
-
-	#spip_log("Passage avec LEAST : $least",'sqlite.'._LOG_DEBUG);
-	return $least;
+	return min($args);
 }
+
+
+/**
+ * Mapping de `GREATEST` pour SQLite
+ *
+ * @param int[] ...$args
+ * @return int
+ */
+function _sqlite_func_greatest(...$args) {
+	return max($args);
+}
+
 
 /**
  * Mapping de `LEFT` pour SQLite
