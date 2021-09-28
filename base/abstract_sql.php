@@ -448,7 +448,7 @@ function sql_alter($q, $serveur = '', $option = true) {
  *    - true -> executer la requete
  *    - continue -> ne pas echouer en cas de serveur sql indisponible
  *
- * @return array
+ * @return array|false
  *    Tableau de cles (colonnes SQL ou alias) / valeurs (valeurs dans la colonne de la table ou calculee)
  *    presentant une ligne de resultat d'une selection
  */
@@ -1595,7 +1595,7 @@ function sql_query($ins, $serveur = '', $option = true) {
  *    - continue -> ne pas echouer en cas de serveur sql indisponible.
  *    - false -> ne pas l'executer mais la retourner.
  *
- * @return array
+ * @return array|string|false
  *     Tableau de la premiere ligne de resultat de la selection tel que
  *     `array('id_rubrique' => 1, 'id_secteur' => 2)`
  *
