@@ -399,14 +399,14 @@ function _q($a) {
  * @param string $query
  * @return array
  */
-function query_echappe_textes($query, $uniqid=null) {
+function query_echappe_textes($query, $uniqid = null) {
 	static $codeEchappements = null;
 	if (is_null($codeEchappements) or $uniqid) {
 		if (is_null($uniqid)) {
 			$uniqid = uniqid();
 		}
 		$uniqid = substr(md5($uniqid), 0, 4);
-		$codeEchappements = ["\\\\" => "\x1@#{$uniqid}#@\x1", "\\'" => "\x2@#{$uniqid}#@\x2", '\\"' => "\x3@#{$uniqid}#@\x3"];
+		$codeEchappements = ['\\\\' => "\x1@#{$uniqid}#@\x1", "\\'" => "\x2@#{$uniqid}#@\x2", '\\"' => "\x3@#{$uniqid}#@\x3"];
 	}
 	if ($query === null) {
 		return $codeEchappements;

@@ -13,9 +13,9 @@
 /**
  * Ce fichier déclare des fonctions étendant les fonctions natives de SQLite
  *
- * On mappe des fonctions absentes de sqlite (notamment donc des fonctions présentes dans mysql) 
+ * On mappe des fonctions absentes de sqlite (notamment donc des fonctions présentes dans mysql)
  * à des fonctions équivalentes php, que sqlite exécutera si besoin.
- * 
+ *
  * entre autre auteurs : mlebas
  *
  * @package SPIP\Core\SQL\SQLite\Fonctions
@@ -177,7 +177,7 @@ function _sqlite_func_concat(...$args) {
  * Mapping de `DAYOFMONTH` pour SQLite
  *
  * @uses _sqlite_func_date()
- * 
+ *
  * @param string $d
  * @return int
  */
@@ -234,7 +234,7 @@ function _sqlite_func_if($bool, $oui, $non) {
  *
  * Retourne une chaine de caractères à partir d'une chaine dans laquelle "chaine"
  * à été inserée à la position "index" en remplacant "longueur" caractères.
- * 
+ *
  * @param string $s
  * @param int $index
  * @param int $longueur
@@ -315,7 +315,7 @@ function _sqlite_func_now($force_refresh = false) {
  * Mapping de `MONTH` pour SQLite
  *
  * @uses _sqlite_func_date()
- * 
+ *
  * @param string $d
  * @return int
  */
@@ -341,7 +341,7 @@ function _sqlite_func_preg_replace($quoi, $cherche, $remplace) {
 
 /**
  * Mapping pour `EXTRAIRE_MULTI` de SPIP pour SQLite
- * 
+ *
  * Extrait une langue d'un texte <multi>[fr] xxx [en] yyy</multi>
  *
  * @param string $quoi le texte contenant ou non un multi
@@ -418,7 +418,7 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 
 /**
  * Mapping de `DATE_FORMAT` pour SQLite
- * 
+ *
  * Transforme un un appel à DATE_FORMAT() via strftime de PHP, mais les motifs de remplacements
  * ne sont pas toujours identiques. On essaie de les contertir.
  *
@@ -470,7 +470,7 @@ function _sqlite_func_strftime_format_converter(string $conv): string {
 
 /**
  * Mapping de `DAYS` pour SQLite
- * 
+ *
  * Nombre de jour entre 0000-00-00 et $d
  *
  * @link http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_to-days
@@ -506,7 +506,7 @@ function _sqlite_func_substring($string, $start, $len = null) {
 
 /**
  * Mapping de `TIMESTAMPDIFF` pour SQLite
- * 
+ *
  * Calcul de la difference entre 2 timestamp, exprimes dans l'unite fournie en premier argument
  *
  * @link https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_timestampdiff
@@ -578,7 +578,7 @@ function _sqlite_func_unix_timestamp($d) {
  * Mapping de `YEAR` pour SQLite
  *
  * @uses _sqlite_func_date()
- * 
+ *
  * @param string $d
  * @return int
  */
