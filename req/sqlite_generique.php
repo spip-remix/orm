@@ -1693,6 +1693,35 @@ function spip_sqlite_showbase($match, $serveur = '', $requeter = true) {
 	);
 }
 
+/**
+ * Indique si une table existe dans la base de données
+ *
+ * @param string $table
+ *     Table dont on cherche l’existence
+ * @param string $serveur
+ *     Connecteur de la base
+ * @param bool $requeter
+ *     true pour éxecuter la requête
+ *     false pour retourner le texte de la requête.
+ * @return ressource
+ *     Ressource à utiliser avec sql_fetch()
+ **/
+function spip_sqlite_table_exists(string $table, $serveur = '', $requeter = true) {
+	$r = spip_sqlite_query(
+		'SELECT name FROM sqlite_master WHERE'
+		. ' type=\'table\''
+		. ' AND name=' . spip_sqlite_quote($table, 'string')
+		. ' AND name NOT LIKE \'sqlite_%\'', 
+		$serveur, 
+		$requeter
+	);
+	if (!$requeter) {
+		return $r;
+	}
+	$res = spip_sqlite_fetch($r);
+	return (bool) $res;
+}
+
 define('_SQLITE_RE_SHOW_TABLE', '/^[^(),]*\(((?:[^()]*\((?:[^()]*\([^()]*\))?[^()]*\)[^()]*)*[^()]*)\)[^()]*$/');
 /**
  * Obtient la description d'une table ou vue SQLite
@@ -2434,6 +2463,7 @@ function _sqlite_ref_fonctions() {
 		'get_charset' => 'spip_sqlite_get_charset',
 		'showbase' => 'spip_sqlite_showbase',
 		'showtable' => 'spip_sqlite_showtable',
+		'table_exists' => 'spip_sqlite_table_exists',
 		'update' => 'spip_sqlite_update',
 		'updateq' => 'spip_sqlite_updateq',
 		'preferer_transaction' => 'spip_sqlite_preferer_transaction',

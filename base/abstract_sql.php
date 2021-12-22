@@ -1238,6 +1238,49 @@ function sql_showtable($table, $table_spip = false, $serveur = '', $option = tru
 	return $f;
 }
 
+
+/**
+ * Teste si une table SQL existe ou non dans la base
+ *
+ * @api
+ *
+ * @param string $table
+ *     Nom de la table
+* @param bool $table_spip
+ *     true pour remplacer automatiquement « spip » par le vrai préfixe de table
+ * @param string $serveur
+ *     Nom du connecteur
+ * @param bool|string $option
+ *     Peut avoir 3 valeurs :
+ *
+ *     - false : ne pas l'exécuter mais la retourner,
+ *     - true : exécuter la requête
+ *     - 'continue' : ne pas échouer en cas de serveur sql indisponible
+ * @return bool|string
+ *     - True si la table existe,
+ *     - False sinon,
+ *     - Texte de la requête si demandé,
+ *     - False en cas d'erreur.
+ **/
+function sql_table_exists(string $table, bool $table_spip = true, $serveur = '', $option = true) {
+	$f = sql_serveur('table_exists', $serveur, $option === 'continue' or $option === false);
+	if (!is_string($f) or !$f) {
+		return false;
+	}
+
+	// la globale n'est remplie qu'apres l'appel de sql_serveur.
+	if ($table_spip) {
+		$connexion = $GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
+		$prefixe = $connexion['prefixe'];
+		$vraie_table = prefixer_table_spip($table, $prefixe);
+	} else {
+		$vraie_table = $table;
+	}
+
+	return $f($vraie_table, $serveur, $option !== false);
+}
+
+
 /**
  * Crée une table dans la base de données
  *

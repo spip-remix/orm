@@ -51,6 +51,10 @@ include_spip('base/objets');
  *     Nom du connecteur
  * @param bool $table_spip
  *     Indique s'il faut transformer le préfixe de table
+ * @param array $options
+ *     - bool log_missing: 
+ *           true: (par défaut) pour écrire un log en cas de table absente. 
+ *           false: log uniquement en niveau debug.
  * @return array|bool
  *     false si table introuvable
  *     tableau de description de la table sinon, en particulier :
@@ -63,7 +67,7 @@ include_spip('base/objets');
  *
  *
  **/
-function base_trouver_table_dist($nom, $serveur = '', $table_spip = true) {
+function base_trouver_table_dist($nom, $serveur = '', $table_spip = true, array $options = []) {
 	static $nom_cache_desc_sql = [];
 
 	if (
@@ -72,6 +76,11 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true) {
 	) {
 		return null;
 	}
+
+	$options = $options + [
+		// si false, baissera le niveau de log si une table demandée n’existe pas
+		'log_missing' => true,
+	];
 
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$objets_sql = lister_tables_objets_sql('::md5');
@@ -151,10 +160,15 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true) {
 	}
 	if (!isset($connexion['tables'][$nom_sql])) {
 		// La *vraie* base a la priorite
-		$desc = sql_showtable($nom_sql, $table_spip, $serveur);
-		if (!$desc or !$desc['field']) {
+		$exists = sql_table_exists($nom_sql, $table_spip, $serveur);
+		if (
+			!$exists 
+			or !$desc = sql_showtable($nom_sql, $table_spip, $serveur)
+			or !$desc['field']
+		) {
 			if (!$fdesc) {
-				spip_log("trouver_table: table inconnue '$serveur' '$nom'", 'base' . _LOG_INFO_IMPORTANTE);
+				$log_level = $options['log_missing'] ? _LOG_INFO_IMPORTANTE : _LOG_DEBUG;
+				spip_log("trouver_table: table inconnue '$serveur' '$nom'", 'base' . $log_level);
 
 				return null;
 			}

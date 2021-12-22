@@ -129,6 +129,7 @@ $GLOBALS['spip_mysql_functions_1'] = [
 	'get_charset' => 'spip_mysql_get_charset',
 	'showbase' => 'spip_mysql_showbase',
 	'showtable' => 'spip_mysql_showtable',
+	'table_exists' => 'spip_mysql_table_exists',
 	'update' => 'spip_mysql_update',
 	'updateq' => 'spip_mysql_updateq',
 
@@ -866,6 +867,27 @@ function spip_mysql_repair($table, $serveur = '', $requeter = true) {
 	return spip_mysql_query("REPAIR TABLE `$table`", $serveur, $requeter);
 }
 
+/**
+ * Indique si une table existe dans la base de données
+ *
+ * @param string $table
+ *     Table dont on cherche l’existence
+ * @param string $serveur
+ *     Connecteur de la base
+ * @param bool $requeter
+ *     true pour éxecuter la requête
+ *     false pour retourner le texte de la requête.
+ * @return ressource
+ *     Ressource à utiliser avec sql_fetch()
+ **/
+function spip_mysql_table_exists(string $table, $serveur = '', $requeter = true) {
+	$r = spip_mysql_query('SHOW TABLES LIKE ' . _q($table), $serveur, $requeter);
+	if (!$requeter) {
+		return $r;
+	}
+	$res = spip_mysql_fetch($r);
+	return (bool) $res;
+}
 
 define('_MYSQL_RE_SHOW_TABLE', '/^[^(),]*\(((?:[^()]*\((?:[^()]*\([^()]*\))?[^()]*\)[^()]*)*[^()]*)\)[^()]*$/');
 /**
