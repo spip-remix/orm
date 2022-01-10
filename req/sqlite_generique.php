@@ -1711,8 +1711,8 @@ function spip_sqlite_table_exists(string $table, $serveur = '', $requeter = true
 		'SELECT name FROM sqlite_master WHERE'
 		. ' type=\'table\''
 		. ' AND name=' . spip_sqlite_quote($table, 'string')
-		. ' AND name NOT LIKE \'sqlite_%\'', 
-		$serveur, 
+		. ' AND name NOT LIKE \'sqlite_%\'',
+		$serveur,
 		$requeter
 	);
 	if (!$requeter) {

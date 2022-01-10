@@ -52,8 +52,8 @@ include_spip('base/objets');
  * @param bool $table_spip
  *     Indique s'il faut transformer le préfixe de table
  * @param array $options
- *     - bool log_missing: 
- *           true: (par défaut) pour écrire un log en cas de table absente. 
+ *     - bool log_missing:
+ *           true: (par défaut) pour écrire un log en cas de table absente.
  *           false: log uniquement en niveau debug.
  * @return array|bool
  *     false si table introuvable
@@ -162,7 +162,7 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true, array 
 		// La *vraie* base a la priorite
 		$exists = sql_table_exists($nom_sql, $table_spip, $serveur);
 		if (
-			!$exists 
+			!$exists
 			or !$desc = sql_showtable($nom_sql, $table_spip, $serveur)
 			or !$desc['field']
 		) {
