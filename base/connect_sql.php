@@ -116,7 +116,7 @@ function spip_connect($serveur = '', $version = '') {
 		return $GLOBALS['connexions'][$index];
 	}
 
-	$GLOBALS['connexions'][$index]['spip_connect_version'] = isset($GLOBALS['spip_connect_version']) ? $GLOBALS['spip_connect_version'] : 0;
+	$GLOBALS['connexions'][$index]['spip_connect_version'] = $GLOBALS['spip_connect_version'] ?? 0;
 
 	// initialisation de l'alphabet utilise dans les connexions SQL
 	// si l'installation l'a determine.
@@ -270,8 +270,7 @@ function spip_connect_db(
 	}
 
 	if (!$prefixe) {
-		$prefixe = isset($GLOBALS['table_prefix'])
-			? $GLOBALS['table_prefix'] : $db;
+		$prefixe = $GLOBALS['table_prefix'] ?? $db;
 	}
 	$h = charger_fonction($type, 'req', true);
 	if (!$h) {

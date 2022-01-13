@@ -808,12 +808,10 @@ function renseigner_table_objet_interfaces($table_sql, &$infos) {
 			$infos['date'] = ((isset($infos['field']['date'])) ? 'date' : '');
 		}
 	}
-	if (!isset($infos['statut'])) {
-		$infos['statut'] = isset($GLOBALS['table_statut'][$table_sql]) ? $GLOBALS['table_statut'][$table_sql] : '';
-	}
-	if (!isset($infos['tables_jointures'])) {
-		$infos['tables_jointures'] = [];
-	}
+
+	$infos['statut'] ??= $GLOBALS['table_statut'][$table_sql] ?? '';
+	$infos['tables_jointures'] ??= [];
+
 	if (isset($GLOBALS['tables_jointures'][$table_sql])) {
 		$infos['tables_jointures'] = array_merge($infos['tables_jointures'], $GLOBALS['tables_jointures'][$table_sql]);
 	}
@@ -1521,9 +1519,7 @@ function objet_lister_enfants($objet, $id_objet) {
 			} else {
 				// Les enfants sont stockés dans une table différente de l'objet parent.
 				$table_enfant = $_methode_parent['table'];
-				$cle_objet_enfant = isset($_methode_parent['source_champ'])
-					? $_methode_parent['source_champ']
-					: id_table_objet($objet_enfant);
+				$cle_objet_enfant = $_methode_parent['source_champ'] ?? id_table_objet($objet_enfant);
 
 				// S'il y a une condition supplémentaire
 				if (isset($_methode_parent['table_condition'])) {

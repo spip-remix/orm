@@ -539,15 +539,15 @@ function base_preparer_table_dest($table, $desc, $serveur_dest, $init = false) {
  */
 function base_copier_tables($status_file, $tables, $serveur_source, $serveur_dest, $options = []) {
 
-	$callback_progression = isset($options['callback_progression']) ? $options['callback_progression'] : '';
-	$max_time = isset($options['max_time']) ? $options['max_time'] : 0;
-	$drop_source = isset($options['drop_source']) ? $options['drop_source'] : false;
-	$no_erase_dest = isset($options['no_erase_dest']) ? $options['no_erase_dest'] : [];
-	$where = isset($options['where']) ? $options['where'] : [];
-	$fonction_base_inserer = isset($options['fonction_base_inserer']) ? $options['fonction_base_inserer'] : 'inserer_copie';
-	$desc_tables_dest = isset($options['desc_tables_dest']) ? $options['desc_tables_dest'] : [];
-	$racine_fonctions = (isset($options['racine_fonctions_dest']) ? $options['racine_fonctions_dest'] : 'base');
-	$data_pool = (isset($options['data_pool']) ? $options['data_pool'] : 50 * 1024);
+	$callback_progression = $options['callback_progression'] ?? '';
+	$max_time = $options['max_time'] ?? 0;
+	$drop_source = $options['drop_source'] ?? false;
+	$no_erase_dest = $options['no_erase_dest'] ?? [];
+	$where = $options['where'] ?? [];
+	$fonction_base_inserer = $options['fonction_base_inserer'] ?? 'inserer_copie';
+	$desc_tables_dest = $options['desc_tables_dest'] ?? [];
+	$racine_fonctions = $options['racine_fonctions_dest'] ?? 'base';
+	$data_pool = $options['data_pool'] ?? 50 * 1024;
 
 	spip_log(
 		'Copier ' . count($tables) . " tables de '$serveur_source' vers '$serveur_dest'",
