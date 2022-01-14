@@ -68,6 +68,7 @@ include_spip('base/objets');
  *
  **/
 function base_trouver_table_dist($nom, $serveur = '', $table_spip = true, array $options = []) {
+	$desc_cache = null;
 	static $nom_cache_desc_sql = [];
 
 	if (
@@ -114,7 +115,7 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true, array 
 	}
 
 	$fdesc = $desc = '';
-	$connexion = &$GLOBALS['connexions'][$serveur ? $serveur : 0];
+	$connexion = &$GLOBALS['connexions'][$serveur ?: 0];
 
 	// base sous SPIP: gerer les abreviations explicites des noms de table
 	if ($connexion['spip_connect_version']) {

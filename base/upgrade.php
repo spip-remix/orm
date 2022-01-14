@@ -135,9 +135,9 @@ function maj_base($version_cible = 0, $redirect = '', $debut_page = true) {
 		return true;
 	}
 
-	$cible = ($version_cible ? $version_cible : $GLOBALS['spip_version_base']);
+	$cible = ($version_cible ?: $GLOBALS['spip_version_base']);
 
-	if ($version_installee < 2021010100) {
+	if ($version_installee < 2021_01_01_00) {
 		include_spip('maj/legacy/v21');
 		include_spip('maj/legacy/v30');
 		include_spip('maj/legacy/v31');

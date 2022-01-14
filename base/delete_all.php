@@ -49,7 +49,7 @@ function base_delete_all_dist($titre) {
 		spip_unlink(_ACCESS_FILE_NAME);
 		spip_unlink(_CACHE_RUBRIQUES);
 	}
-	$d = count($delete);
+	$d = is_countable($delete) ? count($delete) : 0;
 	$r = count($res);
 	spip_log("Tables detruites: $r sur $d: " . join(', ', $res), _LOG_INFO_IMPORTANTE);
 }

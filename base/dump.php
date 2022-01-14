@@ -81,7 +81,7 @@ function base_lister_toutes_tables(
 	$affiche_vrai_prefixe = false
 ) {
 	spip_connect($serveur);
-	$connexion = $GLOBALS['connexions'][$serveur ? $serveur : 0];
+	$connexion = $GLOBALS['connexions'][$serveur ?: 0];
 	$prefixe = $connexion['prefixe'];
 
 	$p = '/^' . $prefixe . '/';
@@ -107,7 +107,7 @@ function base_lister_toutes_tables(
  */
 function base_prefixe_tables($serveur = '') {
 	spip_connect($serveur);
-	$connexion = $GLOBALS['connexions'][$serveur ? $serveur : 0];
+	$connexion = $GLOBALS['connexions'][$serveur ?: 0];
 	$prefixe = $connexion['prefixe'];
 
 	return $prefixe;
@@ -271,9 +271,9 @@ function base_liste_table_for_dump($exclude_tables = []) {
 			if (!$infos['principale'] and !isset($tables_auxiliaires[$t])) {
 				$tables_auxiliaires[$t] = true;
 			}
-			if (count($infos['tables_jointures'])) {
+			if (is_countable($infos['tables_jointures']) ? count($infos['tables_jointures']) : 0) {
 				$tables_jointures[$t] = array_merge(
-					isset($tables_jointures[$t]) ? $tables_jointures[$t] : [],
+					$tables_jointures[$t] ?? [],
 					$infos['tables_jointures']
 				);
 			}
@@ -303,7 +303,7 @@ function base_liste_table_for_dump($exclude_tables = []) {
 		}
 	}
 
-	$liste_tables = array_merge(array_keys($tables_principales), array_keys($tables_auxiliaires), array_keys($tables));
+	$liste_tables = [...array_keys($tables_principales), ...array_keys($tables_auxiliaires), ...array_keys($tables)];
 	foreach ($liste_tables as $table) {
 		//		$name = preg_replace("{^spip_}","",$table);
 		if (
@@ -539,6 +539,7 @@ function base_preparer_table_dest($table, $desc, $serveur_dest, $init = false) {
  */
 function base_copier_tables($status_file, $tables, $serveur_source, $serveur_dest, $options = []) {
 
+	$status = [];
 	$callback_progression = $options['callback_progression'] ?? '';
 	$max_time = $options['max_time'] ?? 0;
 	$drop_source = $options['drop_source'] ?? false;
@@ -635,7 +636,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 				and $status['tables_copiees'][$table] >= 0
 				and $desc_dest = $preparer_table_dest(
 					$table,
-					isset($desc_tables_dest[$table]) ? $desc_tables_dest[$table] : $desc_source,
+					$desc_tables_dest[$table] ?? $desc_source,
 					$serveur_dest,
 					$status['tables_copiees'][$table] == 0
 				)
@@ -649,7 +650,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 					$res = sql_select(
 						'*',
 						$table,
-						isset($where[$table]) ? $where[$table] : '',
+						$where[$table] ?? '',
 						'',
 						'',
 						"$n,400",
@@ -726,12 +727,12 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 
 	// si le nombre de tables envoyees n'est pas egal au nombre de tables demandees
 	// abandonner
-	if (count($status['tables_copiees']) < count($tables)) {
+	if ((is_countable($status['tables_copiees']) ? count($status['tables_copiees']) : 0) < count($tables)) {
 		spip_log(
-			'Nombre de tables copiees incorrect : ' . count($status['tables_copiees']) . '/' . count($tables),
+			'Nombre de tables copiees incorrect : ' . (is_countable($status['tables_copiees']) ? count($status['tables_copiees']) : 0) . '/' . count($tables),
 			'dump.' . _LOG_ERREUR
 		);
-		$status['errors'][] = 'Nombre de tables copiees incorrect : ' . count($status['tables_copiees']) . '/' . count($tables);
+		$status['errors'][] = 'Nombre de tables copiees incorrect : ' . (is_countable($status['tables_copiees']) ? count($status['tables_copiees']) : 0) . '/' . count($tables);
 		ecrire_fichier($status_file, serialize($status));
 	}
 

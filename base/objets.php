@@ -405,7 +405,7 @@ function lister_tables_objets_sql(?string $table_sql = null, $desc = []) {
 					$add = $all[$i];
 					// eviter les doublons de declaration de table jointure (ex des mots sur auteurs)
 					// pour les declarations generiques avec cles numeriques
-					if ($i == 'tables_jointures' and isset($infos_tables[$t][$i]) and count($infos_tables[$t][$i])) {
+					if ($i == 'tables_jointures' and isset($infos_tables[$t][$i]) and is_countable($infos_tables[$t][$i]) ? count($infos_tables[$t][$i]) : 0) {
 						$doublons = array_intersect($infos_tables[$t][$i], $add);
 						foreach ($doublons as $d) {
 							if (
@@ -416,10 +416,10 @@ function lister_tables_objets_sql(?string $table_sql = null, $desc = []) {
 							}
 						}
 					}
-					$infos_tables[$t][$i] = array_merge(isset($infos_tables[$t][$i]) ? $infos_tables[$t][$i] : [], $add);
+					$infos_tables[$t][$i] = array_merge($infos_tables[$t][$i] ?? [], $add);
 				} else {
 					$infos_tables[$t][$i] = array_merge_recursive(
-						isset($infos_tables[$t][$i]) ? $infos_tables[$t][$i] : [],
+						$infos_tables[$t][$i] ?? [],
 						$all[$i]
 					);
 				}
@@ -433,7 +433,7 @@ function lister_tables_objets_sql(?string $table_sql = null, $desc = []) {
 			$principale_ou_auxiliaire = ($infos['principale'] ? 'tables_principales' : 'tables_auxiliaires');
 			// memoriser des champs eventuels declares par des plugins dans le pipeline tables_xxx
 			// qui a ete appelle avant
-			$mem = (isset($GLOBALS[$principale_ou_auxiliaire][$table]) ? $GLOBALS[$principale_ou_auxiliaire][$table] : []);
+			$mem = ($GLOBALS[$principale_ou_auxiliaire][$table] ?? []);
 			// l'ajouter au tableau
 			$GLOBALS[$principale_ou_auxiliaire][$table] = [];
 			if (isset($infos['field']) and isset($infos['key'])) {
@@ -447,7 +447,7 @@ function lister_tables_objets_sql(?string $table_sql = null, $desc = []) {
 				// pour avoir la vrai description en base, il faut passer par trouver_table
 				$GLOBALS[$principale_ou_auxiliaire][$table] = [];
 			}
-			if (count($mem)) {
+			if (is_countable($mem) ? count($mem) : 0) {
 				foreach (array_keys($mem) as $k) {
 					if (isset($GLOBALS[$principale_ou_auxiliaire][$table][$k])) {
 						$GLOBALS[$principale_ou_auxiliaire][$table][$k] = array_merge(
@@ -483,7 +483,7 @@ function lister_tables_objets_sql(?string $table_sql = null, $desc = []) {
 		return $desc;
 	}
 	if ($table_sql) {
-		return isset($infos_tables[$table_sql]) ? $infos_tables[$table_sql] : [];
+		return $infos_tables[$table_sql] ?? [];
 	}
 
 	return $infos_tables;
@@ -828,7 +828,7 @@ function renseigner_table_objet_interfaces($table_sql, &$infos) {
  **/
 function lister_tables_principales() {
 	static $done = false;
-	if (!$done or !count($GLOBALS['tables_principales'])) {
+	if (!$done or !(is_countable($GLOBALS['tables_principales']) ? count($GLOBALS['tables_principales']) : 0)) {
 		lister_tables_objets_sql();
 		$done = true;
 	}
@@ -845,7 +845,7 @@ function lister_tables_principales() {
  **/
 function lister_tables_auxiliaires() {
 	static $done = false;
-	if (!$done or !count($GLOBALS['tables_auxiliaires'])) {
+	if (!$done or !(is_countable($GLOBALS['tables_auxiliaires']) ? count($GLOBALS['tables_auxiliaires']) : 0)) {
 		lister_tables_objets_sql();
 		$done = true;
 	}
@@ -955,7 +955,7 @@ function lister_tables_spip($serveur = '') {
 			include_spip('base/abstract_sql');
 		}
 		$ts = sql_alltable(null, $serveur); // toutes les tables "spip_" (ou prefixe perso)
-		$connexion = $GLOBALS['connexions'][$serveur ? $serveur : 0];
+		$connexion = $GLOBALS['connexions'][$serveur ?: 0];
 		$spip = $connexion['prefixe'] . '_';
 		foreach ($ts as $t) {
 			$t = substr($t, strlen($spip));

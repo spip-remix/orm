@@ -43,7 +43,7 @@ require_once _ROOT_RESTREINT . 'base/objets.php';
 function spip_connect($serveur = '', $version = '') {
 
 	$serveur = !is_string($serveur) ? '' : strtolower($serveur);
-	$index = $serveur ? $serveur : 0;
+	$index = $serveur ?: 0;
 	if (!$version) {
 		$version = $GLOBALS['spip_sql_version'];
 	}
@@ -60,8 +60,7 @@ function spip_connect($serveur = '', $version = '') {
 			? '' // nom de serveur mal ecrit
 			: ($serveur ?
 				(_DIR_CONNECT . $serveur . '.php') // serveur externe
-				: (_FILE_CONNECT ? _FILE_CONNECT // serveur principal ok
-					: ($install ? _FILE_CONNECT_TMP // init du serveur principal
+				: (_FILE_CONNECT ?: ($install ? _FILE_CONNECT_TMP // init du serveur principal
 						: ''))); // installation pas faite
 
 		unset($GLOBALS['db_ok']);
@@ -165,7 +164,7 @@ function spip_connect($serveur = '', $version = '') {
 function spip_sql_erreur($serveur = '') {
 	$connexion = spip_connect($serveur);
 	$e = sql_errno($serveur);
-	$t = (isset($connexion['type']) ? $connexion['type'] : 'sql');
+	$t = ($connexion['type'] ?? 'sql');
 	$m = "Erreur $e de $t: " . sql_error($serveur) . "\nin " . sql_error_backtrace() . "\n" . trim($connexion['last']);
 	$f = $t . $serveur;
 	spip_log($m, $f . '.' . _LOG_ERREUR);
@@ -425,7 +424,7 @@ function query_echappe_textes($query, $uniqid = null) {
 	// si la query contient deja des codes d'echappement on va s'emmeler les pinceaux et donc on ne touche a rien
 	// ce n'est pas un cas legitime
 	foreach ($codeEchappements as $codeEchappement) {
-		if (strpos($query, $codeEchappement) !== false) {
+		if (strpos($query, (string) $codeEchappement) !== false) {
 			return [$query, []];
 		}
 	}

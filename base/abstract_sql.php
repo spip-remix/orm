@@ -29,7 +29,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 }
 
 /** Version de l'API SQL */
-define('sql_ABSTRACT_VERSION', 1);
+define('SQL_ABSTRACT_VERSION', 1);
 include_spip('base/connect_sql');
 
 /**
@@ -104,7 +104,7 @@ function sql_error_backtrace($compil_info = false) {
 function sql_serveur($ins_sql = '', $serveur = '', $continue = false) {
 	static $sql_serveur = [];
 	if (!isset($sql_serveur[$serveur][$ins_sql])) {
-		$f = spip_connect_sql(sql_ABSTRACT_VERSION, $ins_sql, $serveur, $continue);
+		$f = spip_connect_sql(\SQL_ABSTRACT_VERSION, $ins_sql, $serveur, $continue);
 		if (!is_string($f) or !$f) {
 			return $f;
 		}
@@ -134,8 +134,8 @@ function sql_serveur($ins_sql = '', $serveur = '', $continue = false) {
  **/
 function sql_get_charset($charset, $serveur = '', $option = true) {
 	// le nom http du charset differe parfois du nom SQL utf-8 ==> utf8 etc.
-	$desc = sql_serveur('', $serveur, true, true);
-	$desc = $desc[sql_ABSTRACT_VERSION];
+	$desc = sql_serveur('', $serveur, true);
+	$desc = $desc[\SQL_ABSTRACT_VERSION];
 	$c = $desc['charsets'][$charset];
 	if ($c) {
 		if (function_exists($f = @$desc['get_charset'])) {
@@ -266,7 +266,7 @@ function sql_select(
 		}
 		// le debug, c'est pour ce qui a ete produit par le compilateur
 		if (isset($GLOBALS['debug']['aucasou'])) {
-			list($table, $id, ) = $GLOBALS['debug']['aucasou'];
+			[$table, $id, ] = $GLOBALS['debug']['aucasou'];
 			$nom = $GLOBALS['debug_objets']['courant'] . $id;
 			$GLOBALS['debug_objets']['requete'][$nom] = $query;
 		}
@@ -2077,9 +2077,7 @@ function sql_in_quote($champ, $valeurs, $not = '', $serveur = '', $type = '', $o
 	}
 
 	// sql_quote produit une chaine dans tous les cas
-	$valeurs = array_filter($valeurs, function ($v) {
- return !is_array($v);
-	});
+	$valeurs = array_filter($valeurs, fn($v) => !is_array($v));
 	$valeurs = array_unique($valeurs);
 	$valeurs = $quote($valeurs, $type);
 
