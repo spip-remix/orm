@@ -43,7 +43,7 @@ function req_pg_dist($addr, $port, $login, $pass, $db = '', $prefixe = '') {
 			${$a} = $last_connect[$a];
 		}
 	}
-	@[$host, $p] = explode(';', $addr);
+	[$host, $p] = array_pad(explode(';', $addr), 2, null);
 	if ($p > 0) {
 		$port = " port=$p";
 	} else {
