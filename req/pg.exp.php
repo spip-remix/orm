@@ -40,10 +40,10 @@ function req_pg_dist($addr, $port, $login, $pass, $db = '', $prefixe = '') {
 	// si provient de selectdb
 	if (empty($addr) && empty($port) && empty($login) && empty($pass)) {
 		foreach (['addr', 'port', 'login', 'pass', 'prefixe'] as $a) {
-			$$a = $last_connect[$a];
+			${$a} = $last_connect[$a];
 		}
 	}
-	@list($host, $p) = explode(';', $addr);
+	@[$host, $p] = explode(';', $addr);
 	if ($p > 0) {
 		$port = " port=$p";
 	} else {
@@ -89,7 +89,7 @@ function req_pg_dist($addr, $port, $login, $pass, $db = '', $prefixe = '') {
 
 	return !$link ? false : [
 		'db' => $db,
-		'prefixe' => $prefixe ? $prefixe : $db,
+		'prefixe' => $prefixe ?: $db,
 		'link' => $link,
 	];
 }
@@ -169,7 +169,7 @@ function spip_pg_query($query, $serveur = '', $requeter = true) {
 	$db = $connexion['db'];
 
 	if (preg_match('/\s(SET|VALUES|WHERE|DATABASE)\s/i', $query, $regs)) {
-		$suite = strstr($query, $regs[0]);
+		$suite = strstr($query, (string) $regs[0]);
 		$query = substr($query, 0, -strlen($suite));
 	} else {
 		$suite = '';
@@ -295,7 +295,7 @@ function spip_pg_alter_change($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^`?(\w+)`?\s+`?(\w+)`?\s+(.*?)\s*(DEFAULT .*?)?(NOT\s+NULL)?\s*(DEFAULT .*?)?$/i', $arg, $r)) {
 		spip_log("alter change: $arg  incompris", 'pg.' . _LOG_ERREUR);
 	} else {
-		list(, $old, $new, $type, $default, $null, $def2) = $r;
+		[, $old, $new, $type, $default, $null, $def2] = $r;
 		$actions = ["ALTER $old TYPE " . mysql2pg_type($type)];
 		if ($null) {
 			$actions[] = "ALTER $old SET NOT NULL";
@@ -303,7 +303,7 @@ function spip_pg_alter_change($table, $arg, $serveur = '', $requeter = true) {
 			$actions[] = "ALTER $old DROP NOT NULL";
 		}
 
-		if ($d = ($default ? $default : $def2)) {
+		if ($d = ($default ?: $def2)) {
 			$actions[] = "ALTER $old SET $d";
 		} else {
 			$actions[] = "ALTER $old DROP DEFAULT";
@@ -319,6 +319,7 @@ function spip_pg_alter_change($table, $arg, $serveur = '', $requeter = true) {
 
 // https://code.spip.net/@spip_pg_alter_add
 function spip_pg_alter_add($table, $arg, $serveur = '', $requeter = true) {
+	$nom_index = null;
 	if (!preg_match('/^(COLUMN|INDEX|KEY|PRIMARY\s+KEY|)\s*(.*)$/', $arg, $r)) {
 		spip_log("alter add $arg  incompris", 'pg.' . _LOG_ERREUR);
 
@@ -465,7 +466,7 @@ function spip_pg_explain($query, $serveur = '', $requeter = true) {
 	$prefixe = $connexion['prefixe'];
 	$link = $connexion['link'];
 	if (preg_match('/\s(SET|VALUES|WHERE)\s/i', $query, $regs)) {
-		$suite = strstr($query, $regs[0]);
+		$suite = strstr($query, (string) $regs[0]);
 		$query = substr($query, 0, -strlen($suite));
 	} else {
 		$suite = '';
@@ -583,7 +584,7 @@ function spip_pg_select(
 
 	$r = spip_pg_trace_query($query, $serveur);
 
-	return $r ? $r : $query;
+	return $r ?: $query;
 ;
 }
 
@@ -903,7 +904,7 @@ function spip_pg_countsel(
 	if (!is_resource($r)) {
 		return 0;
 	}
-	list($c) = pg_fetch_array($r, null, PGSQL_NUM);
+	[$c] = pg_fetch_array($r, null, PGSQL_NUM);
 
 	return $c;
 }
@@ -1019,11 +1020,11 @@ function spip_pg_insertq_multi($table, $tab_couples = [], $desc = [], $serveur =
 	if (!$desc) {
 		die("$table insertion sans description");
 	}
-	$fields = isset($desc['field']) ? $desc['field'] : [];
+	$fields = $desc['field'] ?? [];
 
 	// recherche de champs 'timestamp' pour mise a jour auto de ceux-ci
 	// une premiere fois pour ajouter maj dans les cles
-	$c = isset($tab_couples[0]) ? $tab_couples[0] : [];
+	$c = $tab_couples[0] ?? [];
 	$les_cles = spip_pg_ajouter_champs_timestamp($table, $c, $desc, $serveur);
 
 	$cles = '(' . join(',', array_keys($les_cles)) . ')';
@@ -1176,6 +1177,7 @@ function spip_pg_replace($table, $values, $desc, $serveur = '', $requeter = true
 
 // https://code.spip.net/@spip_pg_replace_multi
 function spip_pg_replace_multi($table, $tab_couples, $desc = [], $serveur = '', $requeter = true) {
+	$retour = null;
 	// boucler pour traiter chaque requete independemment
 	foreach ($tab_couples as $couples) {
 		$retour = spip_pg_replace($table, $couples, $desc, $serveur, $requeter);
@@ -1218,7 +1220,7 @@ function spip_pg_cite($v, $t) {
 	} // null php se traduit en NULL SQL
 
 	if (sql_test_date($t)) {
-		if ($v and (strpos('0123456789', $v[0]) === false)) {
+		if ($v and (strpos('0123456789', (string) $v[0]) === false)) {
 			return spip_pg_frommysql($v);
 		} else {
 			if (strncmp($v, '0000', 4) == 0) {

@@ -41,7 +41,7 @@ if (!defined('_MYSQL_NOPLANES')) {
  *     - tableau décrivant la connexion sinon
  */
 function req_mysql_dist($host, $port, $login, $pass, $db = '', $prefixe = '') {
-	if (!extension_loaded('mysqli')) {
+	if (!extension_loaded(\mysqli::class)) {
 		return false;
 	}
 
@@ -89,7 +89,7 @@ function req_mysql_dist($host, $port, $login, $pass, $db = '', $prefixe = '') {
 	return !$ok ? false : [
 		'db' => $db,
 		'last' => $last,
-		'prefixe' => $prefixe ? $prefixe : $db,
+		'prefixe' => $prefixe ?: $db,
 		'link' => $link,
 		'total_requetes' => 0,
 	];
@@ -157,7 +157,7 @@ $GLOBALS['spip_mysql_functions_1'] = [
  * @return Object Information de connexion pour mysqli
  */
 function _mysql_link($serveur = '') {
-	$link = &$GLOBALS['connexions'][$serveur ? $serveur : 0]['link'];
+	$link = &$GLOBALS['connexions'][$serveur ?: 0]['link'];
 
 	return $link;
 }
@@ -234,8 +234,8 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 	$debug = '';
 	if (defined('_DEBUG_SLOW_QUERIES') and _DEBUG_SLOW_QUERIES) {
 		if (isset($GLOBALS['debug']['aucasou'])) {
-			list(, $id, , $infos) = $GLOBALS['debug']['aucasou'];
-			$debug .= "BOUCLE$id @ " . (isset($infos[0]) ? $infos[0] : '') . ' | ';
+			[, $id, , $infos] = $GLOBALS['debug']['aucasou'];
+			$debug .= "BOUCLE$id @ " . ($infos[0] ?? '') . ' | ';
 		}
 		if (isset($_SERVER['REQUEST_URI'])) {
 			$debug .= $_SERVER['REQUEST_URI'];
@@ -389,7 +389,7 @@ function spip_mysql_select(
 	}
 	$r = spip_mysql_query($query, $serveur, $requeter);
 
-	return $r ? $r : $query;
+	return $r ?: $query;
 }
 
 
@@ -545,14 +545,14 @@ function _mysql_traite_query($query, $db = '', $prefixe = '', $echappe_textes = 
 	if (!preg_match('/\s(SET|VALUES|WHERE|DATABASE)\s/i', $query, $regs)) {
 		$suite = '';
 	} else {
-		$suite = strstr($query, $regs[0]);
+		$suite = strstr($query, (string) $regs[0]);
 		$query = substr($query, 0, -strlen($suite));
 		// propager le prefixe en cas de requete imbriquee
 		// il faut alors echapper les chaine avant de le faire, pour ne pas risquer de
 		// modifier une requete qui est en fait juste du texte dans un champ
 		if (stripos($suite, 'SELECT') !== false) {
 			if ($echappe_textes) {
-				list($suite_echap, $textes) = query_echappe_textes($suite);
+				[$suite_echap, $textes] = query_echappe_textes($suite);
 			}
 			else {
 				$suite_echap = $suite;
@@ -926,7 +926,7 @@ function spip_mysql_showtable($nom_table, $serveur = '', $requeter = true) {
 		return $s;
 	}
 
-	list(, $a) = mysqli_fetch_array($s, MYSQLI_NUM);
+	[, $a] = mysqli_fetch_array($s, MYSQLI_NUM);
 	if (preg_match(_MYSQL_RE_SHOW_TABLE, $a, $r)) {
 		$desc = $r[1];
 		// extraction d'une KEY éventuelle en prenant garde de ne pas
@@ -1067,7 +1067,7 @@ function spip_mysql_countsel(
 	if (!$r instanceof mysqli_result) {
 		return 0;
 	}
-	list($c) = mysqli_fetch_array($r, MYSQLI_NUM);
+	[$c] = mysqli_fetch_array($r, MYSQLI_NUM);
 	mysqli_free_result($r);
 
 	return $c;
@@ -1117,7 +1117,7 @@ function spip_mysql_error($query = '', $serveur = '', $requeter = true) {
  *     0, pas d'erreur. Autre, numéro de l'erreur.
  **/
 function spip_mysql_errno($serveur = '', $requeter = true) {
-	$link = $GLOBALS['connexions'][$serveur ? $serveur : 0]['link'];
+	$link = $GLOBALS['connexions'][$serveur ?: 0]['link'];
 	$s = mysqli_errno($link);
 	// 2006 MySQL server has gone away
 	// 2013 Lost connection to MySQL server during query
@@ -1188,6 +1188,7 @@ function spip_mysql_free($r, $serveur = '', $requeter = true) {
  **/
 function spip_mysql_insert($table, $champs, $valeurs, $desc = [], $serveur = '', $requeter = true) {
 
+	$e = null;
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 	$link = $connexion['link'];
 	$table = prefixer_table_spip($table, $connexion['prefixe']);
@@ -1261,7 +1262,7 @@ function spip_mysql_insertq($table, $couples = [], $desc = [], $serveur = '', $r
 	if (!$desc) {
 		$couples = [];
 	}
-	$fields = isset($desc['field']) ? $desc['field'] : [];
+	$fields = $desc['field'] ?? [];
 
 	foreach ($couples as $champ => $val) {
 		$couples[$champ] = spip_mysql_cite($val, $fields[$champ]);
@@ -1305,7 +1306,7 @@ function spip_mysql_insertq_multi($table, $tab_couples = [], $desc = [], $serveu
 	if (!$desc) {
 		$tab_couples = [];
 	}
-	$fields = isset($desc['field']) ? $desc['field'] : [];
+	$fields = $desc['field'] ?? [];
 
 	$cles = '(' . join(',', array_keys(reset($tab_couples))) . ')';
 	$valeurs = [];

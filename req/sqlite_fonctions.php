@@ -378,7 +378,7 @@ function _sqlite_func_extraire_multi($quoi, $lang) {
  * @return float
  */
 function _sqlite_func_rand() {
-	return rand();
+	return random_int(0, mt_getrandmax());
 }
 
 
@@ -408,7 +408,7 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 	}
 	// il faut enlever un niveau d'echappement pour être homogène à mysql
 	$cherche = str_replace('\\\\', '\\', $cherche);
-	$u = isset($GLOBALS['meta']['pcre_u']) ? $GLOBALS['meta']['pcre_u'] : 'u';
+	$u = $GLOBALS['meta']['pcre_u'] ?? 'u';
 	$return = preg_match('%' . $cherche . '%imsS' . $u, $quoi);
 
 	#spip_log("regexp_replace : $quoi, $cherche, $remplace, $return",'sqlite.'._LOG_DEBUG);
@@ -540,7 +540,7 @@ function _sqlite_timestampdiff($unit, $date1, $date2) {
 		case 'SECOND':
 			return $inv * (((24 * $diff->days + $diff->h) * 60 + $diff->i) * 60 + $diff->s);
 		case 'MICROSECOND':
-			return $inv * (((24 * $diff->days + $diff->h) * 60 + $diff->i) * 60 + $diff->s) * 1000000;
+			return $inv * (((24 * $diff->days + $diff->h) * 60 + $diff->i) * 60 + $diff->s) * 1_000_000;
 	}
 
 	return 0;
@@ -566,7 +566,7 @@ function _sqlite_func_unix_timestamp($d) {
 	//2005-12-02 20:53:53
 	#spip_log("Passage avec UNIX_TIMESTAMP : $d",'sqlite.'._LOG_DEBUG);
 	if (!$d) {
-		return $mem[$d] = mktime();
+		return $mem[$d] = time();
 	}
 
 	// une pile plus grosse n'accelere pas le calcul
