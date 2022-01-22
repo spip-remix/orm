@@ -250,7 +250,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 	} catch (\mysqli_sql_exception $e) {
 		spip_log('mysqli_sql_exception: ' . $e->getMessage(), 'mysql.' . _LOG_DEBUG);
 		$r = false;
-		// Todo: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
+		// TODO: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
 		// mais il faut pour php < 8.1 forcer les exeptions via mysqli_report().
 	}
 
@@ -265,7 +265,14 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 			$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
 			$link = $connexion['link'];
 			//On retente au cas où
-			$r = mysqli_query($link, $query . $debug);
+			try {
+				$r = mysqli_query($link, $query . $debug);
+			} catch (\mysqli_sql_exception $e) {
+				spip_log('mysqli_sql_exception: ' . $e->getMessage(), 'mysql.' . _LOG_DEBUG);
+				$r = false;
+				// TODO: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
+				// mais il faut pour php < 8.1 forcer les exeptions via mysqli_report().
+			}
 		}
 	}
 
@@ -1226,7 +1233,7 @@ function spip_mysql_insert($table, $champs, $valeurs, $desc = [], $serveur = '',
 		$insert = mysqli_query($link, $query);
 	} catch (\mysqli_sql_exception $e) {
 		spip_log('mysqli_sql_exception: ' . $e->getMessage(), 'mysql.' . _LOG_DEBUG);
-		// Todo: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
+		// TODO: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
 		// mais il faut pour php < 8.1 forcer les exeptions via mysqli_report().
 	}
 	if ($insert) {
