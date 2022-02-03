@@ -380,7 +380,7 @@ function spip_connect_ldap($serveur = '') {
  * @note
  *   L'usage comme échappement SQL est déprécié, à remplacer par sql_quote().
  *
- * @param num|string|array $a Valeur à échapper
+ * @param int|float|string|array $a Valeur à échapper
  * @return string Valeur échappée.
  **/
 function _q($a): string {
