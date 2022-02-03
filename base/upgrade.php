@@ -151,7 +151,7 @@ function maj_base($version_cible = 0, $redirect = '', $debut_page = true) {
 	$res = maj_while($version_installee, $cible, $GLOBALS['maj'], 'version_installee', 'meta', $redirect, $debut_page);
 	if ($res) {
 		if (!is_array($res)) {
-			spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_INFO_ERREUR);
+			spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_ERREUR);
 		} else {
 			echo _T('avis_operation_echec') . ' ' . join(' ', $res);
 			echo install_fin_html();
@@ -241,7 +241,7 @@ function maj_plugin($nom_meta_base_version, $version_cible, $maj, $table_meta = 
 		$res = maj_while($current_version, $version_cible, $maj, $nom_meta_base_version, $table_meta, $redirect);
 		if ($res) {
 			if (!is_array($res)) {
-				spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_INFO_ERREUR);
+				spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_ERREUR);
 			} else {
 				echo '<p>' . _T('avis_operation_echec') . ' ' . join(' ', $res) . '</p>';
 			}
