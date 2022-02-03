@@ -415,7 +415,7 @@ function query_echappe_textes($query, $uniqid = null) {
 			$uniqid = uniqid();
 		}
 		$uniqid = substr(md5($uniqid), 0, 4);
-		$codeEchappements = ['\\\\' => "\x1@#{$uniqid}#@\x1", "\\'" => "\x2@#{$uniqid}#@\x2", '\\"' => "\x3@#{$uniqid}#@\x3"];
+		$codeEchappements = ['\\\\' => "\x1@#{$uniqid}#@\x1", "\\'" => "\x2@#{$uniqid}#@\x2", '\\"' => "\x3@#{$uniqid}#@\x3", '%' => "\x4@#{$uniqid}#@\x4"];
 	}
 	if ($query === null) {
 		return $codeEchappements;
@@ -431,38 +431,45 @@ function query_echappe_textes($query, $uniqid = null) {
 
 	$query_echappees = str_replace(array_keys($codeEchappements), array_values($codeEchappements), $query);
 	if (preg_match_all("/('[^']*')|(\"[^\"]*\")/S", $query_echappees, $textes)) {
-		$textes = reset($textes); // indice 0 du match
-		switch (count($textes)) {
-			case 0:
-				$replace = [];
-				break;
-			case 1:
-				$replace = ['%1$s'];
-				break;
-			case 2:
-				$replace = ['%1$s', '%2$s'];
-				break;
-			case 3:
-				$replace = ['%1$s', '%2$s', '%3$s'];
-				break;
-			case 4:
-				$replace = ['%1$s', '%2$s', '%3$s', '%4$s'];
-				break;
-			case 5:
-				$replace = ['%1$s', '%2$s', '%3$s', '%4$s', '%5$s'];
-				break;
-			default:
-				$replace = range(1, count($textes));
-				$replace = '%' . implode('$s,%', $replace) . '$s';
-				$replace = explode(',', $replace);
-				break;
+		$textes = reset($textes);
+
+		$parts = [];
+		$currentpos = 0;
+		$k = 0;
+		while(count($textes)) {
+			$part = array_shift($textes);
+			$nextpos = strpos($query_echappees, $part, $currentpos);
+			// si besoin recoller ensemble les doubles '' de sqlite (echappement des ')
+			while (count($textes) and substr($part, -1) === "'") {
+				$next = reset($textes);
+				if (strpos($next, "'") === 0
+				  and strpos($query_echappees, $part . $next, $currentpos) === $nextpos) {
+					$part .= array_shift($textes);
+				}
+				else {
+					break;
+				}
+			}
+			$k++;
+			$parts[$k] = [
+				'texte' => $part,
+				'position' => $nextpos,
+				'placeholder' => '%'.$k.'$s',
+			];
+			$currentpos = $nextpos + strlen($part);
 		}
-		$query_echappees = str_replace($textes, $replace, $query_echappees);
+
+		// et on replace les parts une par une en commencant par la fin
+		while ($k>0) {
+			$query_echappees = substr_replace($query_echappees, $parts[$k]['placeholder'], $parts[$k]['position'], strlen($parts[$k]['texte']));
+			$k--;
+		}
+		$textes = array_column($parts, 'texte');
 	} else {
 		$textes = [];
 	}
 
-	// si il reste des quotes simples ou doubles, c'est qu'on s'est emmelles les pinceaux
+	// si il reste des quotes simples ou doubles, c'est qu'on s'est emmelle les pinceaux
 	// dans le doute on ne touche a rien
 	if (strpbrk($query_echappees, "'\"") !== false) {
 		return [$query, []];
@@ -485,7 +492,9 @@ function query_reinjecte_textes($query, $textes) {
 	// recuperer les codes echappements
 	$codeEchappements = query_echappe_textes(null);
 
-	$query = sprintf($query, ...$textes);
+	if (!empty($textes)) {
+		$query = sprintf($query, ...$textes);
+	}
 
 	$query = str_replace(array_values($codeEchappements), array_keys($codeEchappements), $query);
 
