@@ -204,8 +204,8 @@ function sql_set_charset($charset, $serveur = '', $option = true) {
  *     Tableau de classement (Order By)
  * @param string $limit
  *     Critere de limite (Limit)
- * @param array $having
- *     Tableau des des post-conditions a remplir (Having)
+ * @param string|array $having
+ *     Tableau ou chaine des des post-conditions à remplir (Having)
  * @param string $serveur
  *     Le serveur sollicite (pour retrouver la connexion)
  * @param bool|string $option
@@ -309,8 +309,8 @@ function sql_select(
  *    Tableau de classement (Order By)
  * @param string $limit
  *    Critere de limite (Limit)
- * @param array $having
- *    Tableau des des post-conditions a remplir (Having)
+ * @param string|array $having
+ *     Tableau ou chaine des des post-conditions à remplir (Having)
  * @param string $serveur
  *    Le serveur sollicite (pour retrouver la connexion)
  *
@@ -356,8 +356,8 @@ function sql_get_select(
  *    Conditions a remplir (Where)
  * @param array|string $groupby
  *    Critere de regroupement (Group by)
- * @param array $having
- *    Tableau des des post-conditions a remplir (Having)
+ * @param string|array $having
+ *     Tableau ou chaine des des post-conditions à remplir (Having)
  * @param string $serveur
  *    Le serveur sollicite (pour retrouver la connexion)
  * @param bool|string $option
@@ -1628,8 +1628,8 @@ function sql_query($ins, $serveur = '', $option = true) {
  *    Tableau de classement (Order By)
  * @param string $limit
  *    Critere de limite (Limit)
- * @param array $having
- *    Tableau des des post-conditions a remplir (Having)
+ * @param string|array $having
+ *     Tableau ou chaine des des post-conditions à remplir (Having)
  * @param string $serveur
  *    Le serveur sollicite (pour retrouver la connexion)
  * @param bool|string $option
@@ -1696,8 +1696,8 @@ function sql_fetsel(
  *    Tableau de classement (Order By)
  * @param string $limit
  *    Critere de limite (Limit)
- * @param array $having
- *    Tableau des des post-conditions a remplir (Having)
+ * @param string|array $having
+ *     Tableau ou chaine des des post-conditions à remplir (Having)
  * @param string $serveur
  *    Le serveur sollicite (pour retrouver la connexion)
  * @param bool|string $option
@@ -1766,8 +1766,8 @@ function sql_allfetsel(
  *     Tableau de classement (Order By)
  * @param string $limit
  *     Critère de limite (Limit)
- * @param array $having
- *     Tableau des des post-conditions à remplir (Having)
+ * @param string|array $having
+ *     Tableau ou chaine des des post-conditions à remplir (Having)
  * @param string $serveur
  *     Le serveur sollicité (pour retrouver la connexion)
  * @param bool|string $option
@@ -2152,8 +2152,8 @@ function sql_in($champ, $valeurs, $not = '', $serveur = '', $option = true) {
  *     Tableau de classement (Order By)
  * @param string $limit
  *     Critere de limite (Limit)
- * @param array $having
- *     Tableau des des post-conditions a remplir (Having)
+ * @param string|array $having
+ *     Tableau ou chaine des des post-conditions à remplir (Having)
  * @param string $serveur
  *     Nom du connecteur
  * @return string

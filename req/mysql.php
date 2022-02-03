@@ -1051,7 +1051,7 @@ function spip_mysql_seek($r, $row_number, $serveur = '', $requeter = true) {
  * @param array|string $from Tables à consulter (From)
  * @param array|string $where Conditions a remplir (Where)
  * @param array|string $groupby Critère de regroupement (Group by)
- * @param array $having Tableau des des post-conditions à remplir (Having)
+ * @param array|string $having Tableau des des post-conditions à remplir (Having)
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Exécuter la requête, sinon la retourner
  * @return int|string
