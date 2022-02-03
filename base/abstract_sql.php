@@ -1092,7 +1092,7 @@ function sql_drop_table($table, $exist = '', $serveur = '', $option = true) {
  * @param string $table Nom de la vue SQL
  * @param string $exist True pour ajouter un test d'existence avant de supprimer
  * @param string $serveur Nom de la connexion
- * @param bool $option
+ * @param bool|string $option
  *     Peut avoir 3 valeurs :
  *
  *     - false : ne pas l'exécuter mais la retourner,
@@ -1349,7 +1349,7 @@ function sql_create(
  * @api
  * @param string $nom Nom de la base (sans l'extension de fichier si gestionnaire SQLite)
  * @param string $serveur Nom de la connexion
- * @param bool $option
+ * @param bool|string $option
  *     Peut avoir 3 valeurs :
  *
  *     - false : ne pas l'exécuter mais la retourner,
@@ -1455,7 +1455,7 @@ function sql_multi($sel, $lang, $serveur = '', $option = true) {
  *      False si le serveur est indisponible
  */
 function sql_error($serveur = '') {
-	$f = sql_serveur('error', $serveur, 'continue');
+	$f = sql_serveur('error', $serveur, true);
 	if (!is_string($f) or !$f) {
 		return false;
 	}
@@ -1474,7 +1474,7 @@ function sql_error($serveur = '') {
  *      False si le serveur est indisponible
  */
 function sql_errno($serveur = '') {
-	$f = sql_serveur('errno', $serveur, 'continue');
+	$f = sql_serveur('errno', $serveur, true);
 	if (!is_string($f) or !$f) {
 		return false;
 	}
@@ -1488,16 +1488,16 @@ function sql_errno($serveur = '') {
  * @api
  * @param string $q Texte de la requête
  * @param string $serveur Nom de la connexion
- * @param bool $option
+ * @param bool|string $option
  *     Peut avoir 3 valeurs :
  *
  *     - false : ne pas l'exécuter mais la retourner,
  *     - true : exécuter la requête
  *     - 'continue' : ne pas échouer en cas de serveur sql indisponible
- * @return array           Tableau de l'explication
+ * @return array|false   Tableau de l'explication
  */
 function sql_explain($q, $serveur = '', $option = true) {
-	$f = sql_serveur('explain', $serveur, 'continue');
+	$f = sql_serveur('explain', $serveur, true);
 	if (!is_string($f) or !$f) {
 		return false;
 	}
@@ -1542,7 +1542,7 @@ function sql_optimize($table, $serveur = '', $option = true) {
  * @api
  * @param string $table Nom de la table SQL
  * @param string $serveur Nom de la connexion
- * @param bool $option
+ * @param bool|string $option
  *     Peut avoir 3 valeurs :
  *
  *     - false : ne pas l'exécuter mais la retourner,
@@ -1575,7 +1575,7 @@ function sql_repair($table, $serveur = '', $option = true) {
  * @api
  * @param string $ins Requête
  * @param string $serveur Nom de la connexion
- * @param bool $option
+ * @param bool|string $option
  *     Peut avoir 3 valeurs :
  *
  *     - false : ne pas l'exécuter mais la retourner,
@@ -1865,7 +1865,7 @@ function sql_version($serveur = '', $option = true) {
  *    Le serveur SQL prefere t'il des transactions pour les insertions multiples ?
  **/
 function sql_preferer_transaction($serveur = '', $option = true) {
-	$f = sql_serveur('preferer_transaction', $serveur, 'continue');
+	$f = sql_serveur('preferer_transaction', $serveur, true);
 	if (!is_string($f) or !$f) {
 		return false;
 	}
@@ -1899,7 +1899,7 @@ function sql_preferer_transaction($serveur = '', $option = true) {
  *      false en cas d'erreur
  **/
 function sql_demarrer_transaction($serveur = '', $option = true) {
-	$f = sql_serveur('demarrer_transaction', $serveur, 'continue');
+	$f = sql_serveur('demarrer_transaction', $serveur, true);
 	if (!is_string($f) or !$f) {
 		return false;
 	}
@@ -1933,7 +1933,7 @@ function sql_demarrer_transaction($serveur = '', $option = true) {
  *      false en cas d'erreur
  **/
 function sql_terminer_transaction($serveur = '', $option = true) {
-	$f = sql_serveur('terminer_transaction', $serveur, 'continue');
+	$f = sql_serveur('terminer_transaction', $serveur, true);
 	if (!is_string($f) or !$f) {
 		return false;
 	}
@@ -2063,9 +2063,9 @@ function sql_date_proche($champ, $interval, $unite, $serveur = '', $option = tru
  * @param string $type
  *   type du champ pour le sql_quote
  * @param bool|string $option
- *   Peut avoir 2 valeurs :
+ *   Peut avoir 3 valeurs :
  *
- *   - continue -> ne pas echouer en cas de serveur sql indisponible
+ *   - 'continue' -> ne pas echouer en cas de serveur sql indisponible
  *   - true ou false -> retourne l'expression
  * @return string
  *     Expression de requête SQL
