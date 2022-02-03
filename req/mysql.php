@@ -169,7 +169,7 @@ function _mysql_link($serveur = '') {
  * @param string $charset Charset à appliquer
  * @param string $serveur Nom de la connexion
  * @param bool $requeter inutilisé
- * @return resource       Ressource de résultats pour fetch()
+ * @return mysqli_result|bool Jeu de résultats pour fetch()
  */
 function spip_mysql_set_charset($charset, $serveur = '', $requeter = true) {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
@@ -185,7 +185,7 @@ function spip_mysql_set_charset($charset, $serveur = '', $requeter = true) {
  * @param array|string $charset Nom du charset à tester.
  * @param string $serveur Nom de la connexion
  * @param bool $requeter inutilisé
- * @return array                Description du charset (son nom est dans 'charset')
+ * @return array Description du charset (son nom est dans 'charset')
  */
 function spip_mysql_get_charset($charset = [], $serveur = '', $requeter = true) {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
@@ -201,9 +201,9 @@ function spip_mysql_get_charset($charset = [], $serveur = '', $requeter = true) 
  * @param string $query Requête
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Exécuter la requête, sinon la retourner
- * @return array|resource|string|bool
+ * @return mysqli_result|bool|string|array
+ *     - mysqli_result|bool : Si requête exécutée
  *     - string : Texte de la requête si on ne l'exécute pas
- *     - ressource|bool : Si requête exécutée
  *     - array : Tableau décrivant requête et temps d'exécution si var_profile actif pour tracer.
  */
 function spip_mysql_query($query, $serveur = '', $requeter = true) {
@@ -861,7 +861,7 @@ function spip_mysql_drop_view($view, $exist = '', $serveur = '', $requeter = tru
  * @param bool $requeter
  *     true pour éxecuter la requête
  *     false pour retourner le texte de la requête.
- * @return ressource
+ * @return mysqli_result|bool|string
  *     Ressource à utiliser avec sql_fetch()
  **/
 function spip_mysql_showbase($match, $serveur = '', $requeter = true) {
@@ -894,8 +894,9 @@ function spip_mysql_repair($table, $serveur = '', $requeter = true) {
  * @param bool $requeter
  *     true pour éxecuter la requête
  *     false pour retourner le texte de la requête.
- * @return ressource
- *     Ressource à utiliser avec sql_fetch()
+ * @return bool|string
+ *     - true si la table existe, false sinon
+ *     - string : requete sql, si $requeter = true
  **/
 function spip_mysql_table_exists(string $table, $serveur = '', $requeter = true) {
 	$r = spip_mysql_query('SHOW TABLES LIKE ' . _q($table), $serveur, $requeter);
@@ -1014,7 +1015,7 @@ function spip_mysql_showtable($nom_table, $serveur = '', $requeter = true) {
  *
  * Récupère la ligne suivante d'une ressource de résultat
  *
- * @param Ressource $r Ressource de résultat (issu de sql_select)
+ * @param mysqli_result $r Jeu de résultats (issu de sql_select)
  * @param string $t Structure de résultat attendu (défaut MYSQLI_ASSOC)
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Inutilisé
@@ -1022,7 +1023,7 @@ function spip_mysql_showtable($nom_table, $serveur = '', $requeter = true) {
  */
 function spip_mysql_fetch($r, $t = '', $serveur = '', $requeter = true) {
 	if (!$t) {
-		$t = MYSQLI_ASSOC;
+		$t = \MYSQLI_ASSOC;
 	}
 	if ($r) {
 		return mysqli_fetch_array($r, $t);
@@ -1032,7 +1033,7 @@ function spip_mysql_fetch($r, $t = '', $serveur = '', $requeter = true) {
 /**
  * Place le pointeur de résultat sur la position indiquée
  *
- * @param Ressource $r Ressource de résultat
+ * @param mysqli_result $r Jeu de résultats
  * @param int $row_number Position. Déplacer le pointeur à cette ligne
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Inutilisé
@@ -1159,10 +1160,10 @@ function spip_mysql_count($r, $serveur = '', $requeter = true) {
 /**
  * Libère une ressource de résultat
  *
- * Indique à MySQL de libérer de sa mémoire la ressoucre de résultat indiquée
+ * Indique à MySQL de libérer de sa mémoire la ressource de résultat indiquée
  * car on n'a plus besoin de l'utiliser.
  *
- * @param Ressource $r Ressource de résultat
+ * @param mysqli_result $r Jeu de résultats
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Inutilisé
  * @return bool              True si réussi

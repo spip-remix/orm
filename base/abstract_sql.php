@@ -612,7 +612,7 @@ function sql_selectdb($nom, $serveur = '', $option = true) {
  * @see sql_select()
  * @see sql_countsel()
  *
- * @param Ressource $res
+ * @param Object $res
  *     Ressource SQL
  * @param string $serveur
  *     Nom du connecteur
@@ -644,7 +644,7 @@ function sql_count($res, $serveur = '', $option = true) {
  * Indique au gestionnaire SQL de libérer de sa mémoire la ressoucre de
  * résultat indiquée car on n'a plus besoin de l'utiliser.
  *
- * @param Ressource|Object $res
+ * @param Object $res
  *     Ressource de résultat
  * @param string $serveur
  *     Nom de la connexion
@@ -1132,7 +1132,7 @@ function sql_drop_view($table, $exist = '', $serveur = '', $option = true) {
  *     - false -> ne pas l'executer mais la retourner,
  *     - continue -> ne pas echouer en cas de serveur sql indisponible,
  *     - true -> executer la requete.
- * @return ressource
+ * @return object|bool|string
  *     Ressource à utiliser avec sql_fetch()
  **/
 function sql_showbase($spip = null, $serveur = '', $option = true) {
@@ -2189,7 +2189,7 @@ function sql_in_select(
  *
  * @see sql_seek()
  *
- * @param resource $res
+ * @param Object $res
  *    Ressource issue d'une selection sql_select
  * @param int $pos
  *   position courante

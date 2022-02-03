@@ -139,7 +139,7 @@ function _sqlite_init_functions(&$sqlite) {
  *
  * @uses _sqlite_is_version()
  *
- * @param PDO|resource $sqlite Représente la connexion Sqlite
+ * @param PDO $sqlite Représente la connexion Sqlite
  * @param string $f Nom de la fonction à créer
  * @param array $r Tableau indiquant :
  *     - le nom de la fonction à appeler,
@@ -179,7 +179,7 @@ function _sqlite_func_concat(...$args) {
  * @uses _sqlite_func_date()
  *
  * @param string $d
- * @return int
+ * @return string
  */
 function _sqlite_func_dayofmonth($d) {
 	return _sqlite_func_date('d', $d);
@@ -317,7 +317,7 @@ function _sqlite_func_now($force_refresh = false) {
  * @uses _sqlite_func_date()
  *
  * @param string $d
- * @return int
+ * @return string
  */
 function _sqlite_func_month($d) {
 	return _sqlite_func_date('m', $d);
@@ -580,7 +580,7 @@ function _sqlite_func_unix_timestamp($d) {
  * @uses _sqlite_func_date()
  *
  * @param string $d
- * @return int
+ * @return string
  */
 function _sqlite_func_year($d) {
 	return _sqlite_func_date('Y', $d);
@@ -593,7 +593,7 @@ function _sqlite_func_year($d) {
  *   format : Y, m, ou d
  * @param int $d
  *   timestamp
- * @return int
+ * @return string
  */
 function _sqlite_func_date($quoi, $d) {
 	static $mem = [];

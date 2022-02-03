@@ -141,7 +141,7 @@ function req_sqlite_dist($addr, $port, $login, $pass, $db = '', $prefixe = '', $
  *    Effectuer la requete ?
  *    - true pour executer
  *    - false pour retourner le texte de la requete
- * @return bool|SQLiteResult|string
+ * @return PDOStatement|bool|string|array
  *    Resultat de la requete
  */
 function spip_sqlite_query($query, $serveur = '', $requeter = true) {
@@ -522,7 +522,7 @@ function spip_sqlite_create_base($nom, $serveur = '', $option = true) {
  *     Nom du connecteur
  * @param bool $requeter
  *     Effectuer la requete, sinon la retourner
- * @return bool|SQLiteResult|string
+ * @return bool|string
  *     - true si la vue est créée
  *     - false si erreur ou si la vue existe déja
  *     - string texte de la requête si $requeter vaut false
@@ -623,7 +623,7 @@ function spip_sqlite_create_index($nom, $table, $champs, $unique = '', $serveur 
  * pour les resultats de SELECT
  * cela est fait sans spip_sqlite_query()
  *
- * @param Ressource|Object $r Ressource de résultat
+ * @param PDOStatement $r Jeu de résultats
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Inutilisé
  * @return int                 Nombre de lignes
@@ -921,7 +921,7 @@ function spip_sqlite_explain($query, $serveur = '', $requeter = true) {
  *
  * Récupère la ligne suivante d'une ressource de résultat
  *
- * @param Ressource $r Ressource de résultat (issu de sql_select)
+ * @param PDOStatement $r Jeu de résultats (issu de sql_select)
  * @param string $t Structure de résultat attendu (défaut ASSOC)
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Inutilisé
@@ -958,7 +958,7 @@ function spip_sqlite_fetch($r, $t = '', $serveur = '', $requeter = true) {
 /**
  * Place le pointeur de résultat sur la position indiquée
  *
- * @param Ressource $r Ressource de résultat
+ * @param PDOStatement $r Jeu de résultats
  * @param int $row_number Position. Déplacer le pointeur à cette ligne
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Inutilisé
@@ -976,7 +976,7 @@ function spip_sqlite_seek($r, $row_number, $serveur = '', $requeter = true) {
  * Indique à SQLite de libérer de sa mémoire la ressoucre de résultat indiquée
  * car on n'a plus besoin de l'utiliser.
  *
- * @param Ressource|Object $r Ressource de résultat
+ * @param PDOStatement $r Jeu de résultats
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Inutilisé
  * @return bool                True si réussi
@@ -1088,7 +1088,7 @@ function spip_sqlite_insert($table, $champs, $valeurs, $desc = [], $serveur = ''
  *
  * @param string $table
  *     Nom de la table SQL
- * @param string $couples
+ * @param array $couples
  *    Couples (colonne => valeur)
  * @param array $desc
  *     Tableau de description des colonnes de la table SQL utilisée
@@ -1331,9 +1331,9 @@ function spip_sqlite_multi($objet, $lang) {
  *   Sqlite optimise TOUT un fichier sinon rien.
  *   On évite donc 2 traitements sur la même base dans un hit.
  *
- * @param $table nom de la table a optimiser
- * @param $serveur nom de la connexion
- * @param $requeter effectuer la requete ? sinon retourner son code
+ * @param string $table nom de la table a optimiser
+ * @param string $serveur nom de la connexion
+ * @param bool $requeter effectuer la requete ? sinon retourner son code
  * @return bool|string true / false / requete
  **/
 function spip_sqlite_optimize($table, $serveur = '', $requeter = true) {
@@ -1669,7 +1669,7 @@ function spip_sqlite_set_charset($charset, $serveur = '', $requeter = true) {
  * @param bool $requeter
  *     true pour éxecuter la requête
  *     false pour retourner le texte de la requête.
- * @return ressource
+ * @return PDOStatement|bool|string|array
  *     Ressource à utiliser avec sql_fetch()
  **/
 function spip_sqlite_showbase($match, $serveur = '', $requeter = true) {
@@ -1703,8 +1703,9 @@ function spip_sqlite_showbase($match, $serveur = '', $requeter = true) {
  * @param bool $requeter
  *     true pour éxecuter la requête
  *     false pour retourner le texte de la requête.
- * @return ressource
- *     Ressource à utiliser avec sql_fetch()
+ * @return bool|string
+ *     - true si la table existe, false sinon
+ *     - string : requete sql, si $requeter = true
  **/
 function spip_sqlite_table_exists(string $table, $serveur = '', $requeter = true) {
 	$r = spip_sqlite_query(
@@ -2029,7 +2030,7 @@ function _sqlite_is_version($version = '', $link = '', $serveur = '', $requeter 
  * Retrouver un link d'une connexion SQLite
  *
  * @param string $serveur Nom du serveur
- * @return Object Information de connexion pour SQLite
+ * @return PDO Information de connexion pour SQLite
  */
 function _sqlite_link($serveur = '') {
 	$link = &$GLOBALS['connexions'][$serveur ? $serveur : 0]['link'];
@@ -2855,7 +2856,7 @@ class sqlite_requeteur {
 	public $query = ''; // la requete
 	/** @var string Nom de la connexion */
 	public $serveur = '';
-	/** @var Ressource Identifiant de la connexion SQLite */
+	/** @var PDO Identifiant de la connexion SQLite */
 	public $link = '';
 	/** @var string Prefixe des tables SPIP */
 	public $prefixe = '';
@@ -2899,7 +2900,7 @@ class sqlite_requeteur {
 	 *     Requête à exécuter
 	 * @param bool|null $tracer
 	 *     true pour tracer la requête
-	 * @return bool|SQLiteResult
+	 * @return bool|PDOStatement|array
 	 */
 	public function executer_requete($query, $tracer = null) {
 		if (is_null($tracer)) {
@@ -2967,7 +2968,7 @@ class sqlite_requeteur {
 	/**
 	 * Obtient l'identifiant de la dernière ligne insérée ou modifiée
 	 *
-	 * @return int
+	 * @return string|false
 	 **/
 	public function last_insert_id() {
 		return $this->link->lastInsertId();
