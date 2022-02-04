@@ -50,7 +50,9 @@ function array_set_merge(&$table, $index, $valeur) {
  *   table_sql demandee explicitement
  * @param array $desc
  *   description connue de la table sql demandee
- * @return array|bool
+ * @return array|string
+ *   - array : description de la table ou des tables
+ *   - string (interne) si table '::md5' retourne un hash
  */
 function lister_tables_objets_sql(?string $table_sql = null, $desc = []) {
 	static $deja_la = false;
@@ -1104,14 +1106,14 @@ function table_objet_sql(string $type, string $serveur = ''): string {
  *     Nom de la table SQL ou de l'objet
  * @param string $serveur
  *     Nom du connecteur
- * @return string
+ * @return string|null
  *     Nom de la clé primaire
  **/
 function id_table_objet($type, $serveur = '') {
 	static $trouver_table = null;
 	$type = objet_type($type, $serveur);
 	if (!$type) {
-		return;
+		return null;
 	}
 	$t = table_objet($type);
 	if (!$trouver_table) {

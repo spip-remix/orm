@@ -55,8 +55,8 @@ include_spip('base/objets');
  *     - bool log_missing:
  *           true: (par défaut) pour écrire un log en cas de table absente.
  *           false: log uniquement en niveau debug.
- * @return array|bool
- *     false si table introuvable
+ * @return array|null
+ *     null si pas de connexion sql ou table introuvable
  *     tableau de description de la table sinon, en particulier :
  *     - field : tableau des colonnes SQL et leur description (comme dans serial.php ou objets.php)
  *     - key   : tableau des KEY (comme dans serial.php ou objets.php)
