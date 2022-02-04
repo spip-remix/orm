@@ -228,7 +228,7 @@ function spip_connect_sql($version, $ins = '', $serveur = '', $continue = false)
  * @param string $prefixe Préfixe des tables SPIP
  * @param string $auth Type d'authentification (cas si 'ldap')
  * @param string $charset Charset de la connexion SQL (optionnel)
- * @return array          Description de la connexion
+ * @return array|null Description de la connexion
  */
 function spip_connect_db(
 	$host,
@@ -265,7 +265,7 @@ function spip_connect_db(
 	) {
 		spip_log("Echec : $f recent. Pas de tentative de connexion", _LOG_HS);
 
-		return;
+		return null;
 	}
 
 	if (!$prefixe) {
@@ -275,7 +275,7 @@ function spip_connect_db(
 	if (!$h) {
 		spip_log("les requetes $type ne sont pas fournies", _LOG_HS);
 
-		return;
+		return null;
 	}
 	if ($g = $h($host, $port, $login, $pass, $db, $prefixe)) {
 		if (!is_array($auth)) {
@@ -294,6 +294,7 @@ function spip_connect_db(
 		@touch($f);
 		spip_log("Echec connexion serveur $type : host[$host] port[$port] login[$login] base[$db]", $type . '.' . _LOG_HS);
 	}
+	return null;
 }
 
 
