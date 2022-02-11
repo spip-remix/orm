@@ -291,7 +291,9 @@ function maj_debut_page($installee, $meta, $table) {
 		return;
 	}
 	include_spip('inc/minipres');
-	@ini_set('zlib.output_compression', '0'); // pour permettre l'affichage au fur et a mesure
+	if (function_exists('ini_set')) {
+		@ini_set('zlib.output_compression', '0'); // pour permettre l'affichage au fur et a mesure
+	}
 	$timeout = _UPGRADE_TIME_OUT * 2;
 	$titre = _T('titre_page_upgrade');
 	$balise_img = charger_filtre('balise_img');
