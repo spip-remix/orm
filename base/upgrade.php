@@ -455,7 +455,7 @@ function serie_alter($serie, $q = [], $meta = '', $table = 'meta', $redirect = '
 					ecrire_meta($meta2, $i + 1, 'non', $table);
 				}
 				echo (_IS_CLI ? '.' : " <span title='$i'>.</span>");
-				call_user_func_array($f, $r);
+				$f(...$r);
 				// si temps imparti depasse, on relance sans ecrire en meta
 				// car on est peut etre sorti sur timeout si c'est une fonction longue
 				if (time() >= _TIME_OUT) {
