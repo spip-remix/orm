@@ -280,7 +280,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 	if ($e = spip_mysql_errno($serveur)) {
 		// et du fautif
 		$e .= spip_mysql_error($query, $serveur);
-	} 
+	}
 	return $t ? trace_query_end($query, $t, $r, $e, $serveur) : $r;
 }
 
@@ -1244,7 +1244,7 @@ function spip_mysql_insert($table, $champs, $valeurs, $desc = [], $serveur = '',
 		if ($e = spip_mysql_errno($serveur)) {
 			// et du fautif
 			$e .= spip_mysql_error($query, $serveur);
-		} 
+		}
 	}
 
 	return $t ? trace_query_end($query, $t, $r, $e, $serveur) : $r;
@@ -1699,7 +1699,7 @@ function spip_mysql_cite($v, $type) {
 		return $v;
 	} elseif (sql_test_int($type)) {
 		if (
-			is_numeric($v) 
+			is_numeric($v)
 			or ($v and ctype_xdigit(substr($v, 2)) and $v[0] === '0' and $v[1] === 'x')
 		) {
 			return $v;

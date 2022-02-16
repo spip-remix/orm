@@ -191,10 +191,10 @@ function spip_sql_erreur($serveur = '') {
 function spip_connect_sql($version, $ins = '', $serveur = '', $continue = false) {
 	$desc = spip_connect($serveur, $version);
 	if (
-		$desc 
+		$desc
 		and $f = ($desc[$version][$ins] ?? '')
 		and function_exists($f)
-	 ) {
+	) {
 		return $f;
 	}
 	if ($continue) {
@@ -394,7 +394,7 @@ function _q($a): string {
 	} elseif ($a === null) {
 		return "''";
 	}
-	throw new \RuntimeException("Can’t use _q with " . gettype($a));
+	throw new \RuntimeException('Can’t use _q with ' . gettype($a));
 }
 
 /**
@@ -437,14 +437,16 @@ function query_echappe_textes($query, $uniqid = null) {
 		$parts = [];
 		$currentpos = 0;
 		$k = 0;
-		while(count($textes)) {
+		while (count($textes)) {
 			$part = array_shift($textes);
 			$nextpos = strpos($query_echappees, $part, $currentpos);
 			// si besoin recoller ensemble les doubles '' de sqlite (echappement des ')
 			while (count($textes) and substr($part, -1) === "'") {
 				$next = reset($textes);
-				if (strpos($next, "'") === 0
-				  and strpos($query_echappees, $part . $next, $currentpos) === $nextpos) {
+				if (
+					strpos($next, "'") === 0
+					and strpos($query_echappees, $part . $next, $currentpos) === $nextpos
+				) {
 					$part .= array_shift($textes);
 				}
 				else {
@@ -455,13 +457,13 @@ function query_echappe_textes($query, $uniqid = null) {
 			$parts[$k] = [
 				'texte' => $part,
 				'position' => $nextpos,
-				'placeholder' => '%'.$k.'$s',
+				'placeholder' => '%' . $k . '$s',
 			];
 			$currentpos = $nextpos + strlen($part);
 		}
 
 		// et on replace les parts une par une en commencant par la fin
-		while ($k>0) {
+		while ($k > 0) {
 			$query_echappees = substr_replace($query_echappees, $parts[$k]['placeholder'], $parts[$k]['position'], strlen($parts[$k]['texte']));
 			$k--;
 		}

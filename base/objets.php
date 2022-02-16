@@ -1156,7 +1156,7 @@ function id_table_objet($type, $serveur = '') {
  * @return string|null
  *     Type de l'objet
  **/
-function objet_type(string $table_objet, string $serveur = '') : ?string {
+function objet_type(string $table_objet, string $serveur = ''): ?string {
 	if (!$table_objet) {
 		return null;
 	}
