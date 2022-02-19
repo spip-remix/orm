@@ -368,7 +368,6 @@ function spip_connect_main($connexion, $charset_sql_connexion = '') {
  */
 function spip_connect_ldap($serveur = '') {
 	include_spip('auth/ldap');
-
 	return auth_ldap_connect($serveur);
 }
 
