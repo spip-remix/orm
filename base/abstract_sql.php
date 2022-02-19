@@ -745,7 +745,7 @@ function sql_insert($table, $noms, $valeurs, $desc = [], $serveur = '', $option 
  *     - true : exécuter la requête
  *     - 'continue' : ne pas échouer en cas de serveur sql indisponible
  *
- * @return bool|string
+ * @return int|bool|string
  *     - int|true identifiant de l'élément inséré (si possible), ou true, si réussite
  *     - Texte de la requête si demandé,
  *     - False en cas d'erreur.
