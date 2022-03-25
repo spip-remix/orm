@@ -1110,7 +1110,7 @@ function table_objet_sql(string $type, string $serveur = ''): string {
  * @return string|null
  *     Nom de la clé primaire
  **/
-function id_table_objet($type, $serveur = '') {
+function id_table_objet(string $type, string $serveur = ''): ?string {
 	static $trouver_table = null;
 	$type = objet_type($type, $serveur);
 	if (!$type) {
