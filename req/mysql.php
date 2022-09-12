@@ -1097,7 +1097,7 @@ function spip_mysql_countsel(
 	[$c] = mysqli_fetch_array($r, MYSQLI_NUM);
 	mysqli_free_result($r);
 
-	return $c;
+	return intval($c);
 }
 
 
