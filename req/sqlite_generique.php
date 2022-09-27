@@ -2099,7 +2099,7 @@ function _sqlite_calculer_cite($v, $type) {
 			and $l instanceof \PDO
 			and $l->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite'
 		) {
-			return $l->quote($v);
+			return $l->quote($v ?? '');
 		}
 	}
 
