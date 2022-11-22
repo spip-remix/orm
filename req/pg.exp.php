@@ -497,9 +497,9 @@ function spip_pg_selectdb($db, $serveur = '', $requeter = true) {
 		if (($db == $link['db']) && $GLOBALS['connexions'][$index] = $link) {
 			return $db;
 		}
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 // Qu'une seule base pour le moment
