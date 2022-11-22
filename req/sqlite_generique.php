@@ -1681,9 +1681,9 @@ function spip_sqlite_selectdb($db, $serveur = '', $requeter = true)
 		}
 	} else {
 		spip_log("Impossible de selectionner la base $db", 'sqlite.' . _LOG_HS);
-
-		return false;
 	}
+
+	return false;
 }
 
 
@@ -1956,6 +1956,8 @@ function spip_sqlite_update($table, $champs, $where = '', $desc = '', $serveur =
 			$requeter
 		);
 	}
+
+	return false;
 }
 
 
