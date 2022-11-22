@@ -1062,6 +1062,7 @@ function spip_mysql_seek($r, $row_number, $serveur = '', $requeter = true) {
 	if ($r and mysqli_num_rows($r)) {
 		return mysqli_data_seek($r, $row_number);
 	}
+	return false;
 }
 
 
@@ -1188,7 +1189,11 @@ function spip_mysql_count($r, $serveur = '', $requeter = true) {
  * @return bool              True si réussi
  */
 function spip_mysql_free($r, $serveur = '', $requeter = true) {
-	return (($r instanceof mysqli_result) ? mysqli_free_result($r) : false);
+	if ($r instanceof mysqli_result) {
+		mysqli_free_result($r);
+		return true;
+	}
+	return false;
 }
 
 
@@ -1402,6 +1407,7 @@ function spip_mysql_update($table, $champs, $where = '', $desc = [], $serveur = 
 			$requeter
 		);
 	}
+	return false;
 }
 
 /**
