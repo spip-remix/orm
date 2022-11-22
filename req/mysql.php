@@ -880,7 +880,7 @@ function spip_mysql_showbase($match, $serveur = '', $requeter = true) {
  * @param string $table Nom de la table SQL
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Exécuter la requête, sinon la retourner
- * @return bool|string
+ * @return bool|string|array
  *     - string texte de la requête si demandée,
  *     - true si la requête a réussie, false sinon
  */
@@ -896,6 +896,7 @@ function spip_mysql_repair($table, $serveur = '', $requeter = true) {
 	} else {
 		spip_log("spip_mysql_repair impossible pour la table $table engine $engine", 'mysql.' . _LOG_DEBUG);
 	}
+	return false;
 }
 
 /**
