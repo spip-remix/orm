@@ -1461,9 +1461,9 @@ function spip_pg_set_connect_charset($charset, $serveur = '', $requeter = true) 
 /**
  * Optimise une table SQL
  *
- * @param $table nom de la table a optimiser
- * @param $serveur nom de la connexion
- * @param $requeter effectuer la requete ? sinon retourner son code
+ * @param string $table nom de la table a optimiser
+ * @param string $serveur nom de la connexion
+ * @param bool $requeter effectuer la requete ? sinon retourner son code
  * @return bool|string true / false / requete
  **/
 function spip_pg_optimize($table, $serveur = '', $requeter = true) {
