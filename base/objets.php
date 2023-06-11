@@ -788,8 +788,8 @@ function renseigner_table_objet_sql($table_sql, &$infos) {
  * statut
  * tables_jointures
  *
- * @param $table_sql
- * @param $infos
+ * @param string $table_sql
+ * @param array $infos
  * @return array
  */
 function renseigner_table_objet_interfaces($table_sql, &$infos) {
@@ -1429,8 +1429,8 @@ function objet_lister_parents($objet, $id_objet, $parent_direct_seulement = fals
  * Fonction helper qui permet de récupérer une liste simplifiée des parents, regroupés par objet
  * [ 'objet1' => [ids...], 'objet2' => [ids...] ]
  *
- * @param $objet
- * @param $id_objet
+ * @param string $objet
+ * @param int $id_objet
  * @return array
  */
 function objet_lister_parents_par_type($objet, $id_objet) {
@@ -1469,9 +1469,9 @@ function objet_lister_parents_par_type($objet, $id_objet) {
  * le tableau contient en plus en entrée 'lien' qui contient les informations complètes du lien (rang, role...)
  *
  * @api
- * @param $objet
+ * @param string $objet
  *     Type de l'objet dont on cherche les enfants
- * @param $id_objet
+ * @param int $id_objet
  *     Identifiant de l'objet dont on cherche les enfants
  * @return array
  *     Retourne un tableau de tableaux, avec comme clés les types des objets, et dans chacun un tableau des identifiants trouvés
@@ -1562,8 +1562,8 @@ function objet_lister_enfants($objet, $id_objet) {
  * Fonction helper qui permet de récupérer une liste simplifiée des enfants, regroupés par objet
  * [ 'objet1' => [ids...], 'objet2' => [ids...] ]
  *
- * @param $objet
- * @param $id_objet
+ * @param string $objet
+ * @param int $id_objet
  * @return array
  */
 function objet_lister_enfants_par_type($objet, $id_objet) {
@@ -1583,7 +1583,7 @@ function objet_lister_enfants_par_type($objet, $id_objet) {
 /**
  * Donne les informations de parenté directe d'un type d'objet si on en trouve
  *
- * @param $objet
+ * @param string $objet
  *     Type de l'objet dont on cherche les informations de parent
  * @return array|false
  *     Retourne un tableau de tableau contenant les informations de type et de champ pour trouver le parent ou false sinon
@@ -1619,7 +1619,7 @@ function objet_type_decrire_infos_parents($objet) {
 /**
  * Donne les informations des enfants directs d'un type d'objet si on en trouve
  *
- * @param $objet
+ * @param string $objet
  *     Type de l'objet dont on cherche les informations des enfants
  * @return array
  *     Retourne un tableau de tableaux contenant chacun les informations d'un type d'enfant
