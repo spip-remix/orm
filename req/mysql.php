@@ -328,7 +328,7 @@ function spip_mysql_optimize($table, $serveur = '', $requeter = true) {
  * @return array           Tableau de l'explication
  */
 function spip_mysql_explain($query, $serveur = '', $requeter = true) {
-	if (strpos(ltrim($query), 'SELECT') !== 0) {
+	if (!str_starts_with(ltrim($query), 'SELECT')) {
 		return [];
 	}
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
@@ -497,7 +497,7 @@ function calculer_mysql_expression($expression, $v, $join = 'AND') {
 function spip_mysql_select_as($args) {
 	$res = '';
 	foreach ($args as $k => $v) {
-		if (substr($k, -1) == '@') {
+		if (str_ends_with($k, '@')) {
 			// c'est une jointure qui se refere au from precedent
 			// pas de virgule
 			$res .= '  ' . $v;
