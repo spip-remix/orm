@@ -47,8 +47,9 @@ function req_mysql_dist($host, $port, $login, #[\SensitiveParameter] $pass, $db 
 	// si port est fourni mais pas host, c'est un socket -> compat avec vieille syntaxe de mysql_connect() et anciens fichiers connect.php
 	try {
 		if (
-			$port and !is_numeric($socket = $port)
-			and (!$host or $host === 'localhost')
+			$port
+			&& !is_numeric($socket = $port)
+			&& (!$host || $host === 'localhost')
 		) {
 			$link = @mysqli_connect($host, $login, $pass, '', null, $socket);
 		} elseif ($port) {
@@ -74,7 +75,7 @@ function req_mysql_dist($host, $port, $login, #[\SensitiveParameter] $pass, $db 
 		$ok = mysqli_select_db($link, $db);
 		if (
 			defined('_MYSQL_SET_SQL_MODE')
-			or defined('_MYSQL_SQL_MODE_TEXT_NOT_NULL') // compatibilite
+			|| defined('_MYSQL_SQL_MODE_TEXT_NOT_NULL') // compatibilite
 		) {
 			mysqli_query($link, $last = "set sql_mode=''");
 		}
@@ -219,7 +220,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 		return $query;
 	}
 
-	if (isset($_GET['var_profile']) or (defined('_DEBUG_TRACE_QUERIES') and _DEBUG_TRACE_QUERIES)) {
+	if (isset($_GET['var_profile']) || defined('_DEBUG_TRACE_QUERIES') && _DEBUG_TRACE_QUERIES) {
 		include_spip('public/tracer');
 		$t = trace_query_start();
 	} else {
@@ -231,7 +232,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 
 	// ajouter un debug utile dans log/mysql-slow.log ?
 	$debug = '';
-	if (defined('_DEBUG_SLOW_QUERIES') and _DEBUG_SLOW_QUERIES) {
+	if (defined('_DEBUG_SLOW_QUERIES') && _DEBUG_SLOW_QUERIES) {
 		if (isset($GLOBALS['debug']['aucasou'])) {
 			[, $id, , $infos] = $GLOBALS['debug']['aucasou'];
 			$debug .= "BOUCLE$id @ " . ($infos[0] ?? '') . ' | ';
@@ -539,7 +540,7 @@ define('_SQL_PREFIXE_TABLE_MYSQL', '/([,\s])spip_/S');
  */
 function _mysql_traite_query($query, $db = '', $prefixe = '', $echappe_textes = true) {
 
-	if ($GLOBALS['mysql_rappel_nom_base'] and $db) {
+	if ($GLOBALS['mysql_rappel_nom_base'] && $db) {
 		$pref = '`' . $db . '`.';
 	} else {
 		$pref = '';
@@ -581,9 +582,9 @@ function _mysql_traite_query($query, $db = '', $prefixe = '', $echappe_textes = 
 	// remplacer les emoji (que mysql ne sait pas gérer) en &#128169;
 	if (
 		defined('_MYSQL_NOPLANES')
-		and _MYSQL_NOPLANES
-		and !empty($GLOBALS['meta']['charset_sql_connexion'])
-		and $GLOBALS['meta']['charset_sql_connexion'] == 'utf8'
+		&& _MYSQL_NOPLANES
+		&& !empty($GLOBALS['meta']['charset_sql_connexion'])
+		&& $GLOBALS['meta']['charset_sql_connexion'] == 'utf8'
 	) {
 		include_spip('inc/charsets');
 		$r = utf8_noplanes($r);
@@ -716,7 +717,7 @@ function spip_mysql_create(
 		if (preg_match(',([a-z]*\s*(\(\s*[0-9]*\s*\))?(\s*binary)?),i', $v, $defs)) {
 			if (
 				preg_match(',(char|text),i', $defs[1])
-				and !preg_match(',(binary|CHARACTER|COLLATE),i', $v)
+				&& !preg_match(',(binary|CHARACTER|COLLATE),i', $v)
 			) {
 				$v = $defs[1] . $character_set . ' ' . substr($v, strlen($defs[1]));
 			}
@@ -1058,7 +1059,7 @@ function spip_mysql_fetch($r, $t = '', $serveur = '', $requeter = true) {
  * @return bool True si déplacement réussi, false sinon.
  **/
 function spip_mysql_seek($r, $row_number, $serveur = '', $requeter = true) {
-	if ($r and mysqli_num_rows($r)) {
+	if ($r && mysqli_num_rows($r)) {
 		return mysqli_data_seek($r, $row_number);
 	}
 	return false;
@@ -1228,9 +1229,9 @@ function spip_mysql_insert($table, $champs, $valeurs, $desc = [], $serveur = '',
 	// remplacer les emoji (que mysql ne sait pas gérer) en &#128169;
 	if (
 		defined('_MYSQL_NOPLANES')
-		and _MYSQL_NOPLANES
-		and !empty($GLOBALS['meta']['charset_sql_connexion'])
-		and $GLOBALS['meta']['charset_sql_connexion'] == 'utf8'
+		&& _MYSQL_NOPLANES
+		&& !empty($GLOBALS['meta']['charset_sql_connexion'])
+		&& $GLOBALS['meta']['charset_sql_connexion'] == 'utf8'
 	) {
 		include_spip('inc/charsets');
 		$valeurs = utf8_noplanes($valeurs);
@@ -1654,7 +1655,7 @@ function spip_mysql_quote($v, $type = '') {
  *     Expression SQL
  **/
 function spip_mysql_date_proche($champ, $interval, $unite) {
-	$use_now = ( ($champ === 'maj' or strpos($champ, '.maj')) ? true : false );
+	$use_now = ( ($champ === 'maj' || strpos($champ, '.maj')) ? true : false );
 	return '('
 	. $champ
 	. (($interval <= 0) ? '>' : '<')
@@ -1719,12 +1720,12 @@ function spip_mysql_cite($v, $type) {
 		} else {
 			return "''";
 		}
-	} elseif (sql_test_date($type) and preg_match('/^\w+\(/', $v)) {
+	} elseif (sql_test_date($type) && preg_match('/^\w+\(/', $v)) {
 		return $v;
 	} elseif (sql_test_int($type)) {
 		if (
 			is_numeric($v)
-			or ($v and ctype_xdigit(substr($v, 2)) and $v[0] === '0' and $v[1] === 'x')
+			|| $v && ctype_xdigit(substr($v, 2)) && $v[0] === '0' && $v[1] === 'x'
 		) {
 			return $v;
 		} else {
