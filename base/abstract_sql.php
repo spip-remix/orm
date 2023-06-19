@@ -2344,11 +2344,8 @@ function description_table($nom, $serveur = '') {
 	}
 
 	include_spip('base/auxiliaires');
-	if (isset($GLOBALS['tables_auxiliaires'][$nom])) {
-		return $GLOBALS['tables_auxiliaires'][$nom];
-	}
 
-	return false;
+	return $GLOBALS['tables_auxiliaires'][$nom] ?? false;
 }
 
 /**

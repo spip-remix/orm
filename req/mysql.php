@@ -612,7 +612,7 @@ function spip_mysql_selectdb($db, $serveur = '', $requeter = true) {
 	$link = _mysql_link($serveur);
 	try {
 		$ok = mysqli_select_db($link, $db);
-	} catch (\mysqli_sql_exception $e) {
+	} catch (\mysqli_sql_exception) {
 		$ok = false;
 	}
 	if (!$ok) {
