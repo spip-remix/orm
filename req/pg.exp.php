@@ -1269,22 +1269,18 @@ function spip_pg_errno($serveur = '') {
 	return 0;
 }
 
-function spip_pg_drop_table($table, $exist = '', $serveur = '', $requeter = true) {
-	if ($exist) {
-		$exist = ' IF EXISTS';
-	}
+function spip_pg_drop_table($table, $exist = false, $serveur = '', $requeter = true) {
+	$exist = (bool) $exist ? ' IF EXISTS' : '';
 	if (spip_pg_query("DROP TABLE$exist $table", $serveur, $requeter)) {
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 // supprime une vue
-function spip_pg_drop_view($view, $exist = '', $serveur = '', $requeter = true) {
-	if ($exist) {
-		$exist = ' IF EXISTS';
-	}
+function spip_pg_drop_view($view, $exist = false, $serveur = '', $requeter = true) {
+	$exist = (bool) $exist ? ' IF EXISTS' : '';
 
 	return spip_pg_query("DROP VIEW$exist $view", $serveur, $requeter);
 }

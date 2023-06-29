@@ -821,17 +821,15 @@ function spip_mysql_create_view($nom, $query_select, $serveur = '', $requeter = 
  * Supprime une table SQL
  *
  * @param string $table Nom de la table SQL
- * @param string $exist True pour ajouter un test d'existence avant de supprimer
+ * @param bool $exist True pour ajouter un test d'existence avant de supprimer
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Exécuter la requête, sinon la retourner
  * @return bool|string
  *     - string texte de la requête si demandé
  *     - true si la requête a réussie, false sinon
  */
-function spip_mysql_drop_table($table, $exist = '', $serveur = '', $requeter = true) {
-	if ($exist) {
-		$exist = ' IF EXISTS';
-	}
+function spip_mysql_drop_table($table, $exist = false, $serveur = '', $requeter = true) {
+	$exist = (bool) $exist ? ' IF EXISTS' : '';
 
 	return spip_mysql_query("DROP TABLE$exist $table", $serveur, $requeter);
 }
@@ -840,17 +838,15 @@ function spip_mysql_drop_table($table, $exist = '', $serveur = '', $requeter = t
  * Supprime une vue SQL
  *
  * @param string $view Nom de la vue SQL
- * @param string $exist True pour ajouter un test d'existence avant de supprimer
+ * @param bool $exist True pour ajouter un test d'existence avant de supprimer
  * @param string $serveur Nom de la connexion
  * @param bool $requeter Exécuter la requête, sinon la retourner
  * @return bool|string
  *     - string texte de la requête si demandé
  *     - true si la requête a réussie, false sinon
  */
-function spip_mysql_drop_view($view, $exist = '', $serveur = '', $requeter = true) {
-	if ($exist) {
-		$exist = ' IF EXISTS';
-	}
+function spip_mysql_drop_view($view, $exist = false, $serveur = '', $requeter = true) {
+	$exist = (bool) $exist ? ' IF EXISTS' : '';
 
 	return spip_mysql_query("DROP VIEW$exist $view", $serveur, $requeter);
 }

@@ -1051,7 +1051,7 @@ function sql_replace_multi($table, $tab_couples, $desc = [], $serveur = '', $opt
  *
  * @param string $table
  *     Nom de la table
- * @param string $exist
+ * @param bool $exist
  *     true pour ajouter un test sur l'existence de la table, false sinon
  * @param string $serveur
  *     Nom du connecteur
@@ -1066,7 +1066,7 @@ function sql_replace_multi($table, $tab_couples, $desc = [], $serveur = '', $opt
  *     - texte de la requête si demandé,
  *     - false en cas d'erreur.
  **/
-function sql_drop_table($table, $exist = '', $serveur = '', $option = true) {
+function sql_drop_table($table, $exist = false, $serveur = '', $option = true) {
 	$f = sql_serveur('drop_table', $serveur, $option === 'continue' || $option === false);
 	if (!is_string($f) || !$f) {
 		return false;
@@ -1087,7 +1087,7 @@ function sql_drop_table($table, $exist = '', $serveur = '', $option = true) {
  * @see sql_drop_table()
  *
  * @param string $table Nom de la vue SQL
- * @param string $exist True pour ajouter un test d'existence avant de supprimer
+ * @param bool $exist True pour ajouter un test d'existence avant de supprimer
  * @param string $serveur Nom de la connexion
  * @param bool|string $option
  *     Peut avoir 3 valeurs :
@@ -1099,7 +1099,7 @@ function sql_drop_table($table, $exist = '', $serveur = '', $option = true) {
  *     - string texte de la requête si demandé
  *     - true si la requête a réussie, false sinon
  */
-function sql_drop_view($table, $exist = '', $serveur = '', $option = true) {
+function sql_drop_view($table, $exist = false, $serveur = '', $option = true) {
 	$f = sql_serveur('drop_view', $serveur, $option === 'continue' || $option === false);
 	if (!is_string($f) || !$f) {
 		return false;
