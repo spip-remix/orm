@@ -1156,10 +1156,10 @@ function spip_sqlite_insertq($table, $couples = [], $desc = [], $serveur = '', $
  **/
 function spip_sqlite_insertq_multi($table, $tab_couples = [], $desc = [], $serveur = '', $requeter = true) {
 	$retour = null;
- $nb = null;
- if (!$desc) {
+	$nb = null;
+	if (!$desc) {
 		$desc = description_table($table, $serveur);
- }
+	}
 	if (!$desc) {
 		die("$table insertion sans description");
 	}
