@@ -85,11 +85,10 @@ function spip_connect($serveur = '', $version = '') {
 		if ($f && is_readable($f)) {
 			include($f);
 			if (!isset($GLOBALS['db_ok'])) {
-				spip_log("spip_connect: fichier de connexion '$f' OK mais echec connexion au serveur", _LOG_HS);
+				spip_logger()->emergency("spip_connect: fichier de connexion '$f' OK mais echec connexion au serveur");
 			}
-		}
-		else {
-			spip_log("spip_connect: fichier de connexion '$f' non trouve, pas de connexion serveur", _LOG_HS);
+		} else {
+			spip_logger()->emergency("spip_connect: fichier de connexion '$f' non trouve, pas de connexion serveur");
 		}
 		if (!isset($GLOBALS['db_ok'])) {
 			// fera mieux la prochaine fois
@@ -112,7 +111,7 @@ function spip_connect($serveur = '', $version = '') {
 	$type = $GLOBALS['db_ok']['type'];
 	$jeu = 'spip_' . $type . '_functions_' . $version;
 	if (!isset($GLOBALS[$jeu]) && !find_in_path($type . '_' . $version . '.php', 'req/', true)) {
-		spip_log("spip_connect: serveur $index version '$version' non defini pour '$type'", _LOG_HS);
+		spip_logger()->emergency("spip_connect: serveur $index version '$version' non defini pour '$type'");
 		// ne plus reessayer
 		return $GLOBALS['connexions'][$index][$version] = [];
 	}
@@ -132,7 +131,7 @@ function spip_connect($serveur = '', $version = '') {
 		$charset = spip_connect_main($GLOBALS[$jeu], $GLOBALS['db_ok']['charset']);
 		if (!$charset) {
 			unset($GLOBALS['connexions'][$index]);
-			spip_log('spip_connect: absence de charset', _LOG_AVERTISSEMENT);
+			spip_logger()->warning('spip_connect: absence de charset');
 
 			return false;
 		}
@@ -173,7 +172,7 @@ function spip_sql_erreur($serveur = '') {
 	$t = ($connexion['type'] ?? 'sql');
 	$m = "Erreur $e de $t: " . sql_error($serveur) . "\nin " . sql_error_backtrace() . "\n" . trim((string) $connexion['last']);
 	$f = $t . $serveur;
-	spip_log($m, $f . '.' . _LOG_ERREUR);
+	spip_logger($f)->error($m);
 }
 
 /**
@@ -207,7 +206,7 @@ function spip_connect_sql($version, $ins = '', $serveur = '', $continue = false)
 		return $desc;
 	}
 	if ($ins) {
-		spip_log("Le serveur '$serveur' version $version n'a pas '$ins'", _LOG_ERREUR);
+		spip_logger()->error("Le serveur '$serveur' version $version n'a pas '$ins'");
 	}
 	include_spip('inc/minipres');
 	echo minipres(_T('info_travaux_titre'), _T('titre_probleme_technique'), ['status' => 503]);
@@ -269,7 +268,7 @@ function spip_connect_db(
 		&& @file_exists($f)
 		&& (time() - @filemtime($f) < _CONNECT_RETRY_DELAY)
 	) {
-		spip_log("Echec : $f recent. Pas de tentative de connexion", _LOG_HS);
+		spip_logger()->emergency("Echec : $f recent. Pas de tentative de connexion");
 
 		return null;
 	}
@@ -279,7 +278,7 @@ function spip_connect_db(
 	}
 	$h = charger_fonction($type, 'req', true);
 	if (!$h) {
-		spip_log("les requetes $type ne sont pas fournies", _LOG_HS);
+		spip_logger()->emergency("les requetes $type ne sont pas fournies");
 
 		return null;
 	}
@@ -298,7 +297,7 @@ function spip_connect_db(
 	// En cas d'indisponibilite du serveur, eviter de le bombarder
 	if ($f) {
 		@touch($f);
-		spip_log("Echec connexion serveur $type : host[$host] port[$port] login[$login] base[$db]", $type . '.' . _LOG_HS);
+		spip_logger($type)->emergency("Echec connexion serveur $type : host[$host] port[$port] login[$login] base[$db]");
 	}
 	return null;
 }

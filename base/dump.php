@@ -340,9 +340,8 @@ function base_liste_table_for_dump($exclude_tables = []) {
 function base_vider_tables_destination_copie($tables, $exclure_tables = [], $serveur = '') {
 	$trouver_table = charger_fonction('trouver_table', 'base');
 
-	spip_log(
+	spip_logger('base')->notice(
 		'Vider ' . count($tables) . " tables sur serveur '$serveur' : " . implode(', ', $tables),
-		'base.' . _LOG_INFO_IMPORTANTE
 	);
 	foreach ($tables as $table) {
 		// sur le serveur principal, il ne faut pas supprimer l'auteur loge !
@@ -379,9 +378,8 @@ function base_vider_tables_destination_copie($tables, $exclure_tables = [], $ser
 function base_conserver_copieur($move = true, $serveur = '') {
 	// s'asurer qu'on a pas deja fait la manip !
 	if ($GLOBALS['visiteur_session']['id_auteur'] > 0 && sql_countsel('spip_auteurs', 'id_auteur>0')) {
-		spip_log(
+		spip_logger('dump')->notice(
 			'Conserver copieur dans id_auteur=' . $GLOBALS['visiteur_session']['id_auteur'] . " pour le serveur '$serveur'",
-			'dump.' . _LOG_INFO_IMPORTANTE
 		);
 		sql_delete('spip_auteurs', 'id_auteur<0', $serveur);
 		if ($move) {
@@ -424,17 +422,16 @@ function base_detruire_copieur_si_besoin($serveur = '') {
 	// rien a faire si ce n'est pas le serveur principal !
 	if ($serveur == '') {
 		if (sql_countsel('spip_auteurs', 'id_auteur>0')) {
-			spip_log("Detruire copieur id_auteur<0 pour le serveur '$serveur'", 'dump.' . _LOG_INFO_IMPORTANTE);
+			spip_logger('dump')->notice("Detruire copieur id_auteur<0 pour le serveur '$serveur'");
 			sql_delete('spip_auteurs', 'id_auteur<0', $serveur);
 		} else {
-			spip_log(
+			spip_logger('dump')->notice(
 				"Restaurer copieur id_auteur<0 pour le serveur '$serveur' (aucun autre auteur en base)",
-				'dump.' . _LOG_INFO_IMPORTANTE
 			);
 			sql_update('spip_auteurs', ['id_auteur' => '-id_auteur'], 'id_auteur<0');
 		}
 	} else {
-		spip_log("Pas de destruction copieur sur serveur '$serveur'", 'dump.' . _LOG_INFO_IMPORTANTE);
+		spip_logger('dump')->notice("Pas de destruction copieur sur serveur '$serveur'");
 	}
 }
 
@@ -468,19 +465,19 @@ function base_preparer_table_dest($table, $desc, $serveur_dest, $init = false) {
 			}
 		} else {
 			sql_drop_table($table, '', $serveur_dest);
-			spip_log("drop table '$table' sur serveur '$serveur_dest'", 'dump.' . _LOG_INFO_IMPORTANTE);
+			spip_logger('dump')->notice("drop table '$table' sur serveur '$serveur_dest'");
 		}
 		$desc_dest = false;
 	}
 	// si la table n'existe pas dans la destination, la creer a l'identique !
 	if (!$desc_dest) {
-		spip_log("creation '$table' sur serveur '$serveur_dest'", 'dump.' . _LOG_INFO_IMPORTANTE);
+		spip_logger('dump')->notice("creation '$table' sur serveur '$serveur_dest'");
 		include_spip('base/create');
 		creer_ou_upgrader_table($table, $desc, 'auto', $upgrade, $serveur_dest);
 		$desc_dest = sql_showtable($table, true, $serveur_dest);
 	}
 	if (!$desc_dest) {
-		spip_log("Erreur creation '$table' sur serveur '$serveur_dest'" . var_export($desc, 1), 'dump.' . _LOG_ERREUR);
+		spip_logger('dump')->error("Erreur creation '$table' sur serveur '$serveur_dest'" . var_export($desc, 1));
 	}
 
 	return $desc_dest;
@@ -540,18 +537,19 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 	$racine_fonctions = $options['racine_fonctions_dest'] ?? 'base';
 	$data_pool = $options['data_pool'] ?? 50 * 1024;
 
-	spip_log(
+	$logger = spip_logger('dump');
+
+	$logger->notice(
 		'Copier ' . count($tables) . " tables de '$serveur_source' vers '$serveur_dest'",
-		'dump.' . _LOG_INFO_IMPORTANTE
 	);
 
 	if (!$inserer_copie = charger_fonction($fonction_base_inserer, $racine_fonctions, true)) {
-		spip_log("Fonction '{$racine_fonctions}_$fonction_base_inserer' inconnue. Abandon", 'dump.' . _LOG_INFO_IMPORTANTE);
+		$logger->notice("Fonction '{$racine_fonctions}_$fonction_base_inserer' inconnue. Abandon");
 
 		return true; // echec mais on a fini, donc true
 	}
 	if (!$preparer_table_dest = charger_fonction('preparer_table_dest', $racine_fonctions, true)) {
-		spip_log("Fonction '{$racine_fonctions}_$preparer_table_dest' inconnue. Abandon", 'dump.' . _LOG_INFO_IMPORTANTE);
+		$logger->notice("Fonction '{$racine_fonctions}_$preparer_table_dest' inconnue. Abandon");
 
 		return true; // echec mais on a fini, donc true
 	}
@@ -577,9 +575,8 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 				true
 			)
 		) {
-			spip_log(
+			$logger->notice(
 				"Fonction '{$racine_fonctions}_vider_tables_destination_copie' inconnue. Abandon",
-				'dump.' . _LOG_INFO_IMPORTANTE
 			);
 
 			return true; // echec mais on a fini, donc true
@@ -598,7 +595,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 		$tables = array_diff($tables, ['spip_meta']);
 		$tables[] = 'spip_meta';
 	}
-	spip_log('Tables a copier :' . implode(', ', $tables), 'dump.' . _LOG_INFO);
+	$logger->info('Tables a copier :' . implode(', ', $tables));
 
 	$trouver_table = charger_fonction('trouver_table', 'base');
 
@@ -662,7 +659,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 						// mais si ca renvoie false c'est une erreur fatale => abandon
 						if ($inserer_copie($table, $rows, $desc_dest, $serveur_dest) === false) {
 							// forcer la sortie, charge a l'appelant de gerer l'echec
-							spip_log("Erreur fatale dans $inserer_copie table $table", 'dump' . _LOG_ERREUR);
+							$logger->error("Erreur fatale dans $inserer_copie table $table");
 							$status['errors'][] = "Erreur fatale  lors de la copie de la table $table";
 							ecrire_fichier($status_file, serialize($status));
 
@@ -677,7 +674,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 					if ($n == $status['tables_copiees'][$table]) {
 						break;
 					}
-					spip_log("recopie $table " . $status['tables_copiees'][$table], 'dump.' . _LOG_INFO_IMPORTANTE);
+					$logger->notice("recopie $table " . $status['tables_copiees'][$table]);
 					if ($callback_progression) {
 						$callback_progression($status['tables_copiees'][$table], 0, $table);
 					}
@@ -688,17 +685,17 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 				}
 				if ($drop_source) {
 					sql_drop_table($table, '', $serveur_source);
-					spip_log("drop $table sur serveur source '$serveur_source'", 'dump.' . _LOG_INFO_IMPORTANTE);
+					$logger->notice("drop $table sur serveur source '$serveur_source'");
 				}
 				$status['tables_copiees'][$table] = ($status['tables_copiees'][$table] ? -$status['tables_copiees'][$table] : 'zero');
 				ecrire_fichier($status_file, serialize($status));
-				spip_log('tables_recopiees ' . implode(',', array_keys($status['tables_copiees'])), 'dump.' . _LOG_INFO);
+				$logger->info('tables_recopiees ' . implode(',', array_keys($status['tables_copiees'])));
 				if ($callback_progression) {
 					$callback_progression($status['tables_copiees'][$table], $status['tables_copiees'][$table], $table);
 				}
 			} else {
 				if ($status['tables_copiees'][$table] < 0) {
-					spip_log("Table $table deja copiee : " . $status['tables_copiees'][$table], 'dump.' . _LOG_INFO);
+					$logger->info("Table $table deja copiee : " . $status['tables_copiees'][$table]);
 				}
 				if ($callback_progression) {
 					$callback_progression(
@@ -711,16 +708,15 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 		} else {
 			$status['errors'][] = "Impossible de lire la description de la table $table";
 			ecrire_fichier($status_file, serialize($status));
-			spip_log("Impossible de lire la description de la table $table", 'dump.' . _LOG_ERREUR);
+			$logger->error("Impossible de lire la description de la table $table");
 		}
 	}
 
 	// si le nombre de tables envoyees n'est pas egal au nombre de tables demandees
 	// abandonner
 	if ((is_countable($status['tables_copiees']) ? count($status['tables_copiees']) : 0) < count($tables)) {
-		spip_log(
+		$logger->error(
 			'Nombre de tables copiees incorrect : ' . (is_countable($status['tables_copiees']) ? count($status['tables_copiees']) : 0) . '/' . count($tables),
-			'dump.' . _LOG_ERREUR
 		);
 		$status['errors'][] = 'Nombre de tables copiees incorrect : ' . (is_countable($status['tables_copiees']) ? count($status['tables_copiees']) : 0) . '/' . count($tables);
 		ecrire_fichier($status_file, serialize($status));
@@ -729,7 +725,7 @@ function base_copier_tables($status_file, $tables, $serveur_source, $serveur_des
 	if ($detruire_copieur_si_besoin = charger_fonction('detruire_copieur_si_besoin', $racine_fonctions, true)) {
 		$detruire_copieur_si_besoin($serveur_dest);
 	} else {
-		spip_log("Fonction '{$racine_fonctions}_detruire_copieur_si_besoin' inconnue.", 'dump.' . _LOG_INFO_IMPORTANTE);
+		$logger->notice("Fonction '{$racine_fonctions}_detruire_copieur_si_besoin' inconnue.");
 	}
 
 	// OK, copie complete
@@ -753,9 +749,8 @@ function base_inserer_copie($table, $rows, $desc_dest, $serveur_dest) {
 	$r = sql_insertq_multi($table, $rows, $desc_dest, $serveur_dest);
 	$nb = sql_countsel($table, '', '', '', $serveur_dest);
 	if ($nb - $nb1 < count($rows)) {
-		spip_log(
+		spip_logger('dump')->notice(
 			'base_inserer_copie : ' . ($nb - $nb1) . ' insertions au lieu de ' . count($rows) . '. On retente 1 par 1',
-			'dump' . _LOG_INFO_IMPORTANTE
 		);
 		foreach ($rows as $row) {
 			// si l'enregistrement est deja en base, ca fera un echec ou un doublon
@@ -765,9 +760,8 @@ function base_inserer_copie($table, $rows, $desc_dest, $serveur_dest) {
 		$r = 0;
 		$nb = sql_countsel($table, '', '', '', $serveur_dest);
 		if ($nb - $nb1 < count($rows)) {
-			spip_log(
+			spip_logger('dump')->error(
 				'base_inserer_copie : ' . ($nb - $nb1) . ' insertions au lieu de ' . count($rows) . ' apres insertion 1 par 1',
-				'dump' . _LOG_ERREUR
 			);
 			$r = false;
 		}

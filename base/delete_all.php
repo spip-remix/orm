@@ -35,7 +35,7 @@ function base_delete_all_dist($titre) {
 			if (sql_drop_table($table)) {
 				$res[] = $table;
 			} else {
-				spip_log("SPIP n'a pas pu detruire $table.", _LOG_ERREUR);
+				spip_logger()->error("SPIP n'a pas pu detruire $table.");
 			}
 		}
 
@@ -50,5 +50,5 @@ function base_delete_all_dist($titre) {
 	}
 	$d = is_countable($delete) ? count($delete) : 0;
 	$r = count($res);
-	spip_log("Tables detruites: $r sur $d: " . implode(', ', $res), _LOG_INFO_IMPORTANTE);
+	spip_logger()->notice("Tables detruites: $r sur $d: " . implode(', ', $res));
 }

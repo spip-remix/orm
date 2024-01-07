@@ -127,7 +127,7 @@ function _sqlite_init_functions(&$sqlite) {
 		_sqlite_add_function($sqlite, $f, $r);
 	}
 
-	#spip_log('functions sqlite chargees ','sqlite.'._LOG_DEBUG);
+	#spip_logger('sqlite')->debug('functions sqlite chargees ');
 }
 
 
@@ -307,7 +307,7 @@ function _sqlite_func_now($force_refresh = false) {
 		$now = date('Y-m-d H:i:s');
 	}
 
-	#spip_log("Passage avec NOW : $now | ".time(),'sqlite.'._LOG_DEBUG);
+	#spip_logger('sqlite')->debug("Passage avec NOW : $now | ".time());
 	return $now;
 }
 
@@ -334,7 +334,7 @@ function _sqlite_func_month($d) {
  * @return string
  */
 function _sqlite_func_preg_replace($quoi, $cherche, $remplace) {
-	#spip_log("preg_replace : $quoi, $cherche, $remplace, $return",'sqlite.'._LOG_DEBUG);
+	#spip_logger('sqlite')->debug("preg_replace : $quoi, $cherche, $remplace, $return");
 	return preg_replace('%' . $cherche . '%', $remplace, $quoi);
 }
 
@@ -394,7 +394,7 @@ function _sqlite_func_regexp_match($cherche, $quoi) {
 	$cherche = str_replace('\\\\', '\\', $cherche);
 	$u = $GLOBALS['meta']['pcre_u'] ?? 'u';
 
-	#spip_log("regexp_replace : $quoi, $cherche, $remplace, $return",'sqlite.'._LOG_DEBUG);
+	#spip_logger('sqlite')->debug("regexp_replace : $quoi, $cherche, $remplace, $return");
 	return preg_match('%' . $cherche . '%imsS' . $u, $quoi);
 }
 
@@ -444,7 +444,7 @@ function _sqlite_func_strftime_format_converter(string $conv): string {
 		$count = 0;
 		str_replace($mysql_to_strftime_not_ok, '', $conv, $count);
 		if ($count > 0) {
-			spip_log("DATE_FORMAT : At least one parameter can't be parsed by strftime with format '$conv'", 'sqlite.' . _LOG_ERREUR);
+			spip_logger('sqlite')->error("DATE_FORMAT : At least one parameter can't be parsed by strftime with format '$conv'");
 		}
 		$to_strftime[$conv] = str_replace(array_keys($mysql_to_strftime), $mysql_to_strftime, $conv);
 	}
@@ -465,7 +465,7 @@ function _sqlite_func_to_days($d) {
 	static $offset = 719528; // nb de jour entre 0000-00-00 et timestamp 0=1970-01-01
 	$result = $offset + (int)ceil(_sqlite_func_unix_timestamp($d) / (24 * 3600));
 
-	#spip_log("Passage avec TO_DAYS : $d, $result",'sqlite.'._LOG_DEBUG);
+	#spip_logger('sqlite')->debug("Passage avec TO_DAYS : $d, $result");
 	return $result;
 }
 
@@ -536,7 +536,7 @@ function _sqlite_func_unix_timestamp($d) {
 	}
 
 	//2005-12-02 20:53:53
-	#spip_log("Passage avec UNIX_TIMESTAMP : $d",'sqlite.'._LOG_DEBUG);
+	#spip_logger('sqlite')->debug("Passage avec UNIX_TIMESTAMP : $d");
 	if (!$d) {
 		return $mem[$d] = time();
 	}

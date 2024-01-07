@@ -45,6 +45,7 @@ function req_mysql_dist($host, $port, $login, #[\SensitiveParameter] $pass, $db 
 	}
 
 	// si port est fourni mais pas host, c'est un socket -> compat avec vieille syntaxe de mysql_connect() et anciens fichiers connect.php
+	$logger = spip_logger('mysql');
 	try {
 		if (
 			$port
@@ -58,12 +59,12 @@ function req_mysql_dist($host, $port, $login, #[\SensitiveParameter] $pass, $db 
 			$link = @mysqli_connect($host, $login, $pass);
 		}
 	} catch (\mysqli_sql_exception $e) {
-		spip_log('mysqli_sql_exception: ' . $e->getMessage(), 'mysql.' . _LOG_DEBUG);
+		$logger->debug('mysqli_sql_exception: ' . $e->getMessage());
 		$link = false;
 	}
 
 	if (!$link) {
-		spip_log('Echec mysqli_connect. Erreur : ' . mysqli_connect_error(), 'mysql.' . _LOG_HS);
+		$logger->emergency('Echec mysqli_connect. Erreur : ' . mysqli_connect_error());
 
 		return false;
 	}
@@ -81,9 +82,8 @@ function req_mysql_dist($host, $port, $login, #[\SensitiveParameter] $pass, $db 
 		}
 	}
 
-	spip_log(
+	$logger->debug(
 		"Connexion MySQLi vers $host, base $db, prefixe $prefixe " . ($ok ? 'operationnelle' : 'impossible'),
-		_LOG_DEBUG
 	);
 
 	return !$ok ? false : [
@@ -173,7 +173,7 @@ function _mysql_link($serveur = '') {
  */
 function spip_mysql_set_charset($charset, $serveur = '', $requeter = true) {
 	$connexion = &$GLOBALS['connexions'][$serveur ? strtolower($serveur) : 0];
-	spip_log('changement de charset sql : ' . 'SET NAMES ' . _q($charset), _LOG_DEBUG);
+	spip_logger('mysql')->debug('changement de charset sql : ' . 'SET NAMES ' . _q($charset));
 
 	return mysqli_query($connexion['link'], $connexion['last'] = 'SET NAMES ' . _q($charset));
 }
@@ -248,7 +248,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 	try {
 		$r = mysqli_query($link, $query . $debug);
 	} catch (\mysqli_sql_exception $e) {
-		spip_log('mysqli_sql_exception: ' . $e->getMessage(), 'mysql.' . _LOG_DEBUG);
+		spip_logger('mysql')->debug('mysqli_sql_exception: ' . $e->getMessage());
 		$r = false;
 		// TODO: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
 		// mais il faut pour php < 8.1 forcer les exeptions via mysqli_report().
@@ -268,7 +268,7 @@ function spip_mysql_query($query, $serveur = '', $requeter = true) {
 			try {
 				$r = mysqli_query($link, $query . $debug);
 			} catch (\mysqli_sql_exception $e) {
-				spip_log('mysqli_sql_exception: ' . $e->getMessage(), 'mysql.' . _LOG_DEBUG);
+				spip_logger('mysql')->debug('mysqli_sql_exception: ' . $e->getMessage());
 				$r = false;
 				// TODO: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
 				// mais il faut pour php < 8.1 forcer les exeptions via mysqli_report().
@@ -590,7 +590,7 @@ function _mysql_traite_query($query, $db = '', $prefixe = '', $echappe_textes = 
 		$r = utf8_noplanes($r);
 	}
 
-	#spip_log("_mysql_traite_query: " . substr($r,0, 50) . ".... $db, $prefixe", _LOG_DEBUG);
+	#spip_logger('mysql')->debug("_mysql_traite_query: " . substr($r,0, 50) . ".... $db, $prefixe");
 	return $r;
 }
 
@@ -616,7 +616,7 @@ function spip_mysql_selectdb($db, $serveur = '', $requeter = true) {
 		$ok = false;
 	}
 	if (!$ok) {
-		spip_log('Echec mysqli_selectdb. Erreur : ' . mysqli_error($link), 'mysql.' . _LOG_CRITIQUE);
+		spip_logger('mysql')->critical('Echec mysqli_selectdb. Erreur : ' . mysqli_error($link));
 	}
 
 	return $ok;
@@ -806,7 +806,7 @@ function spip_mysql_create_view($nom, $query_select, $serveur = '', $requeter = 
 	}
 	// vue deja presente
 	if (sql_showtable($nom, false, $serveur)) {
-		spip_log("Echec creation d'une vue sql ($nom) car celle-ci existe deja (serveur:$serveur)", _LOG_ERREUR);
+		spip_logger('mysql')->error("Echec creation d'une vue sql ($nom) car celle-ci existe deja (serveur:$serveur)");
 
 		return false;
 	}
@@ -890,7 +890,7 @@ function spip_mysql_repair($table, $serveur = '', $requeter = true) {
 	} elseif ($engine == 'MyISAM') {
 		return spip_mysql_query("REPAIR TABLE `$table`", $serveur, $requeter);
 	} else {
-		spip_log("spip_mysql_repair impossible pour la table $table engine $engine", 'mysql.' . _LOG_DEBUG);
+		spip_logger('mysql')->debug("spip_mysql_repair impossible pour la table $table engine $engine");
 	}
 	return false;
 }
@@ -1123,7 +1123,7 @@ function spip_mysql_error($query = '', $serveur = '', $requeter = true) {
 	if ($s) {
 		$trace = debug_backtrace();
 		if ($trace[0]['function'] != 'spip_mysql_error') {
-			spip_log("$s - $query - " . sql_error_backtrace(), 'mysql.' . _LOG_ERREUR);
+			spip_logger('mysql')->error("$s - $query - " . sql_error_backtrace());
 		}
 	}
 
@@ -1150,7 +1150,7 @@ function spip_mysql_errno($serveur = '', $requeter = true) {
 		define('spip_interdire_cache', true);
 	}
 	if ($s) {
-		spip_log("Erreur mysql $s", _LOG_ERREUR);
+		spip_logger('mysql')->error("Erreur mysql $s");
 	}
 
 	return $s;
@@ -1247,13 +1247,13 @@ function spip_mysql_insert($table, $champs, $valeurs, $desc = [], $serveur = '',
 	}
 
 	$connexion['last'] = $query;
-	#spip_log($query, 'mysql.'._LOG_DEBUG);
+	#spip_logger('mysql')->debug($query);
 	$r = false;
 	$insert = false;
 	try {
 		$insert = mysqli_query($link, $query);
 	} catch (\mysqli_sql_exception $e) {
-		spip_log('mysqli_sql_exception: ' . $e->getMessage(), 'mysql.' . _LOG_DEBUG);
+		spip_logger('mysql')->debug('mysqli_sql_exception: ' . $e->getMessage());
 		// TODO: utiliser l’exception ensuite plutôt que les appels à spip_mysql_errno()
 		// mais il faut pour php < 8.1 forcer les exeptions via mysqli_report().
 	}

@@ -68,17 +68,18 @@ function req_sqlite_dist($addr, $port, $login, #[\SensitiveParameter] $pass, $db
 		$f = rtrim($addr, '/') . '/';
 	}
 
+	$logger = spip_logger('sqlite');
 	// un nom de base demande et impossible d'obtenir la base, on s'en va :
 	// il faut que la base existe ou que le repertoire parent soit writable
 	if ($db && !is_file($f .= $db . '.sqlite') && !is_writable(dirname($f))) {
-		spip_log("base $f non trouvee ou droits en ecriture manquants", 'sqlite.' . _LOG_HS);
+		$logger->emergency("base $f non trouvee ou droits en ecriture manquants");
 
 		return false;
 	}
 
 	// charger les modules sqlite au besoin
 	if (!_sqlite_charger_version($sqlite_version)) {
-		spip_log("Impossible de trouver/charger le module SQLite ($sqlite_version)!", 'sqlite.' . _LOG_HS);
+		$logger->emergency("Impossible de trouver/charger le module SQLite ($sqlite_version)!");
 
 		return false;
 	}
@@ -101,7 +102,7 @@ function req_sqlite_dist($addr, $port, $login, #[\SensitiveParameter] $pass, $db
 	}
 
 	if (!$link) {
-		spip_log("Impossible d'ouvrir la base SQLite($sqlite_version) $f", 'sqlite.' . _LOG_HS);
+		$logger->emergency("Impossible d'ouvrir la base SQLite($sqlite_version) $f");
 
 		return false;
 	}
@@ -155,7 +156,7 @@ function spip_sqlite_open(string $file): \PDO {
  *    Resultat de la requete
  */
 function spip_sqlite_query($query, $serveur = '', $requeter = true) {
-	#spip_log("spip_sqlite_query() > $query",'sqlite.'._LOG_DEBUG);
+	#spip_logger('sqlite')->debug("spip_sqlite_query() > $query");
 	#_sqlite_init(); // fait la premiere fois dans spip_sqlite
 	$query = Sqlite::traduire_requete($query, $serveur);
 	if (!$requeter) {
@@ -182,6 +183,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 	$query = spip_sqlite_query("ALTER $query", $serveur, false);
 	// traduire la requete pour recuperer les bons noms de table
 	$query = Sqlite::traduire_requete($query, $serveur);
+	$logger = spip_logger('sqlite');
 
 	/*
 		 * la il faut faire les transformations
@@ -198,7 +200,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 		$table = $regs[3];
 		$suite = $regs[4];
 	} else {
-		spip_log("SQLite : Probleme de ALTER TABLE mal forme dans $query", 'sqlite.' . _LOG_ERREUR);
+		$logger->error("SQLite : Probleme de ALTER TABLE mal forme dans $query");
 
 		return false;
 	}
@@ -239,9 +241,8 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 				. '|ADD COLUMN|ADD'
 				. ')\s*([^\s]*)\s*(.*)?/i', $do, $matches)
 		) {
-			spip_log(
+			$logger->error(
 				"SQLite : Probleme de ALTER TABLE, utilisation non reconnue dans : $do \n(requete d'origine : $query)",
-				'sqlite.' . _LOG_ERREUR
 			);
 
 			return false;
@@ -340,7 +341,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 				$do = 'RENAME TO' . substr($do, 6);
 			case 'RENAME TO':
 				if (!Sqlite::executer_requete("$debut $do", $serveur)) {
-					spip_log("SQLite : Erreur ALTER TABLE / RENAME : $query", 'sqlite.' . _LOG_ERREUR);
+					$logger->error("SQLite : Erreur ALTER TABLE / RENAME : $query");
 
 					return false;
 				}
@@ -382,8 +383,8 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 					if ($colonne_origine[0] == '(') {
 						$colonnes = substr($colonne_origine, 1, -1);
 						if (str_contains(',', $colonnes)) {
-							spip_log('SQLite : Erreur, impossible de creer un index sur plusieurs colonnes'
-								. " sans qu'il ait de nom ($table, ($colonnes))", 'sqlite.' . _LOG_ERREUR);
+							$logger->error('SQLite : Erreur, impossible de creer un index sur plusieurs colonnes'
+								. " sans qu'il ait de nom ($table, ($colonnes))");
 							break;
 						} else {
 							$nom_index = $colonnes;
@@ -403,7 +404,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 			default:
 				if (!preg_match(',primary\s+key,i', $do)) {
 					if (!Sqlite::executer_requete("$debut $do", $serveur)) {
-						spip_log("SQLite : Erreur ALTER TABLE / ADD : $query", 'sqlite.' . _LOG_ERREUR);
+						$logger->error("SQLite : Erreur ALTER TABLE / ADD : $query");
 
 						return false;
 					}
@@ -423,7 +424,7 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 					}
 					$opts['field'] = [$colonne_ajoutee => $def];
 					if (!_sqlite_modifier_table($table, [$colonne_ajoutee], $opts, $serveur)) {
-						spip_log("SQLite : Erreur ALTER TABLE / ADD : $query", 'sqlite.' . _LOG_ERREUR);
+						$logger->error("SQLite : Erreur ALTER TABLE / ADD : $query");
 
 						return false;
 					}
@@ -431,10 +432,10 @@ function spip_sqlite_alter($query, $serveur = '', $requeter = true) {
 				break;
 		}
 		// tout est bon, ouf !
-		spip_log("SQLite ($serveur) : Changements OK : $debut $do", 'sqlite.' . _LOG_INFO);
+		$logger->info("SQLite ($serveur) : Changements OK : $debut $do");
 	}
 
-	spip_log("SQLite ($serveur) : fin ALTER TABLE OK !", 'sqlite.' . _LOG_INFO);
+	$logger->info("SQLite ($serveur) : fin ALTER TABLE OK !");
 
 	return true;
 }
@@ -542,9 +543,8 @@ function spip_sqlite_create_view($nom, $query_select, $serveur = '', $requeter =
 	}
 	// vue deja presente
 	if (sql_showtable($nom, false, $serveur)) {
-		spip_log(
+		spip_logger('sqlite')->error(
 			"Echec creation d'une vue sql ($nom) car celle-ci existe deja (serveur:$serveur)",
-			'sqlite.' . _LOG_ERREUR
 		);
 
 		return false;
@@ -575,9 +575,8 @@ function spip_sqlite_create_view($nom, $query_select, $serveur = '', $requeter =
  */
 function spip_sqlite_create_index($nom, $table, $champs, $unique = '', $serveur = '', $requeter = true) {
 	if (!($nom || $table || $champs)) {
-		spip_log(
+		spip_logger('sqlite')->error(
 			"Champ manquant pour creer un index sqlite ($nom, $table, (" . implode(',', $champs) . '))',
-			'sqlite.' . _LOG_ERREUR
 		);
 
 		return false;
@@ -786,7 +785,7 @@ function spip_sqlite_drop_view($view, $exist = false, $serveur = '', $requeter =
  */
 function spip_sqlite_drop_index($nom, $table, $serveur = '', $requeter = true) {
 	if (!$nom && !$table) {
-		spip_log("Champ manquant pour supprimer un index sqlite ($nom, $table)", 'sqlite.' . _LOG_ERREUR);
+		spip_logger('sqlite')->error("Champ manquant pour supprimer un index sqlite ($nom, $table)");
 
 		return false;
 	}
@@ -825,7 +824,7 @@ function spip_sqlite_error($query = '', $serveur = '') {
 	if ($s) {
 		$trace = debug_backtrace();
 		if ($trace[0]['function'] != 'spip_sqlite_error') {
-			spip_log("$s - $query - " . sql_error_backtrace(), 'sqlite.' . _LOG_ERREUR);
+			spip_logger('sqlite')->error("$s - $query - " . sql_error_backtrace());
 		}
 	}
 
@@ -879,7 +878,7 @@ function spip_sqlite_errno($serveur = '') {
 	}
 
 	if ($s) {
-		spip_log("Erreur sqlite $s", 'sqlite.' . _LOG_ERREUR);
+		spip_logger('sqlite')->error("Erreur sqlite $s");
 	}
 
 	return $s ?: 0;
@@ -1418,6 +1417,7 @@ function spip_sqlite_repair($table, $serveur = '', $requeter = true) {
 		&& isset($desc['field'])
 		&& is_array($desc['field'])
 	) {
+		$logger = spip_logger('repair');
 		foreach ($desc['field'] as $c => $d) {
 			if (
 				preg_match(',^(tinytext|mediumtext|text|longtext|varchar|char),i', (string) $d)
@@ -1427,7 +1427,7 @@ function spip_sqlite_repair($table, $serveur = '', $requeter = true) {
 				&& (!isset($desc['key']['PRIMARY KEY']) || $desc['key']['PRIMARY KEY'] !== $c)
 			) {
 				spip_sqlite_alter($q = "TABLE $table CHANGE $c $c $d DEFAULT ''", $serveur);
-				spip_log("ALTER $q", 'repair' . _LOG_INFO_IMPORTANTE);
+				$logger->notice("ALTER $q");
 			}
 			if (
 				preg_match(',^(INTEGER),i', (string) $d)
@@ -1437,7 +1437,7 @@ function spip_sqlite_repair($table, $serveur = '', $requeter = true) {
 				&& (!isset($desc['key']['PRIMARY KEY']) || $desc['key']['PRIMARY KEY'] !== $c)
 			) {
 				spip_sqlite_alter($q = "TABLE $table CHANGE $c $c $d DEFAULT '0'", $serveur);
-				spip_log("ALTER $q", 'repair' . _LOG_INFO_IMPORTANTE);
+				$logger->notice("ALTER $q");
 			}
 			if (
 				preg_match(',^(datetime),i', (string) $d)
@@ -1447,7 +1447,7 @@ function spip_sqlite_repair($table, $serveur = '', $requeter = true) {
 				&& (!isset($desc['key']['PRIMARY KEY']) || $desc['key']['PRIMARY KEY'] !== $c)
 			) {
 				spip_sqlite_alter($q = "TABLE $table CHANGE $c $c $d DEFAULT '0000-00-00 00:00:00'", $serveur);
-				spip_log("ALTER $q", 'repair' . _LOG_INFO_IMPORTANTE);
+				$logger->notice("ALTER $q");
 			}
 		}
 
@@ -1629,7 +1629,7 @@ function spip_sqlite_selectdb($db, $serveur = '', $requeter = true) {
 		!is_file($f = _DIR_DB . $db . '.sqlite')
 		&& (!defined('_ECRIRE_INSTALL') || !_ECRIRE_INSTALL)
 	) {
-		spip_log("Il est interdit de creer la base $db", 'sqlite.' . _LOG_HS);
+		spip_logger('sqlite')->emergency("Il est interdit de creer la base $db",);
 
 		return false;
 	}
@@ -1643,7 +1643,7 @@ function spip_sqlite_selectdb($db, $serveur = '', $requeter = true) {
 			return $db;
 		}
 	} else {
-		spip_log("Impossible de selectionner la base $db", 'sqlite.' . _LOG_HS);
+		spip_logger('sqlite')->emergency("Impossible de selectionner la base $db");
 	}
 
 	return false;
@@ -1661,7 +1661,7 @@ function spip_sqlite_selectdb($db, $serveur = '', $requeter = true) {
  * @return void
  */
 function spip_sqlite_set_charset($charset, $serveur = '', $requeter = true) {
-	# spip_log("Gestion charset sql a ecrire : "."SET NAMES "._q($charset), 'sqlite.'._LOG_ERREUR);
+	# spip_logger('sqlite')->error("Gestion charset sql a ecrire : "."SET NAMES "._q($charset));
 	# return spip_sqlite_query("SET NAMES ". spip_sqlite_quote($charset), $serveur); //<-- Passe pas !
 }
 
@@ -2101,7 +2101,7 @@ function _sqlite_calculer_cite($v, $type) {
 	}
 
 	// echapper les ' en ''
-	spip_log('Pas de methode ->quote pour echapper', 'sqlite.' . _LOG_INFO_IMPORTANTE);
+	spip_logger('sqlite')->notice('Pas de methode ->quote pour echapper');
 
 	return ("'" . str_replace("'", "''", $v) . "'");
 }
@@ -2311,7 +2311,7 @@ function _sqlite_modifier_table($table, $colonne, $opt = [], $serveur = '') {
 
 	$def_origine = sql_showtable($table_origine, false, $serveur);
 	if (!$def_origine || !isset($def_origine['field'])) {
-		spip_log("Alter table impossible sur $table_origine : table non trouvee", 'sqlite' . _LOG_ERREUR);
+		spip_logger('sqlite')->error("Alter table impossible sur $table_origine : table non trouvee");
 
 		return false;
 	}
@@ -2414,8 +2414,8 @@ function _sqlite_modifier_table($table, $colonne, $opt = [], $serveur = '') {
 		// il faut les faire une par une car $query = join('; ', $queries).";"; ne fonctionne pas
 		foreach ($queries as $q) {
 			if (!Sqlite::executer_requete($q, $serveur)) {
-				spip_log('SQLite : ALTER TABLE table :'
-					. " Erreur a l'execution de la requete : $q", 'sqlite.' . _LOG_ERREUR);
+				spip_logger('sqlite')->error('SQLite : ALTER TABLE table :'
+					. " Erreur a l'execution de la requete : $q");
 				Sqlite::annuler_transaction($serveur);
 
 				return false;

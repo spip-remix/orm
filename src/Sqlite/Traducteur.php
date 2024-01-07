@@ -2,6 +2,8 @@
 
 namespace Spip\Sql\Sqlite;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Cette classe est presente essentiellement pour un preg_replace_callback
  * avec des parametres dans la fonction appelee que l'on souhaite incrementer
@@ -15,6 +17,8 @@ class Traducteur
 	 */
 	public $textes = [];
 
+	protected LoggerInterface $logger;
+
 	/**
 	 * Constructeur
 	 */
@@ -26,6 +30,7 @@ class Traducteur
 		/** Version SQLite (2 ou 3) */
 		public string $sqlite_version
 	) {
+		$this->logger = spip_logger('sqlite'); // FIXME: inject it.
 	}
 
 	/**
@@ -48,14 +53,14 @@ class Traducteur
 		// Correction Create Database
 		// Create Database -> requete ignoree
 		if (str_starts_with((string) $this->query, 'CREATE DATABASE')) {
-			spip_log("Sqlite : requete non executee -> $this->query", 'sqlite.' . _LOG_AVERTISSEMENT);
+			$this->logger->notice("Sqlite : requete non executee -> $this->query");
 			$this->query = 'SELECT 1';
 		}
 
 		// Correction Insert Ignore
 		// INSERT IGNORE -> insert (tout court et pas 'insert or replace')
 		if (str_starts_with((string) $this->query, 'INSERT IGNORE')) {
-			spip_log("Sqlite : requete transformee -> $this->query", 'sqlite.' . _LOG_DEBUG);
+			$this->logger->debug("Sqlite : requete transformee -> $this->query");
 			$this->query = 'INSERT ' . substr((string) $this->query, '13');
 		}
 
@@ -82,9 +87,8 @@ class Traducteur
 		// USING (non reconnu en sqlite2)
 		// problematique car la jointure ne se fait pas du coup.
 		if (($this->sqlite_version == 2) && (str_contains((string) $this->query, 'USING'))) {
-			spip_log(
+			$this->logger->error(
 				"'USING (champ)' n'est pas reconnu en SQLite 2. Utilisez 'ON table1.champ = table2.champ'",
-				'sqlite.' . _LOG_ERREUR
 			);
 			$this->query = preg_replace('/USING\s*\([^\)]*\)/', '', (string) $this->query);
 		}

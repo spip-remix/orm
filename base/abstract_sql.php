@@ -141,9 +141,8 @@ function sql_get_charset($charset, $serveur = '', $option = true) {
 	) {
 		return $c;
 	}
-	spip_log(
-		"SPIP ne connait pas les Charsets disponibles sur le serveur $serveur. Le serveur choisira seul.",
-		_LOG_AVERTISSEMENT
+	spip_logger()->warning(
+		"SPIP ne connait pas les Charsets disponibles sur le serveur $serveur. Le serveur choisira seul."
 	);
 
 	return false;

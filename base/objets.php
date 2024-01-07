@@ -64,8 +64,8 @@ function lister_tables_objets_sql(?string $table_sql = null, $desc = []) {
 	if (is_null($infos_tables) || $plugin_hash !== $_PLUGINS_HASH) {
 		// pas de reentrance (cas base/serial)
 		if ($deja_la) {
-			spip_log('Re-entrance anormale sur lister_tables_objets_sql : '
-				. var_export(debug_backtrace(), true), _LOG_CRITIQUE);
+			spip_logger()->critical('Re-entrance anormale sur lister_tables_objets_sql : '
+				. var_export(debug_backtrace(), true));
 
 			return ($table_sql === '::md5' ? $md5 : []);
 		}
@@ -1035,8 +1035,8 @@ function table_objet(string $type, string|false $serveur = ''): string {
 			return $desc['id_table'];
 		}
 
-		spip_log('table_objet(' . $type . ') calculee sans verification');
-		#spip_log(debug_backtrace(),'db');
+		spip_logger()->info('table_objet(' . $type . ') calculee sans verification');
+		#spip_logger('db')->debug(debug_backtrace());
 	}
 
 	return rtrim($type, 's') . 's'; # cas historique ne devant plus servir, sauf si $serveur=false

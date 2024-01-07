@@ -1,5 +1,7 @@
 <?php
 
+use Psr\Log\LogLevel;
+
 /***************************************************************************\
  *  SPIP, Système de publication pour l'internet                           *
  *                                                                         *
@@ -163,8 +165,10 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true, array 
 			|| !$desc['field']
 		) {
 			if (!$fdesc) {
-				$log_level = $options['log_missing'] ? _LOG_INFO_IMPORTANTE : _LOG_DEBUG;
-				spip_log("trouver_table: table inconnue '$serveur' '$nom'", 'base' . $log_level);
+				spip_logger('base')->log(
+					$options['log_missing'] ? LogLevel::NOTICE : LogLevel::DEBUG,
+					"trouver_table: table inconnue '$serveur' '$nom'"
+				);
 
 				return null;
 			}
@@ -177,7 +181,7 @@ function base_trouver_table_dist($nom, $serveur = '', $table_spip = true, array 
 			// gerer le cas des cles vides (echec de l'analyse sur une vue par exemple)
 			// pour recuperer la declaration de lister_tables_objets_sql() si il y en a une
 			if (! $desc['key']) {
-				spip_log("trouver_table: table sans cle '$serveur' '$nom'", 'base');
+				spip_logger('base')->info("trouver_table: table sans cle '$serveur' '$nom'");
 				unset($desc['key']);
 			}
 		}

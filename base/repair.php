@@ -73,7 +73,7 @@ function admin_repair_tables() {
 	foreach ($tables as $tab) {
 		$class = '';
 		$m = "<strong>$tab</strong> ";
-		spip_log("Repare $tab", _LOG_INFO_IMPORTANTE);
+		spip_logger()->notice("Repare $tab");
 		// supprimer la meta avant de lancer la reparation
 		// car le repair peut etre long ; on ne veut pas boucler
 		effacer_meta('admin_repair');

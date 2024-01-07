@@ -2,6 +2,8 @@
 
 namespace Spip\Sql\Sqlite;
 
+use Psr\Log\LoggerInterface;
+
 /*
  * Classe pour partager les lancements de requête
  *
@@ -29,6 +31,8 @@ class Requeteur
 	/** @var string Version de SQLite (2 ou 3) */
 	public $sqlite_version = '';
 
+	protected LoggerInterface $logger;
+
 	/**
 	 * Constructeur
 	 *
@@ -37,9 +41,10 @@ class Requeteur
 	public function __construct($serveur = '') {
 		_sqlite_init();
 		$this->serveur = strtolower($serveur);
+		$this->logger = spip_logger('sqlite'); // FIXME: inject it.
 
 		if (!($this->link = _sqlite_link($this->serveur)) && (!defined('_ECRIRE_INSTALL') || !_ECRIRE_INSTALL)) {
-			spip_log('Aucune connexion sqlite (link)', 'sqlite.' . _LOG_ERREUR);
+			$this->logger->error('Aucune connexion sqlite (link)');
 
 			return;
 		}
@@ -73,7 +78,7 @@ class Requeteur
 			$t = trace_query_start();
 		}
 
-		# spip_log("requete: $this->serveur >> $query",'sqlite.'._LOG_DEBUG); // boum ? pourquoi ?
+		# $this->logger->debug("requete: $this->serveur >> $query"); // boum ? pourquoi ?
 		if ($this->link) {
 			// memoriser la derniere erreur PHP vue
 			$last_error = (function_exists('error_get_last') ? error_get_last() : '');
@@ -85,17 +90,17 @@ class Requeteur
 			try {
 				$r = $this->link->query($query);
 			} catch (\PDOException $e) {
-				spip_log('PDOException: ' . $e->getMessage(), 'sqlite.' . _LOG_DEBUG);
+				$this->logger->error('PDOException: ' . $e->getMessage());
 				$r = false;
 			}
 
 			// loger les warnings/erreurs eventuels de sqlite remontant dans PHP
 			if ($e && $e instanceof \PDOException) {
 				$err = strip_tags($e->getMessage()) . ' in ' . $e->getFile() . ' line ' . $e->getLine();
-				spip_log("$err - " . $query, 'sqlite.' . _LOG_ERREUR);
+				$this->logger->error("$err - " . $query);
 			} elseif (($err = (function_exists('error_get_last') ? error_get_last() : '')) && $err != $last_error) {
 				$err = strip_tags($err['message']) . ' in ' . $err['file'] . ' line ' . $err['line'];
-				spip_log("$err - " . $query, 'sqlite.' . _LOG_ERREUR);
+				$this->logger->error("$err - " . $query);
 			} else {
 				$err = '';
 			}

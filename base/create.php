@@ -60,35 +60,26 @@ function base_determine_autoinc($table, $desc = []) {
  * @return void
  */
 function creer_ou_upgrader_table($table, $desc, $autoinc, $upgrade = false, $serveur = '') {
-	#spip_log("creer_ou_upgrader_table table=$table autoinc=$autoinc upgrade=$upgrade","dbinstall"._LOG_INFO_IMPORTANTE);
 	$sql_desc = $upgrade ? sql_showtable($table, true, $serveur) : false;
-	#if (!$sql_desc) $sql_desc = false;
-	#spip_log("table=$table sql_desc:$sql_desc","dbinstall"._LOG_INFO_IMPORTANTE);
 	if (!$sql_desc) {
 		if ($autoinc === 'auto') {
 			$autoinc = base_determine_autoinc($table, $desc);
 		}
-		#spip_log("sql_create $table autoinc=$autoinc","dbinstall"._LOG_INFO_IMPORTANTE);
 		if (isset($desc['field']) && isset($desc['key'])) {
 			sql_create($table, $desc['field'], $desc['key'], $autoinc, false, $serveur);
 		}
 		// verifier la bonne installation de la table (php-fpm es-tu la ?)
 		$sql_desc = sql_showtable($table, true, $serveur);
-		#if (!$sql_desc) $sql_desc = false;
-		#spip_log("Resultat table=$table sql_desc:$sql_desc","dbinstall"._LOG_INFO_IMPORTANTE);
 		if (!$sql_desc) {
 			// on retente avec un sleep ?
 			sleep(1);
 			sql_create($table, $desc['field'], $desc['key'], $autoinc, false, $serveur);
 			$sql_desc = sql_showtable($table, true, $serveur);
-			#if (!$sql_desc) $sql_desc = false;
-			#spip_log("Resultat table=$table sql_desc:$sql_desc","dbinstall"._LOG_INFO_IMPORTANTE);
 			if (!$sql_desc) {
-				spip_log("Echec creation table $table", 'maj' . _LOG_CRITIQUE);
+				spip_logger('maj')->critical("Echec creation table $table");
 			}
 		}
 	} else {
-		#spip_log("sql_alter $table ... (on s'en fiche)","dbinstall"._LOG_INFO_IMPORTANTE);
 		// ajouter les champs manquants
 		// on ne supprime jamais les champs, car c'est dangereux
 		// c'est toujours a faire manuellement

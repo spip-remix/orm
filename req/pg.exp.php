@@ -59,7 +59,7 @@ function req_pg_dist($addr, $port, $login, #[\SensitiveParameter] $pass, $db = '
 	if (!$link) {
 		$erreurs[] = pg_last_error();
 		foreach ($erreurs as $e) {
-			spip_log('Echec pg_connect. Erreur : ' . $e, 'pg.' . _LOG_HS);
+			spip_logger('pg')->emergency('Echec pg_connect. Erreur : ' . $e);
 		}
 
 		return false;
@@ -76,9 +76,8 @@ function req_pg_dist($addr, $port, $login, #[\SensitiveParameter] $pass, $db = '
 		];
 	}
 
-	spip_log(
+	spip_logger('pg')->debug(
 		"Connexion vers $host, base $db, prefixe $prefixe " . ($link ? 'operationnelle' : 'impossible'),
-		'pg.' . _LOG_DEBUG
 	);
 
 	return $link ? [
@@ -177,7 +176,7 @@ function spip_pg_query($query, $serveur = '', $requeter = true) {
 }
 
 function spip_pg_query_simple($link, $query) {
-	#spip_log(var_export($query,true), 'pg.'._LOG_DEBUG);
+	#spip_logger('pg')->debug(var_export($query,true));
 	return pg_query($link, $query);
 }
 
@@ -234,7 +233,7 @@ function spip_pg_alter($query, $serveur = '', $requeter = true) {
 	// ou revoir l'api de sql_alter en creant un
 	// sql_alter_table($table,array($actions));
 	if (!preg_match('/\s*((\s*IGNORE)?\s*TABLE\s*([^\s]*))\s*(.*)?/is', (string) $query, $regs)) {
-		spip_log("$query mal comprise", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("$query mal comprise");
 
 		return false;
 	}
@@ -263,16 +262,16 @@ function spip_pg_alter($query, $serveur = '', $requeter = true) {
 	$query = $debut . ' ' . array_shift($todo);
 
 	if (!preg_match('/^\s*(IGNORE\s*)?TABLE\s+(\w+)\s+(ADD|DROP|CHANGE|MODIFY|RENAME)\s*(.*)$/is', $query, $r)) {
-		spip_log("$query incompris", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("$query incompris");
 	} else {
 		if ($r[1]) {
-			spip_log("j'ignore IGNORE dans $query", 'pg.' . _LOG_AVERTISSEMENT);
+			spip_logger('pg')->warning("j'ignore IGNORE dans $query");
 		}
 		$f = 'spip_pg_alter_' . strtolower($r[3]);
 		if (function_exists($f)) {
 			$f($r[2], $r[4], $serveur, $requeter);
 		} else {
-			spip_log("$query non prevu", 'pg.' . _LOG_ERREUR);
+			spip_logger('pg')->error("$query non prevu");
 		}
 	}
 	// Alter a plusieurs args. Faudrait optimiser.
@@ -283,7 +282,7 @@ function spip_pg_alter($query, $serveur = '', $requeter = true) {
 
 function spip_pg_alter_change($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^`?(\w+)`?\s+`?(\w+)`?\s+(.*?)\s*(DEFAULT .*?)?(NOT\s+NULL)?\s*(DEFAULT .*?)?$/i', (string) $arg, $r)) {
-		spip_log("alter change: $arg  incompris", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("alter change: $arg  incompris");
 	} else {
 		[, $old, $new, $type, $default, $null, $def2] = $r;
 		$actions = ["ALTER $old TYPE " . mysql2pg_type($type)];
@@ -306,7 +305,7 @@ function spip_pg_alter_change($table, $arg, $serveur = '', $requeter = true) {
 function spip_pg_alter_add($table, $arg, $serveur = '', $requeter = true) {
 	$nom_index = null;
 	if (!preg_match('/^(COLUMN|INDEX|KEY|PRIMARY\s+KEY|)\s*(.*)$/', (string) $arg, $r)) {
-		spip_log("alter add $arg  incompris", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("alter add $arg  incompris");
 
 		return null;
 	}
@@ -341,8 +340,8 @@ function spip_pg_alter_add($table, $arg, $serveur = '', $requeter = true) {
 			if ($m[1][0] == '(') {
 				$colonnes = substr($m[1], 1, -1);
 				if (str_contains(',', $colonnes)) {
-					spip_log('PG : Erreur, impossible de creer un index sur plusieurs colonnes'
-						. " sans qu'il ait de nom ($table, ($colonnes))", 'pg.' . _LOG_ERREUR);
+					spip_logger('pg')->error('PG : Erreur, impossible de creer un index sur plusieurs colonnes'
+						. " sans qu'il ait de nom ($table, ($colonnes))");
 				} else {
 					$nom_index = $colonnes;
 				}
@@ -358,7 +357,7 @@ function spip_pg_alter_add($table, $arg, $serveur = '', $requeter = true) {
 
 function spip_pg_alter_drop($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^(COLUMN|INDEX|KEY|PRIMARY\s+KEY|)\s*`?(\w*)`?/', (string) $arg, $r)) {
-		spip_log("alter drop: $arg  incompris", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("alter drop: $arg  incompris");
 	} else {
 		if (!$r[1] || $r[1] == 'COLUMN') {
 			return spip_pg_query("ALTER TABLE $table DROP " . $r[2], $serveur);
@@ -372,7 +371,7 @@ function spip_pg_alter_drop($table, $arg, $serveur = '', $requeter = true) {
 
 function spip_pg_alter_modify($table, $arg, $serveur = '', $requeter = true) {
 	if (!preg_match('/^`?(\w+)`?\s+(.*)$/', (string) $arg, $r)) {
-		spip_log("alter modify: $arg  incompris", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("alter modify: $arg  incompris");
 	} else {
 		return spip_pg_alter_change($table, $r[1] . ' ' . $arg, $serveur = '', $requeter = true);
 	}
@@ -390,7 +389,7 @@ function spip_pg_alter_rename($table, $arg, $serveur = '', $requeter = true) {
 	} elseif (preg_match('/^(TO)\s*`?(\w*)`?/', (string) $arg, $r)) {
 		$rename = $r[2];
 	} else {
-		spip_log("alter rename: $arg  incompris", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("alter rename: $arg  incompris");
 	}
 
 	return $rename ? spip_pg_query("ALTER TABLE $table RENAME TO $rename") : false;
@@ -410,9 +409,8 @@ function spip_pg_alter_rename($table, $arg, $serveur = '', $requeter = true) {
  */
 function spip_pg_create_index($nom, $table, $champs, $serveur = '', $requeter = true) {
 	if (!($nom || $table || $champs)) {
-		spip_log(
+		spip_logger('pg')->error(
 			"Champ manquant pour creer un index pg ($nom, $table, (" . @implode(',', $champs) . '))',
-			'pg.' . _LOG_ERREUR
 		);
 
 		return false;
@@ -812,7 +810,7 @@ function spip_pg_select_as($args) {
 			$argsas .= '  ' . $v;
 		} else {
 			$as = '';
-			//  spip_log("$k : $v", _LOG_DEBUG);
+			//  spip_logger('pg')->debug("$k : $v");
 			if (!is_numeric($k)) {
 				if (preg_match('/\.(.*)$/', (string) $k, $r)) {
 					$v = $k;
@@ -825,7 +823,7 @@ function spip_pg_select_as($args) {
 					}
 				}
 			}
-			// spip_log("subs $k : $v avec $as", _LOG_DEBUG);
+			// spip_logger('pg')->debug("subs $k : $v avec $as");
 			// if (strpos($v, 'JOIN') === false)  $argsas .= ', ';
 			$argsas .= ', ' . $v . $as;
 		}
@@ -927,7 +925,7 @@ function spip_pg_insert($table, $champs, $valeurs, $desc = [], $serveur = '', $r
 	}
 	$connexion['last'] = $q;
 	$r = spip_pg_query_simple($link, $q);
-#	spip_log($q,'pg.'._LOG_DEBUG);
+#	spip_logger('pg')->debug($q);
 	if ($r) {
 		if (!$ret) {
 			return 0;
@@ -1048,7 +1046,7 @@ function spip_pg_updateq($table, $couples, $where = '', $desc = [], $serveur = '
 
 function spip_pg_replace($table, $values, $desc, $serveur = '', $requeter = true) {
 	if (!$values) {
-		spip_log("replace vide $table", 'pg.' . _LOG_AVERTISSEMENT);
+		spip_logger('pg')->notice("replace vide $table");
 
 		return 0;
 	}
@@ -1097,7 +1095,7 @@ function spip_pg_replace($table, $values, $desc, $serveur = '', $requeter = true
 	$connexion['last'] = $q = "UPDATE $table SET $couples WHERE $where";
 	if ($couples) {
 		$couples = spip_pg_query_simple($link, $q);
-#	  spip_log($q,'pg.'._LOG_DEBUG);
+#	  spip_logger('pg')->debug($q);
 		if (!$couples) {
 			return false;
 		}
@@ -1188,7 +1186,7 @@ function spip_pg_cite($v, $t) {
 	} elseif ($v[0] == '0' && $v[1] !== 'x' && ctype_xdigit(substr((string) $v, 1))) {
 		return substr((string) $v, 1);
 	} else {
-		spip_log("Warning: '$v'  n'est pas de type $t", 'pg.' . _LOG_AVERTISSEMENT);
+		spip_logger('pg')->notice("Warning: '$v'  n'est pas de type $t");
 
 		return (int) $v;
 	}
@@ -1257,7 +1255,7 @@ function spip_pg_error($query = '', $serveur = '', $requeter = true) {
 	$s = $link ? pg_last_error($link) : pg_last_error();
 	if ($s) {
 		$s = str_replace('ERROR', 'errcode: 1000 ', $s);
-		spip_log("$s - $query", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("$s - $query");
 	}
 
 	return $s;
@@ -1414,7 +1412,7 @@ function spip_pg_create($nom, $champs, $cles, $autoinc = false, $temporary = fal
 	$r = @pg_query($link, $q);
 
 	if (!$r) {
-		spip_log("Impossible de creer cette table: $q", 'pg.' . _LOG_ERREUR);
+		spip_logger('pg')->error("Impossible de creer cette table: $q");
 	} else {
 		foreach ($keys as $index) {
 			pg_query($link, $index);
@@ -1437,7 +1435,7 @@ function spip_pg_create_view($nom, $query_select, $serveur = '', $requeter = tru
 	// vue deja presente
 	if (sql_showtable($nom, false, $serveur)) {
 		if ($requeter) {
-			spip_log("Echec creation d'une vue sql ($nom) car celle-ci existe deja (serveur:$serveur)", 'pg.' . _LOG_ERREUR);
+			spip_logger('pg')->error("Echec creation d'une vue sql ($nom) car celle-ci existe deja (serveur:$serveur)");
 		}
 
 		return false;
@@ -1450,7 +1448,7 @@ function spip_pg_create_view($nom, $query_select, $serveur = '', $requeter = tru
 
 
 function spip_pg_set_connect_charset($charset, $serveur = '', $requeter = true) {
-	spip_log('changement de charset sql a ecrire en PG', 'pg.' . _LOG_ERREUR);
+	spip_logger('pg')->error('changement de charset sql a ecrire en PG');
 }
 
 

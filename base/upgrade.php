@@ -55,7 +55,7 @@ function base_upgrade_dist($titre = '', $reprise = '') {
 	if ($GLOBALS['spip_version_base'] != $GLOBALS['meta']['version_installee']) {
 		if (!is_numeric(_request('reinstall'))) {
 			include_spip('base/create');
-			spip_log('recree les tables eventuellement disparues', 'maj.' . _LOG_INFO_IMPORTANTE);
+			spip_logger('maj')->notice('recree les tables eventuellement disparues');
 			creer_base();
 		}
 
@@ -68,7 +68,7 @@ function base_upgrade_dist($titre = '', $reprise = '') {
 			exit;
 		}
 	}
-	spip_log('Fin de mise a jour SQL. Debut m-a-j acces et config', 'maj.' . _LOG_INFO_IMPORTANTE);
+	spip_logger('maj')->notice('Fin de mise a jour SQL. Debut m-a-j acces et config');
 
 	// supprimer quelques fichiers temporaires qui peuvent se retrouver invalides
 	@spip_unlink(_CACHE_RUBRIQUES);
@@ -115,9 +115,8 @@ function maj_base($version_cible = 0, $redirect = '', $debut_page = true) {
 
 	$version_installee = $GLOBALS['meta']['version_installee'] ?? null;
 
-	spip_log(
+	spip_logger('maj')->notice(
 		"Version anterieure: $version_installee. Courante: " . $GLOBALS['spip_version_base'],
-		'maj.' . _LOG_INFO_IMPORTANTE
 	);
 	if (!$version_installee || $GLOBALS['spip_version_base'] < $version_installee) {
 		sql_replace(
@@ -146,7 +145,7 @@ function maj_base($version_cible = 0, $redirect = '', $debut_page = true) {
 	$res = maj_while($version_installee, $cible, $GLOBALS['maj'], 'version_installee', 'meta', $redirect, $debut_page);
 	if ($res) {
 		if (!is_array($res)) {
-			spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_ERREUR);
+			spip_logger('maj')->error("Pb d'acces SQL a la mise a jour");
 		} else {
 			echo _T('avis_operation_echec') . ' ' . implode(' ', $res);
 			echo install_fin_html();
@@ -236,7 +235,7 @@ function maj_plugin($nom_meta_base_version, $version_cible, $maj, $table_meta = 
 		$res = maj_while($current_version, $version_cible, $maj, $nom_meta_base_version, $table_meta, $redirect);
 		if ($res) {
 			if (!is_array($res)) {
-				spip_log("Pb d'acces SQL a la mise a jour", 'maj.' . _LOG_ERREUR);
+				spip_logger('maj')->error("Pb d'acces SQL a la mise a jour");
 			} else {
 				echo '<p>' . _T('avis_operation_echec') . ' ' . implode(' ', $res) . '</p>';
 			}
@@ -385,7 +384,7 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 				return [$v, $etape];
 			}
 			$n = time() - $time;
-			spip_log("$table $meta: $v en $n secondes", 'maj.' . _LOG_INFO_IMPORTANTE);
+			spip_logger('maj')->notice("$table $meta: $v en $n secondes");
 			if ($meta) {
 				ecrire_meta($meta, $installee = $v, 'oui', $table);
 			}
@@ -401,7 +400,7 @@ function maj_while($installee, $cible, $maj, $meta = '', $table = 'meta', $redir
 	if ($meta) {
 		ecrire_meta($meta, $cible, 'oui', $table);
 	}
-	spip_log("MAJ terminee. $meta: $installee", 'maj.' . _LOG_INFO_IMPORTANTE);
+	spip_logger('maj')->notice("MAJ terminee. $meta: $installee");
 
 	return [];
 }
@@ -439,7 +438,7 @@ function serie_alter($serie, $q = [], $meta = '', $table = 'meta', $redirect = '
 				&& function_exists($f = array_shift($r))
 			) {
 				// note: $r (arguments de la fonction $f) peut avoir des données tabulaires
-				spip_log("$msg: $f " . @implode(',', $r), 'maj.' . _LOG_INFO_IMPORTANTE);
+				spip_logger('maj')->notice("$msg: $f " . @implode(',', $r));
 				// pour les fonctions atomiques sql_xx
 				// on enregistre le meta avant de lancer la fonction,
 				// de maniere a eviter de boucler sur timeout
@@ -457,12 +456,12 @@ function serie_alter($serie, $q = [], $meta = '', $table = 'meta', $redirect = '
 					relance_maj($meta, $table, $redirect);
 				}
 				ecrire_meta($meta2, $i + 1, 'non', $table);
-				spip_log("$meta2: ok", 'maj.' . _LOG_INFO_IMPORTANTE);
+				spip_logger('maj')->notice("$meta2: ok");
 			} else {
 				if (!is_array($r)) {
-					spip_log("maj $i format incorrect", 'maj.' . _LOG_ERREUR);
+					spip_logger('maj')->error("maj $i format incorrect");
 				} else {
-					spip_log("maj $i fonction $f non definie", 'maj.' . _LOG_ERREUR);
+					spip_logger('maj')->error("maj $i fonction $f non definie");
 				}
 				// en cas d'erreur serieuse, on s'arrete
 				// mais on permet de passer par dessus en rechargeant la page.
