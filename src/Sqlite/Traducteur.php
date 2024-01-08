@@ -82,17 +82,6 @@ class Traducteur
 			$this->query = preg_replace('/TIMESTAMPDIFF\(\s*([^,]*)\s*,/Uims', "TIMESTAMPDIFF('\\1',", (string) $this->query);
 		}
 
-
-		// Correction Using
-		// USING (non reconnu en sqlite2)
-		// problematique car la jointure ne se fait pas du coup.
-		if (($this->sqlite_version == 2) && (str_contains((string) $this->query, 'USING'))) {
-			$this->logger->error(
-				"'USING (champ)' n'est pas reconnu en SQLite 2. Utilisez 'ON table1.champ = table2.champ'",
-			);
-			$this->query = preg_replace('/USING\s*\([^\)]*\)/', '', (string) $this->query);
-		}
-
 		// Correction Field
 		// remplace FIELD(table,i,j,k...) par CASE WHEN table=i THEN n ... ELSE 0 END
 		if (str_contains((string) $this->query, 'FIELD')) {
@@ -149,12 +138,6 @@ class Traducteur
 		//     http://www.sqlite.org/cvstrac/tktview?tn=3202
 		// (4*1.0/3) n'est pas rendu dans ce cas !
 		# $this->query = str_replace('/','* 1.00 / ',$this->query);
-
-
-		// Correction critere REGEXP, non reconnu en sqlite2
-		if (($this->sqlite_version == 2) && (str_contains($this->query, 'REGEXP'))) {
-			$this->query = preg_replace('/([^\s\(]*)(\s*)REGEXP(\s*)([^\s\)]*)/', 'REGEXP($4, $1)', $this->query);
-		}
 
 		//
 		// 3) Remise en place des textes d'origine
