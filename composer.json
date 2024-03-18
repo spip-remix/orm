@@ -1,0 +1,42 @@
+{
+    "name": "spip-remix/orm",
+    "description": "Spip Database Abstraction Layer",
+    "license": "GPL-3.0-only",
+    "type": "spip-plugin",
+    "keywords": [
+        "orm",
+        "dbal",
+        "abstraction",
+        "sql",
+        "layer",
+        "mapping",
+        "relational"
+    ],
+    "authors": [
+        {
+            "name": "JamesRezo",
+            "email": "james@rezo.net"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "spip-remix/sdk": "^0.1.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "SpipRemix\\Component\\Orm\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SpipRemix\\Component\\Orm\\Test\\": "tests/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.1.27"
+        }
+    }
+}

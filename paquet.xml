@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paquet prefix="orm" version="0.1.0" etat="experimental" compatibilite="[4.1.0;[">
+	<nom>Orm</nom>
+	<necessite nom="php" compatibilite="[8.1.0;[" />
+</paquet>
