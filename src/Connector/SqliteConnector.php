@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace SpipRemix\Component\Orm\Connector;
 
-use SpipRemix\Component\Orm\ConnectorInterface;
-
-final class SqliteConnector extends AbstractConnector implements ConnectorInterface
+final class SqliteConnector extends AbstractConnector
 {
     public static function getDsnPrefix(): string
     {

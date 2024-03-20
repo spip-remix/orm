@@ -24,7 +24,7 @@ interface SqlQueryBuilderInterface
      * @param string|string[] $having
      * @param int|int[] $limit offset et position
      *
-     * @return string la requête SQL
+     * @return mixed le résultat de la requête SQL
      */
     public function select(
         string|array $from,
@@ -34,7 +34,7 @@ interface SqlQueryBuilderInterface
         string|array $having = [],
         string|array $orderBy = [],
         int|array $limit = 0,
-    ): string;
+    ): mixed;
 
     /**
      * Undocumented function
@@ -49,7 +49,7 @@ interface SqlQueryBuilderInterface
         string $table,
         array $columns,
         array $values,
-    ): string;
+    ): mixed;
 
     /**
      * Undocumented function
@@ -64,7 +64,7 @@ interface SqlQueryBuilderInterface
         string $table,
         string|array $values = [],
         string|array $where = [],
-    ): string;
+    ): mixed;
 
     /**
      * Undocumented function
@@ -77,5 +77,5 @@ interface SqlQueryBuilderInterface
     public function delete(
         string $table,
         string|array $where = [],
-    ): string;
+    ): mixed;
 }

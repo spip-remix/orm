@@ -7,9 +7,11 @@ namespace SpipRemix\Component\Orm;
 /**
  * Undocumented interface.
  *
+ * @todo Gérer d'autres paramètres pour la chaîne de connexion (ex: charset)
+ *
  * @author JamesRezo <james@rezo.net>
  */
-interface NetworkInterface
+interface ConnectionInterface
 {
     /**
      * Undocumented function.

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace SpipRemix\Component\Orm\Network;
+namespace SpipRemix\Component\Orm\Connection;
 
-use SpipRemix\Component\Orm\NetworkInterface;
+use SpipRemix\Component\Orm\ConnectionInterface;
 
 /**
  * Undocumented interface.
  *
  * @author JamesRezo <james@rezo.net>
  */
-final class Tcp implements NetworkInterface
+final class Tcp implements ConnectionInterface
 {
     /** @var non-empty-string */
     private string $uri;
@@ -26,6 +26,8 @@ final class Tcp implements NetworkInterface
      * @param positive-int|null $port
      * @param string $username
      * @param string $password
+     * @param ?string $alter_username
+     * @param ?string $alter_password
      */
     public function __construct(
         string $driver,
@@ -35,9 +37,12 @@ final class Tcp implements NetworkInterface
         string $username = '',
         #[\SensitiveParameter]
         string $password = '',
+        ?string $alter_username = null,
+        #[\SensitiveParameter]
+        ?string $alter_password = null,
     ) {
-        $port = \is_null($port) ? '' : 'port='.\strval($port).';';
-        $this->pdoString = $driver.':host='.$hostname.';'.$port.'dbname='.$base.';';
+        $port = \is_null($port) ? '' : 'port=' . \strval($port) . ';';
+        $this->pdoString = $driver . ':host=' . $hostname . ';' . $port . 'dbname=' . $base . ';';
     }
 
     public function getUri(): string

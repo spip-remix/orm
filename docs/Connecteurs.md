@@ -8,7 +8,7 @@
 return [
     'spip' => [                             // Nom de la configuration
         'driver' => 'mysqli',               // Driver de connexion (parmis pdo_sqlite, mysqli, pgsql, pdo_mysql, pdo_pgsql, ...)
-        'parameters' => [
+        'connexion' => [
             'table_prefix' => 'spip',       // Préfixe des tables SQL
             'hostname' => 'localhost',      // Hôte à joindre
             // 'port' => 3306,                 // Port TCP le l'hôte pour accéder au serveur SQL
@@ -21,7 +21,7 @@ return [
     ],
     'autre_base' => [
         'driver' => 'pdo_mysql',
-        'parameters' => [
+        'connexion' => [
             'table_prefix' => 'grmleu',
             'hostname' => 'localhost',
             'base' => 'spip',
@@ -31,7 +31,7 @@ return [
     ],
     'socket_spip' => [
         'driver' => 'pdo_mysql',
-        'parameters' => [
+        'connexion' => [
             'table_prefix' => 'grmleu',
             'socket' => '/tmp/autre_spip.sock',
             'base' => 'spip',
@@ -41,7 +41,7 @@ return [
     ],
     'externe' => [
         'driver' => 'pdo_sqlite',
-        'parameters' => [
+        'connexion' => [
             'table_prefix' => '',
             'filename' => '/opt/data/base.sqlite.db',
         ],

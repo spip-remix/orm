@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace SpipRemix\Component\Orm\Network;
+namespace SpipRemix\Component\Orm\Connection;
 
-use SpipRemix\Component\Orm\NetworkInterface;
+use SpipRemix\Component\Orm\ConnectionInterface;
 
 /**
  * Undocumented class.
  *
  * @author JamesRezo <james@rezo.net>
  */
-class File implements NetworkInterface
+class File implements ConnectionInterface
 {
     /** @var non-empty-string */
     protected string $pdoString;
@@ -24,7 +24,7 @@ class File implements NetworkInterface
         string $driver,
         string $filename,
     ) {
-        $this->pdoString = $driver.':'.$filename;
+        $this->pdoString = $driver . ':' . $filename;
     }
 
     public function getUri(): string
