@@ -1,23 +1,24 @@
 <?php
 
+/**
+ * SPIP, Système de publication pour l'internet
+ *
+ * Copyright © avec tendresse depuis 2001
+ * Arnaud Martin, Antoine Pitrou, Philippe Rivière, Emmanuel Saint-James
+ *
+ * Ce programme est un logiciel libre distribué sous licence GNU/GPL.
+ */
+
+declare(strict_types=1);
+
 use SpipRemix\Component\Orm\SqlQueryBuilder;
 
 /**
  * Undocumented function.
- * 
+ *
  * @example https://github.com/spip-remix/database/blob/0.1/docs/select.md description
  *
- * @param string|array $from la table
- * @param array $select les colonnes de la table
- * @param string $where les conditions
- * @param array $groupby
- * @param string $orderBy
- * @param array $having
- * @param int $limit offset et position
- * @param string $connecteur le connecteur SQL
- * @param string $prefix le prefix des tables du site
- *
- * @return string la requête SQL
+ * @see 
  */
 function sql_select(
     string|array $from,

@@ -2,7 +2,7 @@
 
 ## API
 
-## architeccture
+## architecture
 
 ecrire/base :
 
@@ -14,10 +14,10 @@ abstract_sql::sql_serveur -> connect_sql::spip_connect_sql -> connect_sql::spip_
 
 parametres : $serveur, $ins_sql (instruction: SELECT,UPDATE, ...)
 
-globales : $GLOBALS['spip_sql_version'],  $GLOBALS['connexions'][$index], $GLOBALS['db_ok'], $GLOBALS['spip_connect_version']
+globales : `$GLOBALS['spip_sql_version']`,  `$GLOBALS['connexions'][$index]`, `$GLOBALS['db_ok']`, `$GLOBALS['spip_connect_version']`
 $GLOBALS['tables_principales']
 
-constantes  : _DIR_CONNECT, _FILE_CONNECT, _FILE_CONNECT_TMP -> config/connect.php _ECRIRE_INSTALL _PLUGINS_HASH  _VAR_MODE _REDIRECT_MAJ_PLUGIN _TIME_OUT
+constantes  : _DIR_CONNECT, _FILE_CONNECT, _FILE_CONNECT_TMP -> config/connect.php `_ECRIRE_INSTALL` `_PLUGINS_HASH`  `_VAR_MODE` `_REDIRECT_MAJ_PLUGIN` `_TIME_OUT`
 
 SQL_ABSTRACT_VERSION
 _CONNECT_RETRY_DELAY

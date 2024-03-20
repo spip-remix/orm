@@ -19,9 +19,12 @@
         }
     ],
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "spip-remix/contracts": "^0.1.x-dev"
     },
     "require-dev": {
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
         "spip-remix/sdk": "^0.1.x-dev"
     },
     "autoload": {
@@ -38,5 +41,12 @@
         "platform": {
             "php": "8.1.27"
         }
+    },
+    "suggest": {
+        "ext-ldap": "*",
+        "ext-pdo_mysql": "*",
+        "ext-pdo_pgsql": "*",
+        "ext-mysqli": "*",
+        "ext-pgsql": "*"
     }
 }

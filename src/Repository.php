@@ -2,13 +2,12 @@
 
 namespace SpipRemix\Component\Orm;
 
-use SpipRemix\Component\Orm\Repository\ConnectorInterface;
-
 final class Repository implements RepositoryInterface
 {
     public function __construct(
         public readonly string $name,
         private ConnectorInterface $connector,
+        private SqlQueryBuilderInterface $builder,
     ) {}
 
     public function __toString(): string
@@ -16,9 +15,11 @@ final class Repository implements RepositoryInterface
         return $this->name;
     }
 
-    public function select(): mixed
+    public function select($from, $select, $where, $groupby, $having, $orderBy, $limit): mixed
     {
-        return $this->connector->query();
+        return $this->connector->query($this->builder->select(
+            $from, $select, $where, $groupby, $having, $orderBy, $limit
+        ));
     }
 
     public function fetch(): mixed { return \null; }

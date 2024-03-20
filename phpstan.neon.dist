@@ -8,3 +8,5 @@ parameters:
         - base
         - req
     level: max
+    typeAliases:
+        ConfigParameters: 'array{table_prefix:string,base:string}'
